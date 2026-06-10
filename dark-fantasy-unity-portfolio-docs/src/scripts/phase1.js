@@ -13,14 +13,42 @@ const quickReplies = document.querySelectorAll('[data-reply]');
 const projectGrid = document.querySelector('[data-project-grid]');
 const repoStatus = document.querySelector('[data-repo-status]');
 const projectFilters = document.querySelectorAll('[data-project-filter]');
+const webglModal = document.querySelector('[data-webgl-modal]');
+const webglFrame = document.querySelector('[data-webgl-frame]');
+const webglLoader = document.querySelector('[data-webgl-loader]');
+const webglLine = document.querySelector('[data-webgl-line]');
+const webglClose = document.querySelector('[data-webgl-close]');
+const webglFullscreen = document.querySelector('[data-webgl-fullscreen]');
+const webglOpen = document.querySelector('[data-webgl-open]');
+const webglFallback = document.querySelector('[data-webgl-fallback]');
+const webglWarning = document.querySelector('[data-webgl-warning]');
 
 const GITHUB_USERNAME = 'PiupiuTenshi';
 const GITHUB_REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&direction=desc&per_page=100`;
 const REPO_CACHE_KEY = 'cursed-biomes.github-repos.v1';
 const REPO_CACHE_TTL_MS = 10 * 60 * 1000;
+const WEBGL_LOAD_LINES = [
+  'Opening the cursed gate...',
+  'Awakening forgotten biomes...',
+  'Binding WebGL spirits...',
+  'Summoning gameplay loop...',
+  'Enter the demo.',
+];
+
+const webglDemo = {
+  slug: 'biome-gate',
+  title: 'Biome Gate Demo',
+  repoName: 'Unity2DTopDown',
+  webglEnabled: true,
+  tryNowUrl: 'public/games/biome-gate/index.html',
+  fallbackUrl: 'https://github.com/PiupiuTenshi',
+  isPlaceholder: true,
+};
 
 let activeProjectFilter = 'all';
 let visibleRepos = [];
+let webglLineTimer = null;
+let wasAudioPlayingBeforeWebgl = false;
 
 const repoSettings = [
   {
@@ -113,7 +141,7 @@ const fallbackRepos = [
 
 const botReplies = {
   'Show Unity projects': 'Project relics now sync from GitHub with local cache and fallback data.',
-  'Open WebGL demo': 'The Try Now gate is a static placeholder for Phase 1. Phase 3 will load the Unity WebGL build here.',
+  'Open WebGL demo': 'Use the Try Now gate to open the lazy-loaded WebGL modal. Full Unity export can replace the placeholder folder later.',
   'Download CV': 'The CV route is wired, but the final PDF is still marked pending in the Phase 0 status doc.',
   'Contact via Zalo': 'Use the Zalo portal in Contact for the fastest reply path.',
 };
@@ -311,7 +339,9 @@ function renderRepoCard(repo) {
     : 'Unknown';
   const topics = repo.topics.slice(0, 4).map((topic) => `<span>${escapeHtml(topic)}</span>`).join('');
   const homepage = repo.homepage ? `<a href="${escapeAttribute(repo.homepage)}">Demo</a>` : '';
-  const tryNow = repo.tryNowUrl ? `<a href="${escapeAttribute(repo.tryNowUrl)}">Try Now</a>` : '<a href="#try-now">Preview</a>';
+  const tryNow = repo.tryNowUrl
+    ? `<a href="${escapeAttribute(repo.tryNowUrl)}">Try Now</a>`
+    : '<a href="#try-now" data-open-webgl>Preview</a>';
   const docs = repo.caseStudyUrl ? `<a href="${escapeAttribute(repo.caseStudyUrl)}">Docs</a>` : '';
 
   return `
@@ -378,10 +408,8 @@ audioToggle?.addEventListener('click', async () => {
 });
 
 demoButton?.addEventListener('click', () => {
-  if (!demoProgress) return;
-  demoProgress.classList.remove('is-running');
-  void demoProgress.offsetWidth;
-  demoProgress.classList.add('is-running');
+  startDemoProgress();
+  openWebglDemo();
 });
 
 demoReset?.addEventListener('click', () => {
@@ -392,6 +420,132 @@ demoReset?.addEventListener('click', () => {
     demoProgress.style.width = '';
   }, 20);
 });
+
+document.addEventListener('click', (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  if (!target.closest('[data-open-webgl]')) return;
+  event.preventDefault();
+  startDemoProgress();
+  openWebglDemo();
+});
+
+webglClose?.addEventListener('click', closeWebglDemo);
+
+webglModal?.addEventListener('click', (event) => {
+  if (event.target === webglModal) closeWebglDemo();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && webglModal?.classList.contains('is-open')) {
+    closeWebglDemo();
+  }
+});
+
+webglFullscreen?.addEventListener('click', async () => {
+  const target = webglFrame || webglModal;
+  if (!target?.requestFullscreen) return;
+
+  try {
+    await target.requestFullscreen();
+    trackWebglEvent('WEBGL_FULLSCREEN');
+  } catch (error) {
+    trackWebglEvent('WEBGL_FULLSCREEN_ERROR', { message: error.message });
+  }
+});
+
+webglFrame?.addEventListener('load', () => {
+  webglLoader?.classList.add('is-hidden');
+  trackWebglEvent('WEBGL_LOAD_READY');
+});
+
+function startDemoProgress() {
+  if (!demoProgress) return;
+  demoProgress.classList.remove('is-running');
+  void demoProgress.offsetWidth;
+  demoProgress.classList.add('is-running');
+}
+
+function openWebglDemo() {
+  if (!webglModal || !webglFrame) return;
+
+  trackWebglEvent('TRY_NOW_CLICK');
+  webglModal.classList.add('is-open');
+  webglModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('is-webgl-open');
+  webglLoader?.classList.remove('is-hidden');
+  webglWarning?.classList.toggle('is-visible', isLikelyMobile());
+
+  if (webglOpen) webglOpen.href = webglDemo.tryNowUrl;
+  if (webglFallback) webglFallback.href = webglDemo.fallbackUrl;
+
+  wasAudioPlayingBeforeWebgl = Boolean(audioLoop && !audioLoop.paused);
+  if (audioLoop && wasAudioPlayingBeforeWebgl) {
+    audioLoop.pause();
+    audioToggle.textContent = 'Enable Sound';
+    audioToggle.setAttribute('aria-pressed', 'false');
+  }
+
+  rotateWebglLoadingLines();
+  if (!webglFrame.src) {
+    trackWebglEvent('WEBGL_LOAD_START');
+    webglFrame.src = webglDemo.tryNowUrl;
+  }
+}
+
+function closeWebglDemo() {
+  if (!webglModal || !webglFrame) return;
+
+  trackWebglEvent('WEBGL_CLOSE');
+  webglModal.classList.remove('is-open');
+  webglModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('is-webgl-open');
+  webglFrame.src = '';
+  webglLoader?.classList.remove('is-hidden');
+  stopWebglLoadingLines();
+
+  if (wasAudioPlayingBeforeWebgl && audioLoop) {
+    audioLoop.play().then(() => {
+      audioToggle.textContent = 'Mute Sound';
+      audioToggle.setAttribute('aria-pressed', 'true');
+    }).catch(() => {
+      wasAudioPlayingBeforeWebgl = false;
+    });
+  }
+}
+
+function rotateWebglLoadingLines() {
+  stopWebglLoadingLines();
+  let index = 0;
+  if (webglLine) webglLine.textContent = WEBGL_LOAD_LINES[index];
+
+  webglLineTimer = window.setInterval(() => {
+    index = Math.min(index + 1, WEBGL_LOAD_LINES.length - 1);
+    if (webglLine) webglLine.textContent = WEBGL_LOAD_LINES[index];
+    if (index === WEBGL_LOAD_LINES.length - 1) stopWebglLoadingLines();
+  }, 650);
+}
+
+function stopWebglLoadingLines() {
+  if (!webglLineTimer) return;
+  window.clearInterval(webglLineTimer);
+  webglLineTimer = null;
+}
+
+function isLikelyMobile() {
+  return window.matchMedia('(max-width: 760px)').matches || navigator.maxTouchPoints > 1;
+}
+
+function trackWebglEvent(eventName, extra = {}) {
+  console.info('[webgl-event]', {
+    eventName,
+    gameSlug: webglDemo.slug,
+    repoName: webglDemo.repoName,
+    device: isLikelyMobile() ? 'mobile' : 'desktop',
+    isPlaceholder: webglDemo.isPlaceholder,
+    ...extra,
+  });
+}
 
 chatToggle?.addEventListener('click', () => {
   const isOpen = chatPanel?.classList.toggle('is-open') ?? false;

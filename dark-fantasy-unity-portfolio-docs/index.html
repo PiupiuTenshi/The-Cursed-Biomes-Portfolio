@@ -133,7 +133,7 @@
 
       <section class="try-now section-band" id="try-now" data-reveal>
         <div class="section-heading">
-          <p class="eyebrow">Unity WebGL placeholder</p>
+          <p class="eyebrow">Unity WebGL Try Now</p>
           <h2>Try Now gate</h2>
         </div>
         <div class="demo-shell">
@@ -143,14 +143,18 @@
               alt="Dark fantasy UI UX complete reference"
             />
             <div class="demo-overlay">
-              <span>Unity build slot</span>
-              <strong>WebGL demo will bind here in Phase 3</strong>
+              <span>Playable browser slot</span>
+              <strong>Open the WebGL gate in a lazy-loaded modal</strong>
             </div>
           </div>
           <div class="demo-controls">
-            <button type="button" data-demo-button>Start Placeholder</button>
+            <button type="button" data-demo-button>Try Now</button>
             <button type="button" data-demo-reset>Reset Gate</button>
           </div>
+          <p class="demo-note">
+            This Phase 3 slot uses a lightweight WebGL-style demo page. Replace
+            `public/games/biome-gate` with a Unity WebGL build when it is ready.
+          </p>
           <div class="demo-progress" aria-label="Demo loading progress">
             <span data-demo-progress></span>
           </div>
@@ -233,6 +237,39 @@
         </div>
       </div>
     </aside>
+
+    <div class="webgl-modal" data-webgl-modal aria-hidden="true">
+      <div class="webgl-dialog" role="dialog" aria-modal="true" aria-labelledby="webgl-title">
+        <div class="webgl-head">
+          <div>
+            <p class="eyebrow">Try Now</p>
+            <h2 id="webgl-title">Biome Gate Demo</h2>
+          </div>
+          <button type="button" data-webgl-close aria-label="Close WebGL demo">Close</button>
+        </div>
+        <div class="webgl-warning" data-webgl-warning>
+          Mobile devices may load WebGL slowly. Use fullscreen on desktop for the best run.
+        </div>
+        <div class="webgl-stage">
+          <div class="webgl-loader" data-webgl-loader>
+            <strong data-webgl-line>Opening the cursed gate...</strong>
+            <span></span>
+          </div>
+          <iframe
+            data-webgl-frame
+            title="Biome Gate WebGL demo"
+            loading="lazy"
+            allow="fullscreen; gamepad; autoplay"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="webgl-actions">
+          <button type="button" data-webgl-fullscreen>Fullscreen</button>
+          <a href="public/games/biome-gate/index.html" data-webgl-open>Open Separate</a>
+          <a href="https://github.com/PiupiuTenshi" data-webgl-fallback>Fallback GitHub</a>
+        </div>
+      </div>
+    </div>
 
     <audio data-audio-loop src="public/audio/track-01.ogg" preload="none" loop></audio>
     <script src="src/scripts/phase1.js" defer></script>
