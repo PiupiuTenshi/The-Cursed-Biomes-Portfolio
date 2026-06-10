@@ -1,0 +1,24 @@
+[
+  {
+    "id": "evt_3e340723-a267-43aa-98c5-8c4e12d24c1d",
+    "timestamp": "2026-06-10T18:58:26.948Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_757f77a6-c814-4ff6-966a-bf686c82d448",
+    "timestamp": "2026-06-10T18:59:17.732Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  }
+]

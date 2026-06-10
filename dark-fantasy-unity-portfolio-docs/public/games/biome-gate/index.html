@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Biome Gate Demo</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        color: #f1efe7;
+        background: #05070a;
+      }
+
+      canvas {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(184, 140, 255, 0.22), transparent 16rem),
+          linear-gradient(180deg, #070912, #09060b);
+      }
+
+      .hud {
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: end;
+        pointer-events: none;
+      }
+
+      .panel {
+        max-width: 520px;
+        padding: 14px 16px;
+        border: 1px solid rgba(184, 140, 255, 0.32);
+        border-radius: 8px;
+        background: rgba(8, 9, 13, 0.72);
+        backdrop-filter: blur(12px);
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        font-size: clamp(1.1rem, 3vw, 1.8rem);
+      }
+
+      p {
+        margin: 0;
+        color: #aeb5c2;
+        line-height: 1.5;
+      }
+
+      .badge {
+        color: #d9a441;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gate"></canvas>
+    <div class="hud">
+      <div class="panel">
+        <span class="badge">Phase 3 placeholder</span>
+        <h1>Biome Gate Demo</h1>
+        <p>Move your pointer to bend the rune field. Replace this page with a Unity WebGL export later.</p>
+      </div>
+    </div>
+    <script>
+      const canvas = document.querySelector('#gate');
+      const ctx = canvas.getContext('2d');
+      const pointer = { x: 0.5, y: 0.5 };
+      const particles = Array.from({ length: 96 }, (_, index) => ({
+        angle: (Math.PI * 2 * index) / 96,
+        radius: 80 + Math.random() * 240,
+        speed: 0.0015 + Math.random() * 0.0025,
+        size: 1 + Math.random() * 2.4,
+      }));
+
+      function resize() {
+        canvas.width = Math.floor(window.innerWidth * window.devicePixelRatio);
+        canvas.height = Math.floor(window.innerHeight * window.devicePixelRatio);
+        ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+      }
+
+      window.addEventListener('resize', resize);
+      window.addEventListener('pointermove', (event) => {
+        pointer.x = event.clientX / window.innerWidth;
+        pointer.y = event.clientY / window.innerHeight;
+      });
+
+      function draw(now) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const cx = width * (0.44 + pointer.x * 0.12);
+        const cy = height * (0.42 + pointer.y * 0.08);
+        const pulse = Math.sin(now * 0.002) * 0.5 + 0.5;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = '#05070a';
+        ctx.fillRect(0, 0, width, height);
+
+        const gradient = ctx.createRadialGradient(cx, cy, 20, cx, cy, Math.max(width, height) * 0.72);
+        gradient.addColorStop(0, `rgba(184, 140, 255, ${0.22 + pulse * 0.06})`);
+        gradient.addColorStop(0.42, 'rgba(55, 25, 88, 0.22)');
+        gradient.addColorStop(1, 'rgba(5, 7, 10, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(now * 0.00016);
+        for (let ring = 0; ring < 4; ring += 1) {
+          const radius = 92 + ring * 58 + pulse * 8;
+          ctx.strokeStyle = `rgba(184, 140, 255, ${0.36 - ring * 0.055})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius, 0, Math.PI * 2);
+          ctx.stroke();
+
+          for (let i = 0; i < 16; i += 1) {
+            const angle = (Math.PI * 2 * i) / 16 + ring * 0.18;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            ctx.fillStyle = i % 2 ? 'rgba(217, 164, 65, 0.75)' : 'rgba(184, 140, 255, 0.8)';
+            ctx.fillRect(x - 2, y - 8, 4, 16);
+          }
+        }
+
+        particles.forEach((particle) => {
+          particle.angle += particle.speed;
+          const wobble = Math.sin(now * 0.001 + particle.radius) * 16;
+          const x = Math.cos(particle.angle) * (particle.radius + wobble);
+          const y = Math.sin(particle.angle) * (particle.radius + wobble);
+          ctx.fillStyle = 'rgba(184, 140, 255, 0.72)';
+          ctx.beginPath();
+          ctx.arc(x, y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.restore();
+
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      requestAnimationFrame(draw);
+    </script>
+  </body>
+</html>

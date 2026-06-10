@@ -36,6 +36,32 @@ body {
     linear-gradient(180deg, #08090d 0%, #121018 48%, #090b10 100%);
 }
 
+body.is-motion-reduced .ambient-canvas,
+body.is-motion-reduced .ghost-canvas {
+  display: none;
+}
+
+body.is-webgl-open {
+  overflow: hidden;
+}
+
+.ambient-canvas,
+.ghost-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ambient-canvas {
+  z-index: -1;
+  opacity: 0.78;
+}
+
+.ghost-canvas {
+  z-index: 25;
+  opacity: 0.72;
+}
+
 body::before {
   position: fixed;
   inset: 0;
@@ -185,8 +211,17 @@ img {
   font-size: 0.92rem;
 }
 
+.audio-console {
+  display: grid;
+  grid-template-columns: auto auto auto minmax(150px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-width: min(520px, 100%);
+}
+
 .main-nav a,
 .sound-toggle,
+.icon-button,
 .button,
 .demo-controls button,
 .quick-replies button,
@@ -209,6 +244,7 @@ img {
 }
 
 .sound-toggle,
+.icon-button,
 .demo-controls button,
 .quick-replies button,
 .chatbot-toggle {
@@ -219,6 +255,30 @@ img {
 
 .sound-toggle {
   padding: 0 14px;
+}
+
+.icon-button {
+  padding: 0 12px;
+}
+
+.volume-control {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.volume-control span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.volume-control input {
+  width: 100%;
+  accent-color: var(--primary-soft);
 }
 
 .section-band {
@@ -326,6 +386,28 @@ blockquote,
   transform-style: preserve-3d;
 }
 
+.hero-portrait::before,
+.project-card::before,
+.panel::before,
+.demo-shell::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(184, 140, 255, 0.18), transparent),
+    radial-gradient(circle at 18% 0%, rgba(217, 164, 65, 0.16), transparent 16rem);
+  transition: opacity 300ms ease;
+}
+
+.hero-portrait:hover::before,
+.project-card:hover::before,
+.panel:hover::before,
+.demo-shell:hover::before {
+  opacity: 1;
+}
+
 .hero-portrait img {
   width: 100%;
   aspect-ratio: 4 / 5;
@@ -367,6 +449,8 @@ blockquote,
 .project-card,
 .book-card,
 blockquote {
+  position: relative;
+  overflow: hidden;
   padding: 24px;
 }
 
@@ -429,11 +513,17 @@ blockquote p {
   display: grid;
   align-content: start;
   min-height: 286px;
-  transition: transform 220ms ease, border-color 220ms ease;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    border-radius 700ms ease,
+    box-shadow 260ms ease;
 }
 
 .project-card:hover {
   border-color: rgba(184, 140, 255, 0.38);
+  border-radius: 16px 8px 18px 10px;
+  box-shadow: var(--glow), 0 20px 54px rgba(0, 0, 0, 0.28);
 }
 
 .project-type {
@@ -500,6 +590,8 @@ blockquote p {
 }
 
 .demo-shell {
+  position: relative;
+  overflow: hidden;
   padding: 18px;
 }
 
@@ -544,6 +636,12 @@ blockquote p {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 16px;
+}
+
+.demo-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 .demo-controls button,
@@ -666,6 +764,13 @@ cite {
   background: rgba(184, 140, 255, 0.12);
 }
 
+.chatbot-messages .bot a {
+  color: var(--accent);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .chatbot-messages .user {
   color: #07110d;
   background: rgba(72, 176, 134, 0.88);
@@ -675,6 +780,193 @@ cite {
   flex-wrap: wrap;
   gap: 8px;
   padding: 14px 16px 16px;
+}
+
+.chatbot-form {
+  display: grid;
+  gap: 10px;
+  padding: 0 16px 16px;
+}
+
+.chatbot-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.chatbot-form label span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.chatbot-form textarea,
+.chatbot-form input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  font: inherit;
+  resize: vertical;
+}
+
+.chatbot-form textarea {
+  min-height: 84px;
+  padding: 10px 12px;
+}
+
+.chatbot-form input {
+  min-height: 40px;
+  padding: 0 12px;
+}
+
+.chatbot-form button {
+  min-height: 42px;
+  border: 1px solid rgba(184, 140, 255, 0.42);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(123, 63, 178, 0.34);
+  cursor: pointer;
+}
+
+.chatbot-status {
+  min-height: 20px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.webgl-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  padding: 18px;
+  background: rgba(3, 4, 7, 0.84);
+  backdrop-filter: blur(16px);
+}
+
+.webgl-modal.is-open {
+  display: grid;
+  place-items: center;
+}
+
+.webgl-dialog {
+  display: grid;
+  grid-template-rows: auto auto minmax(280px, 1fr) auto;
+  width: min(1280px, 100%);
+  height: min(820px, calc(100vh - 36px));
+  overflow: hidden;
+  border: 1px solid rgba(184, 140, 255, 0.34);
+  border-radius: 8px;
+  background: #08090d;
+  box-shadow: var(--glow), var(--shadow);
+}
+
+.webgl-head,
+.webgl-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 9, 13, 0.94);
+}
+
+.webgl-head h2 {
+  margin: 4px 0 0;
+  font-size: clamp(1.35rem, 3vw, 2.2rem);
+}
+
+.webgl-head button,
+.webgl-actions button,
+.webgl-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.webgl-warning {
+  display: none;
+  padding: 10px 16px;
+  color: #1b1302;
+  background: rgba(217, 164, 65, 0.9);
+  font-weight: 800;
+}
+
+.webgl-warning.is-visible {
+  display: block;
+}
+
+.webgl-stage {
+  position: relative;
+  min-height: 280px;
+  background: #05070a;
+}
+
+.webgl-stage iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #05070a;
+}
+
+.webgl-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  gap: 16px;
+  align-content: center;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(184, 140, 255, 0.22), transparent 24rem),
+    rgba(5, 7, 10, 0.96);
+}
+
+.webgl-loader.is-hidden {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.webgl-loader strong {
+  padding: 0 18px;
+  text-align: center;
+  font-size: clamp(1.1rem, 3vw, 2.2rem);
+}
+
+.webgl-loader span {
+  width: min(360px, calc(100% - 42px));
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.webgl-loader span::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  content: "";
+  background: linear-gradient(90deg, var(--danger), var(--accent), var(--primary-soft));
+  animation: gate-load 1700ms ease infinite;
+}
+
+.webgl-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 0;
 }
 
 [data-reveal] {
@@ -705,7 +997,7 @@ cite {
 
 @media (max-width: 920px) {
   .site-header {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
   }
 
   .main-nav {
@@ -713,6 +1005,17 @@ cite {
     justify-content: start;
     overflow-x: auto;
     padding-bottom: 2px;
+  }
+
+  .audio-console {
+    grid-template-columns: auto auto auto;
+    justify-content: start;
+    width: 100%;
+  }
+
+  .volume-control {
+    grid-column: 1 / -1;
+    width: min(320px, 100%);
   }
 
   .project-toolbar {
@@ -756,6 +1059,20 @@ cite {
     min-width: 126px;
   }
 
+  .audio-console {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .audio-console .volume-control {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .audio-console .sound-toggle,
+  .audio-console .icon-button {
+    width: 100%;
+  }
+
   .section-band {
     width: min(100% - 28px, 1180px);
     padding: 52px 0;
@@ -788,6 +1105,26 @@ cite {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0;
   }
+
+  .webgl-modal {
+    padding: 10px;
+  }
+
+  .webgl-dialog {
+    height: calc(100vh - 20px);
+  }
+
+  .webgl-head,
+  .webgl-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .webgl-head button,
+  .webgl-actions button,
+  .webgl-actions a {
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -797,5 +1134,10 @@ cite {
     scroll-behavior: auto !important;
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+
+  .ambient-canvas,
+  .ghost-canvas {
+    display: none;
   }
 }
