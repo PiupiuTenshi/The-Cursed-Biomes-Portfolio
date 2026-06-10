@@ -1,0 +1,7 @@
+.env
+.env.local
+/private/admin-command.txt
+node_modules/
+.next/
+dist/
+build/

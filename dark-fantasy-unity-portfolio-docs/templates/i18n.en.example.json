@@ -1,0 +1,23 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "tryNow": "Try Now",
+    "skills": "Skills",
+    "library": "Library",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Unity Developer crafting gameplay systems from cursed biomes.",
+    "subtitle": "A dark fantasy portfolio powered by live GitHub repositories, WebGL demos, and interactive UI.",
+    "tryNow": "Try Now",
+    "viewProjects": "View Projects",
+    "downloadCv": "Download CV"
+  },
+  "chatbot": {
+    "placeholder": "Send a raven message...",
+    "saved": "Thanks! I saved your message for Sáng.",
+    "gateAccepted": "Gate accepted. Continue to the hidden sanctum.",
+    "gateDenied": "The gate remains sealed."
+  }
+}

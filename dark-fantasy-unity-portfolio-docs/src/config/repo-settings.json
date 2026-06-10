@@ -1,0 +1,34 @@
+[
+  {
+    "owner": "PiupiuTenshi",
+    "repoName": "TechWeb-2026",
+    "visible": true,
+    "featured": true,
+    "priority": 1,
+    "category": "web",
+    "tryNowUrl": null,
+    "caseStudyUrl": "/projects/techweb-2026"
+  },
+  {
+    "owner": "PiupiuTenshi",
+    "repoName": "Privacy-Preserving-Vertical-Fragmentation-PII-Shield",
+    "visible": true,
+    "featured": true,
+    "priority": 2,
+    "category": "security",
+    "tryNowUrl": null,
+    "caseStudyUrl": "/projects/pii-shield",
+    "customTitle": "PII Shield"
+  },
+  {
+    "owner": "PiupiuTenshi",
+    "repoName": "Academic-performance-management",
+    "visible": true,
+    "featured": true,
+    "priority": 3,
+    "category": "management",
+    "tryNowUrl": null,
+    "caseStudyUrl": "/projects/academic-performance-management",
+    "customTitle": "Academic Performance"
+  }
+]

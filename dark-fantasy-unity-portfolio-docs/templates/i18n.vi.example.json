@@ -1,0 +1,23 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "projects": "Dự án",
+    "tryNow": "Chơi thử",
+    "skills": "Kỹ năng",
+    "library": "Thư viện",
+    "contact": "Liên hệ"
+  },
+  "hero": {
+    "title": "Unity Developer xây dựng gameplay system từ những biome bị nguyền rủa.",
+    "subtitle": "Portfolio dark fantasy với GitHub repo cập nhật realtime, demo WebGL và UI tương tác.",
+    "tryNow": "Chơi thử",
+    "viewProjects": "Xem dự án",
+    "downloadCv": "Tải CV"
+  },
+  "chatbot": {
+    "placeholder": "Gửi một lời nhắn qua quạ đen...",
+    "saved": "Cảm ơn! Tin nhắn đã được lưu cho Sáng.",
+    "gateAccepted": "Cổng đã mở. Tiếp tục vào thánh điện ẩn.",
+    "gateDenied": "Cánh cổng vẫn bị phong ấn."
+  }
+}

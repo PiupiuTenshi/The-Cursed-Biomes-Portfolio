@@ -1,0 +1,40 @@
+export const featuredRepositories = [
+  {
+    owner: 'PiupiuTenshi',
+    name: 'TechWeb-2026',
+    slug: 'PiupiuTenshi/TechWeb-2026',
+    repositoryUrl: 'https://github.com/PiupiuTenshi/TechWeb-2026',
+    visible: true,
+    featured: true,
+    priority: 1,
+    category: 'web',
+    caseStudyUrl: '/projects/techweb-2026',
+    tryNowUrl: null,
+  },
+  {
+    owner: 'PiupiuTenshi',
+    name: 'Privacy-Preserving-Vertical-Fragmentation-PII-Shield',
+    slug: 'PiupiuTenshi/Privacy-Preserving-Vertical-Fragmentation-PII-Shield',
+    repositoryUrl: 'https://github.com/PiupiuTenshi/Privacy-Preserving-Vertical-Fragmentation-PII-Shield',
+    visible: true,
+    featured: true,
+    priority: 2,
+    category: 'security',
+    caseStudyUrl: '/projects/pii-shield',
+    tryNowUrl: null,
+  },
+  {
+    owner: 'PiupiuTenshi',
+    name: 'Academic-performance-management',
+    slug: 'PiupiuTenshi/Academic-performance-management',
+    repositoryUrl: 'https://github.com/PiupiuTenshi/Academic-performance-management',
+    visible: true,
+    featured: true,
+    priority: 3,
+    category: 'management',
+    caseStudyUrl: '/projects/academic-performance-management',
+    tryNowUrl: null,
+  },
+];
+
+export default featuredRepositories;
