@@ -687,6 +687,60 @@ cite {
   padding: 14px 16px 16px;
 }
 
+.chatbot-form {
+  display: grid;
+  gap: 10px;
+  padding: 0 16px 16px;
+}
+
+.chatbot-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.chatbot-form label span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.chatbot-form textarea,
+.chatbot-form input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  font: inherit;
+  resize: vertical;
+}
+
+.chatbot-form textarea {
+  min-height: 84px;
+  padding: 10px 12px;
+}
+
+.chatbot-form input {
+  min-height: 40px;
+  padding: 0 12px;
+}
+
+.chatbot-form button {
+  min-height: 42px;
+  border: 1px solid rgba(184, 140, 255, 0.42);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(123, 63, 178, 0.34);
+  cursor: pointer;
+}
+
+.chatbot-status {
+  min-height: 20px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .webgl-modal {
   position: fixed;
   inset: 0;

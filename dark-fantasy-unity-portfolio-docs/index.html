@@ -224,10 +224,10 @@
       <div class="chatbot-panel" data-chat-panel>
         <div class="chatbot-head">
           <strong>Gate guide</strong>
-          <span>Static mode</span>
+          <span>Contact mode</span>
         </div>
         <div class="chatbot-messages" data-chat-messages>
-          <p class="bot">Choose a route. I can point you to projects, demo, CV, or Zalo.</p>
+          <p class="bot">Choose a route or leave a message. I can save it for Sang.</p>
         </div>
         <div class="quick-replies">
           <button type="button" data-reply="Show Unity projects">Projects</button>
@@ -235,6 +235,30 @@
           <button type="button" data-reply="Download CV">CV</button>
           <button type="button" data-reply="Contact via Zalo">Zalo</button>
         </div>
+        <form class="chatbot-form" data-chat-form>
+          <label>
+            <span>Message</span>
+            <textarea
+              data-chat-input
+              name="message"
+              rows="3"
+              maxlength="1200"
+              placeholder="Tell Sang what you want to discuss..."
+              required
+            ></textarea>
+          </label>
+          <label>
+            <span>Email or Zalo optional</span>
+            <input
+              data-contact-input
+              name="contact"
+              maxlength="240"
+              placeholder="email@example.com or 089..."
+            />
+          </label>
+          <button type="submit">Send Message</button>
+          <p class="chatbot-status" data-chat-status aria-live="polite"></p>
+        </form>
       </div>
     </aside>
 

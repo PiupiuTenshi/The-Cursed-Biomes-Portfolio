@@ -10,6 +10,10 @@ const chatToggle = document.querySelector('[data-chat-toggle]');
 const chatPanel = document.querySelector('[data-chat-panel]');
 const chatMessages = document.querySelector('[data-chat-messages]');
 const quickReplies = document.querySelectorAll('[data-reply]');
+const chatForm = document.querySelector('[data-chat-form]');
+const chatInput = document.querySelector('[data-chat-input]');
+const contactInput = document.querySelector('[data-contact-input]');
+const chatStatus = document.querySelector('[data-chat-status]');
 const projectGrid = document.querySelector('[data-project-grid]');
 const repoStatus = document.querySelector('[data-repo-status]');
 const projectFilters = document.querySelectorAll('[data-project-filter]');
@@ -26,6 +30,7 @@ const webglWarning = document.querySelector('[data-webgl-warning]');
 const GITHUB_USERNAME = 'PiupiuTenshi';
 const GITHUB_REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&direction=desc&per_page=100`;
 const REPO_CACHE_KEY = 'cursed-biomes.github-repos.v1';
+const SESSION_KEY = 'cursed-biomes.session-id.v1';
 const REPO_CACHE_TTL_MS = 10 * 60 * 1000;
 const WEBGL_LOAD_LINES = [
   'Opening the cursed gate...',
@@ -49,6 +54,7 @@ let activeProjectFilter = 'all';
 let visibleRepos = [];
 let webglLineTimer = null;
 let wasAudioPlayingBeforeWebgl = false;
+const sessionId = getOrCreateSessionId();
 
 const repoSettings = [
   {
@@ -560,6 +566,49 @@ quickReplies.forEach((button) => {
   });
 });
 
+chatForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const message = chatInput?.value.trim() ?? '';
+  const contact = contactInput?.value.trim() ?? '';
+
+  if (!message) return;
+
+  appendChat('user', message);
+  setChatStatus('Saving message...');
+  chatForm.querySelector('button')?.setAttribute('disabled', 'true');
+
+  try {
+    const response = await fetch('/api/chat/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId,
+        message,
+        contact,
+        page: window.location.pathname || '/',
+        language: document.documentElement.lang || 'en',
+      }),
+    });
+
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || `Chat API responded with ${response.status}`);
+    }
+
+    appendChat('bot', payload.reply || 'Saved. Sang can review this from the admin inbox.');
+    appendBotActions(payload.actions || []);
+    setChatStatus(`Saved to inbox as ${payload.messageId}`);
+    chatInput.value = '';
+    contactInput.value = '';
+    logVisitorEvent('CHAT_MESSAGE_SENT', { messageId: payload.messageId });
+  } catch (error) {
+    appendChat('bot', `I could not reach the local inbox yet: ${error.message}`);
+    setChatStatus('Run the local server to enable saving.');
+  } finally {
+    chatForm.querySelector('button')?.removeAttribute('disabled');
+  }
+});
+
 function appendChat(kind, text) {
   if (!chatMessages) return;
   const message = document.createElement('p');
@@ -567,4 +616,47 @@ function appendChat(kind, text) {
   message.textContent = text;
   chatMessages.append(message);
   chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function appendBotActions(actions) {
+  if (!chatMessages || actions.length === 0) return;
+  const actionRow = document.createElement('p');
+  actionRow.className = 'bot';
+  actionRow.textContent = actions.map((action) => action.label).join(' / ');
+  chatMessages.append(actionRow);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function setChatStatus(message) {
+  if (chatStatus) chatStatus.textContent = message;
+}
+
+function getOrCreateSessionId() {
+  try {
+    const existing = localStorage.getItem(SESSION_KEY);
+    if (existing) return existing;
+    const next = `sess_${crypto.randomUUID()}`;
+    localStorage.setItem(SESSION_KEY, next);
+    return next;
+  } catch {
+    return `sess_${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`;
+  }
+}
+
+async function logVisitorEvent(eventType, metadata = {}) {
+  try {
+    await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType,
+        sessionId,
+        path: window.location.pathname || '/',
+        referrer: document.referrer,
+        metadata,
+      }),
+    });
+  } catch {
+    // Analytics is best-effort in the local phase.
+  }
 }
