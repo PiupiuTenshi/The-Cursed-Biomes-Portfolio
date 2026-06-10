@@ -2,7 +2,14 @@ const loadingGate = document.querySelector('[data-loading-gate]');
 const revealItems = document.querySelectorAll('[data-reveal]');
 const tiltItems = document.querySelectorAll('[data-tilt]');
 const audioToggle = document.querySelector('[data-audio-toggle]');
+const audioPrev = document.querySelector('[data-audio-prev]');
+const audioNext = document.querySelector('[data-audio-next]');
+const audioVolume = document.querySelector('[data-audio-volume]');
+const audioLabel = document.querySelector('[data-audio-label]');
 const audioLoop = document.querySelector('[data-audio-loop]');
+const motionToggle = document.querySelector('[data-motion-toggle]');
+const ambientCanvas = document.querySelector('[data-ambient-canvas]');
+const ghostCanvas = document.querySelector('[data-ghost-canvas]');
 const demoButton = document.querySelector('[data-demo-button]');
 const demoReset = document.querySelector('[data-demo-reset]');
 const demoProgress = document.querySelector('[data-demo-progress]');
@@ -31,7 +38,16 @@ const GITHUB_USERNAME = 'PiupiuTenshi';
 const GITHUB_REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&direction=desc&per_page=100`;
 const REPO_CACHE_KEY = 'cursed-biomes.github-repos.v1';
 const SESSION_KEY = 'cursed-biomes.session-id.v1';
+const AUDIO_SETTINGS_KEY = 'cursed-biomes.audio-settings.v1';
+const MOTION_SETTINGS_KEY = 'cursed-biomes.reduce-motion.v1';
 const REPO_CACHE_TTL_MS = 10 * 60 * 1000;
+const AUDIO_TRACKS = [
+  { title: 'Abyss Forest', src: 'public/audio/track-01.ogg', section: 'Home' },
+  { title: 'Blood Ruins', src: 'public/audio/track-02.ogg', section: 'Projects' },
+  { title: 'Obsidian Forge', src: 'public/audio/track-03.ogg', section: 'Skills' },
+  { title: 'Arcane Library', src: 'public/audio/track-04.ogg', section: 'Library' },
+  { title: 'Silent Graveyard', src: 'public/audio/track-05.ogg', section: 'Contact' },
+];
 const WEBGL_LOAD_LINES = [
   'Opening the cursed gate...',
   'Awakening forgotten biomes...',
@@ -54,6 +70,14 @@ let activeProjectFilter = 'all';
 let visibleRepos = [];
 let webglLineTimer = null;
 let wasAudioPlayingBeforeWebgl = false;
+let currentTrackIndex = 0;
+let audioEnabled = false;
+let reducedMotion = readBooleanSetting(MOTION_SETTINGS_KEY);
+let effectsRunning = false;
+let ambientAnimationId = 0;
+let ghostAnimationId = 0;
+let ambientParticles = [];
+let ghostPoints = [];
 const sessionId = getOrCreateSessionId();
 
 const repoSettings = [
@@ -172,6 +196,8 @@ const revealObserver = new IntersectionObserver(
 
 revealItems.forEach((item) => revealObserver.observe(item));
 attachTilt(tiltItems);
+initAudioControls();
+initEffects();
 loadGitHubRepos();
 
 function attachTilt(items) {
@@ -397,20 +423,31 @@ function escapeAttribute(value) {
   return escapeHtml(value);
 }
 
-audioToggle?.addEventListener('click', async () => {
+audioToggle?.addEventListener('click', () => {
   if (!audioLoop) return;
-
   if (audioLoop.paused) {
-    audioLoop.volume = 0.34;
-    await audioLoop.play();
-    audioToggle.textContent = 'Mute Sound';
-    audioToggle.setAttribute('aria-pressed', 'true');
+    playCurrentTrack();
     return;
   }
+  pauseAudio();
+});
 
-  audioLoop.pause();
-  audioToggle.textContent = 'Enable Sound';
-  audioToggle.setAttribute('aria-pressed', 'false');
+audioPrev?.addEventListener('click', () => changeTrack(-1));
+audioNext?.addEventListener('click', () => changeTrack(1));
+
+audioVolume?.addEventListener('input', () => {
+  if (!audioLoop || !audioVolume) return;
+  audioLoop.volume = Number(audioVolume.value) / 100;
+  saveAudioSettings();
+});
+
+audioLoop?.addEventListener('ended', () => changeTrack(1));
+
+motionToggle?.addEventListener('click', () => {
+  reducedMotion = !reducedMotion;
+  localStorage.setItem(MOTION_SETTINGS_KEY, String(reducedMotion));
+  applyMotionPreference();
+  logVisitorEvent('MOTION_TOGGLED', { reducedMotion });
 });
 
 demoButton?.addEventListener('click', () => {
@@ -487,9 +524,7 @@ function openWebglDemo() {
 
   wasAudioPlayingBeforeWebgl = Boolean(audioLoop && !audioLoop.paused);
   if (audioLoop && wasAudioPlayingBeforeWebgl) {
-    audioLoop.pause();
-    audioToggle.textContent = 'Enable Sound';
-    audioToggle.setAttribute('aria-pressed', 'false');
+    pauseAudio();
   }
 
   rotateWebglLoadingLines();
@@ -511,10 +546,7 @@ function closeWebglDemo() {
   stopWebglLoadingLines();
 
   if (wasAudioPlayingBeforeWebgl && audioLoop) {
-    audioLoop.play().then(() => {
-      audioToggle.textContent = 'Mute Sound';
-      audioToggle.setAttribute('aria-pressed', 'true');
-    }).catch(() => {
+    playCurrentTrack().catch(() => {
       wasAudioPlayingBeforeWebgl = false;
     });
   }
@@ -596,7 +628,10 @@ chatForm?.addEventListener('submit', async (event) => {
     }
 
     appendChat('bot', payload.reply || 'Saved. Sang can review this from the admin inbox.');
-    appendBotActions(payload.actions || []);
+    const actions = payload.adminUrl
+      ? [{ type: 'open_link', label: 'Open Admin Gate', href: payload.adminUrl }, ...(payload.actions || [])]
+      : payload.actions || [];
+    appendBotActions(actions);
     setChatStatus(`Saved to inbox as ${payload.messageId}`);
     chatInput.value = '';
     contactInput.value = '';
@@ -622,7 +657,16 @@ function appendBotActions(actions) {
   if (!chatMessages || actions.length === 0) return;
   const actionRow = document.createElement('p');
   actionRow.className = 'bot';
-  actionRow.textContent = actions.map((action) => action.label).join(' / ');
+  actions.forEach((action, index) => {
+    if (index > 0) actionRow.append(document.createTextNode(' / '));
+    const link = document.createElement('a');
+    link.href = action.href;
+    link.textContent = action.label;
+    if (action.type === 'open_link') {
+      link.rel = 'noreferrer';
+    }
+    actionRow.append(link);
+  });
   chatMessages.append(actionRow);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -658,5 +702,235 @@ async function logVisitorEvent(eventType, metadata = {}) {
     });
   } catch {
     // Analytics is best-effort in the local phase.
+  }
+}
+
+function initAudioControls() {
+  const settings = readAudioSettings();
+  currentTrackIndex = clampIndex(settings.trackIndex ?? 0);
+  audioEnabled = false;
+
+  if (audioVolume && typeof settings.volume === 'number') {
+    audioVolume.value = String(Math.round(settings.volume * 100));
+  }
+
+  if (audioLoop && audioVolume) {
+    audioLoop.volume = Number(audioVolume.value) / 100;
+  }
+
+  setTrack(currentTrackIndex, false);
+  updateAudioUi();
+}
+
+async function playCurrentTrack() {
+  if (!audioLoop) return;
+  audioEnabled = true;
+  audioLoop.volume = audioVolume ? Number(audioVolume.value) / 100 : 0.34;
+  await audioLoop.play();
+  updateAudioUi();
+  saveAudioSettings();
+  logVisitorEvent('AUDIO_PLAY', { track: AUDIO_TRACKS[currentTrackIndex].title });
+}
+
+function pauseAudio() {
+  if (!audioLoop) return;
+  audioEnabled = false;
+  audioLoop.pause();
+  updateAudioUi();
+  saveAudioSettings();
+  logVisitorEvent('AUDIO_PAUSE', { track: AUDIO_TRACKS[currentTrackIndex].title });
+}
+
+function changeTrack(direction) {
+  const wasPlaying = Boolean(audioLoop && !audioLoop.paused);
+  setTrack(currentTrackIndex + direction, wasPlaying);
+  logVisitorEvent('AUDIO_TRACK_CHANGE', { track: AUDIO_TRACKS[currentTrackIndex].title });
+}
+
+function setTrack(index, shouldPlay) {
+  if (!audioLoop) return;
+  currentTrackIndex = clampIndex(index);
+  const track = AUDIO_TRACKS[currentTrackIndex];
+  audioLoop.src = track.src;
+  audioLoop.loop = true;
+  updateAudioUi();
+  saveAudioSettings();
+
+  if (shouldPlay) {
+    playCurrentTrack();
+  }
+}
+
+function updateAudioUi() {
+  const track = AUDIO_TRACKS[currentTrackIndex];
+  if (audioLabel) audioLabel.textContent = `${track.title} / ${track.section}`;
+  if (audioToggle) {
+    audioToggle.textContent = audioEnabled && audioLoop && !audioLoop.paused ? 'Mute Sound' : 'Enable Sound';
+    audioToggle.setAttribute('aria-pressed', String(audioEnabled && audioLoop && !audioLoop.paused));
+  }
+}
+
+function readAudioSettings() {
+  try {
+    const settings = JSON.parse(localStorage.getItem(AUDIO_SETTINGS_KEY) || '{}');
+    return typeof settings === 'object' && settings ? settings : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveAudioSettings() {
+  try {
+    localStorage.setItem(AUDIO_SETTINGS_KEY, JSON.stringify({
+      trackIndex: currentTrackIndex,
+      volume: audioLoop?.volume ?? 0.34,
+    }));
+  } catch {
+    // Local storage is optional.
+  }
+}
+
+function clampIndex(index) {
+  return (index + AUDIO_TRACKS.length) % AUDIO_TRACKS.length;
+}
+
+function initEffects() {
+  applyMotionPreference();
+  window.addEventListener('resize', resizeEffectCanvases);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopEffects();
+      return;
+    }
+    applyMotionPreference();
+  });
+
+  window.addEventListener('pointermove', (event) => {
+    if (reducedMotion || isLikelyMobile()) return;
+    ghostPoints.push({
+      x: event.clientX,
+      y: event.clientY,
+      createdAt: performance.now(),
+    });
+    if (ghostPoints.length > 24) ghostPoints.shift();
+  });
+}
+
+function applyMotionPreference() {
+  document.body.classList.toggle('is-motion-reduced', reducedMotion);
+  if (motionToggle) {
+    motionToggle.textContent = reducedMotion ? 'Motion On' : 'Reduce Motion';
+    motionToggle.setAttribute('aria-pressed', String(reducedMotion));
+  }
+
+  if (reducedMotion || document.hidden) {
+    stopEffects();
+    return;
+  }
+
+  startEffects();
+}
+
+function startEffects() {
+  if (effectsRunning) return;
+  effectsRunning = true;
+  resizeEffectCanvases();
+  ambientAnimationId = requestAnimationFrame(drawAmbient);
+  ghostAnimationId = requestAnimationFrame(drawGhostTrail);
+}
+
+function stopEffects() {
+  effectsRunning = false;
+  cancelAnimationFrame(ambientAnimationId);
+  cancelAnimationFrame(ghostAnimationId);
+  clearCanvas(ambientCanvas);
+  clearCanvas(ghostCanvas);
+}
+
+function resizeEffectCanvases() {
+  [ambientCanvas, ghostCanvas].forEach((canvas) => {
+    if (!canvas) return;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(window.innerWidth * ratio);
+    canvas.height = Math.floor(window.innerHeight * ratio);
+    const context = canvas.getContext('2d');
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  });
+
+  ambientParticles = Array.from({ length: isLikelyMobile() ? 28 : 72 }, () => ({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    radius: 0.7 + Math.random() * 2.2,
+    speed: 0.12 + Math.random() * 0.36,
+    drift: -0.15 + Math.random() * 0.3,
+    alpha: 0.16 + Math.random() * 0.34,
+  }));
+}
+
+function drawAmbient() {
+  if (!effectsRunning || !ambientCanvas) return;
+  const ctx = ambientCanvas.getContext('2d');
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = 'rgba(8, 9, 13, 0.08)';
+  ctx.fillRect(0, 0, width, height);
+
+  ambientParticles.forEach((particle) => {
+    particle.y -= particle.speed;
+    particle.x += particle.drift;
+    if (particle.y < -10) {
+      particle.y = height + 10;
+      particle.x = Math.random() * width;
+    }
+    if (particle.x < -10) particle.x = width + 10;
+    if (particle.x > width + 10) particle.x = -10;
+
+    const gradient = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, particle.radius * 8);
+    gradient.addColorStop(0, `rgba(184, 140, 255, ${particle.alpha})`);
+    gradient.addColorStop(1, 'rgba(184, 140, 255, 0)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(particle.x, particle.y, particle.radius * 8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ambientAnimationId = requestAnimationFrame(drawAmbient);
+}
+
+function drawGhostTrail(now) {
+  if (!effectsRunning || !ghostCanvas) return;
+  const ctx = ghostCanvas.getContext('2d');
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  ctx.clearRect(0, 0, width, height);
+  ghostPoints = ghostPoints.filter((point) => now - point.createdAt < 900);
+
+  ghostPoints.forEach((point) => {
+    const age = now - point.createdAt;
+    const opacity = Math.max(0, 1 - age / 900) * 0.35;
+    const scale = 1 + age / 600;
+    ctx.fillStyle = `rgba(184, 140, 255, ${opacity})`;
+    ctx.beginPath();
+    ctx.ellipse(point.x, point.y, 8 * scale, 4 * scale, -0.45, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ghostAnimationId = requestAnimationFrame(drawGhostTrail);
+}
+
+function clearCanvas(canvas) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+}
+
+function readBooleanSetting(key) {
+  try {
+    return localStorage.getItem(key) === 'true' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch {
+    return false;
   }
 }

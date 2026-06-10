@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="src/styles/phase1.css" />
   </head>
   <body>
+    <canvas class="ambient-canvas" data-ambient-canvas aria-hidden="true"></canvas>
+    <canvas class="ghost-canvas" data-ghost-canvas aria-hidden="true"></canvas>
     <div class="loading-gate" data-loading-gate>
       <div class="gate-frame">
         <span class="gate-kicker">Moonlit gate</span>
@@ -32,9 +34,20 @@
         <a href="#library">Library</a>
         <a href="#contact">Contact</a>
       </nav>
-      <button class="sound-toggle" type="button" data-audio-toggle aria-pressed="false">
-        Enable Sound
-      </button>
+      <div class="audio-console" aria-label="Ambient audio controls">
+        <button class="icon-button" type="button" data-audio-prev aria-label="Previous track">Prev</button>
+        <button class="sound-toggle" type="button" data-audio-toggle aria-pressed="false">
+          Enable Sound
+        </button>
+        <button class="icon-button" type="button" data-audio-next aria-label="Next track">Next</button>
+        <label class="volume-control">
+          <span data-audio-label>Abyss Forest</span>
+          <input data-audio-volume type="range" min="0" max="100" value="34" aria-label="Audio volume" />
+        </label>
+        <button class="icon-button" type="button" data-motion-toggle aria-pressed="false">
+          Reduce Motion
+        </button>
+      </div>
     </header>
 
     <main id="home">

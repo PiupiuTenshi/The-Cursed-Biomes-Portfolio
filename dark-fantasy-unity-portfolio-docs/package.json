@@ -1,8 +1,8 @@
 {
   "name": "dark-fantasy-unity-portfolio",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "private": true,
-  "description": "Static dark fantasy Unity portfolio with local Phase 4 chatbot contact pipeline.",
+  "description": "Static dark fantasy Unity portfolio with local hidden admin and chatbot contact pipeline.",
   "scripts": {
     "start": "node server.js",
     "check": "node --check server.js && node --check src/scripts/phase1.js"

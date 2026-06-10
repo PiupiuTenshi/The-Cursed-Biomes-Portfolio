@@ -1,0 +1,117 @@
+[
+  {
+    "id": "aud_e0ad760e-d4de-4544-96b4-f62af1bd3a02",
+    "timestamp": "2026-06-10T18:44:50.330Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_phase5_smoke",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_ef2b55dd-f715-45f4-9bd9-a565d970096b",
+    "timestamp": "2026-06-10T18:54:07.855Z",
+    "action": "ADMIN_LOGIN_DENIED",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "reason": "invalid_gate_token"
+    }
+  },
+  {
+    "id": "aud_16526140-5a00-4b9f-a9cd-219db4a2d31e",
+    "timestamp": "2026-06-10T18:54:36.699Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_phase5_smoke2",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_7e0e2347-c870-448b-8d21-fe3387fc927d",
+    "timestamp": "2026-06-10T18:54:36.846Z",
+    "action": "ADMIN_LOGIN_DENIED",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "reason": "invalid_gate_token"
+    }
+  },
+  {
+    "id": "aud_6b1e4461-f1a6-4fe5-8dce-537cbb731d19",
+    "timestamp": "2026-06-10T18:57:03.730Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_phase5_smoke3",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_df02cbc9-cf8c-4ad2-9c1d-ddd268f9d151",
+    "timestamp": "2026-06-10T18:57:03.765Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "sessionId": "admin_7bb65927-b363-4389-b682-8dd9ebdd390f"
+    }
+  },
+  {
+    "id": "aud_7ba4b7c8-1484-49d4-b3b7-324360ce3cfa",
+    "timestamp": "2026-06-10T18:58:26.942Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_4415affc-f270-4dc9-93e6-2c5c54614f2c",
+    "timestamp": "2026-06-10T18:58:39.897Z",
+    "action": "ADMIN_LOGIN_DENIED",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "reason": "invalid_password"
+    }
+  },
+  {
+    "id": "aud_3ba5c26d-9bbe-41df-b7d8-09809e78f12e",
+    "timestamp": "2026-06-10T18:58:51.026Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "sessionId": "admin_c348e893-522c-46fb-8e26-bac4753a1bb6"
+    }
+  },
+  {
+    "id": "aud_4e3f6c11-3a7d-49ef-86d6-84a6bf33eae0",
+    "timestamp": "2026-06-10T18:59:17.714Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_675892f2-02a5-4cc9-a92c-063c59a26b6b",
+    "timestamp": "2026-06-10T18:59:25.067Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "sessionId": "admin_f357966a-4d1f-4c4a-a483-b0e777a69f4f"
+    }
+  }
+]

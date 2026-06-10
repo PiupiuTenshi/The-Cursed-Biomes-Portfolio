@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard - The Cursed Biomes</title>
+    <link rel="stylesheet" href="/admin/admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div>
+        <p class="eyebrow">Hidden admin</p>
+        <h1>The Cursed Biomes Dashboard</h1>
+      </div>
+      <button type="button" data-logout>Logout</button>
+    </header>
+
+    <main class="dashboard-grid">
+      <section class="kpis">
+        <article>
+          <span>Unread</span>
+          <strong data-kpi-unread>0</strong>
+        </article>
+        <article>
+          <span>Messages</span>
+          <strong data-kpi-messages>0</strong>
+        </article>
+        <article>
+          <span>Events</span>
+          <strong data-kpi-events>0</strong>
+        </article>
+        <article>
+          <span>Audit</span>
+          <strong data-kpi-audit>0</strong>
+        </article>
+      </section>
+
+      <section class="admin-card span-2">
+        <div class="card-head">
+          <h2>Chat Messages</h2>
+          <button type="button" data-refresh>Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Contact</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody data-messages-body></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Visitor Events</h2>
+        <div class="feed" data-events-feed></div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Repo Visibility Seed</h2>
+        <div class="feed" data-repos-feed></div>
+      </section>
+
+      <section class="admin-card span-2">
+        <h2>Audit Log</h2>
+        <div class="feed" data-audit-feed></div>
+      </section>
+    </main>
+
+    <script src="/admin/dashboard.js" defer></script>
+  </body>
+</html>

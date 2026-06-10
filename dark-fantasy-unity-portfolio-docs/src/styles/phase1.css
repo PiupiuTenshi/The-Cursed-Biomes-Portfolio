@@ -36,8 +36,30 @@ body {
     linear-gradient(180deg, #08090d 0%, #121018 48%, #090b10 100%);
 }
 
+body.is-motion-reduced .ambient-canvas,
+body.is-motion-reduced .ghost-canvas {
+  display: none;
+}
+
 body.is-webgl-open {
   overflow: hidden;
+}
+
+.ambient-canvas,
+.ghost-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ambient-canvas {
+  z-index: -1;
+  opacity: 0.78;
+}
+
+.ghost-canvas {
+  z-index: 25;
+  opacity: 0.72;
 }
 
 body::before {
@@ -189,8 +211,17 @@ img {
   font-size: 0.92rem;
 }
 
+.audio-console {
+  display: grid;
+  grid-template-columns: auto auto auto minmax(150px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-width: min(520px, 100%);
+}
+
 .main-nav a,
 .sound-toggle,
+.icon-button,
 .button,
 .demo-controls button,
 .quick-replies button,
@@ -213,6 +244,7 @@ img {
 }
 
 .sound-toggle,
+.icon-button,
 .demo-controls button,
 .quick-replies button,
 .chatbot-toggle {
@@ -223,6 +255,30 @@ img {
 
 .sound-toggle {
   padding: 0 14px;
+}
+
+.icon-button {
+  padding: 0 12px;
+}
+
+.volume-control {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.volume-control span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.volume-control input {
+  width: 100%;
+  accent-color: var(--primary-soft);
 }
 
 .section-band {
@@ -330,6 +386,28 @@ blockquote,
   transform-style: preserve-3d;
 }
 
+.hero-portrait::before,
+.project-card::before,
+.panel::before,
+.demo-shell::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(184, 140, 255, 0.18), transparent),
+    radial-gradient(circle at 18% 0%, rgba(217, 164, 65, 0.16), transparent 16rem);
+  transition: opacity 300ms ease;
+}
+
+.hero-portrait:hover::before,
+.project-card:hover::before,
+.panel:hover::before,
+.demo-shell:hover::before {
+  opacity: 1;
+}
+
 .hero-portrait img {
   width: 100%;
   aspect-ratio: 4 / 5;
@@ -371,6 +449,8 @@ blockquote,
 .project-card,
 .book-card,
 blockquote {
+  position: relative;
+  overflow: hidden;
   padding: 24px;
 }
 
@@ -433,11 +513,17 @@ blockquote p {
   display: grid;
   align-content: start;
   min-height: 286px;
-  transition: transform 220ms ease, border-color 220ms ease;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    border-radius 700ms ease,
+    box-shadow 260ms ease;
 }
 
 .project-card:hover {
   border-color: rgba(184, 140, 255, 0.38);
+  border-radius: 16px 8px 18px 10px;
+  box-shadow: var(--glow), 0 20px 54px rgba(0, 0, 0, 0.28);
 }
 
 .project-type {
@@ -504,6 +590,8 @@ blockquote p {
 }
 
 .demo-shell {
+  position: relative;
+  overflow: hidden;
   padding: 18px;
 }
 
@@ -674,6 +762,13 @@ cite {
 
 .chatbot-messages .bot {
   background: rgba(184, 140, 255, 0.12);
+}
+
+.chatbot-messages .bot a {
+  color: var(--accent);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .chatbot-messages .user {
@@ -902,7 +997,7 @@ cite {
 
 @media (max-width: 920px) {
   .site-header {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
   }
 
   .main-nav {
@@ -910,6 +1005,17 @@ cite {
     justify-content: start;
     overflow-x: auto;
     padding-bottom: 2px;
+  }
+
+  .audio-console {
+    grid-template-columns: auto auto auto;
+    justify-content: start;
+    width: 100%;
+  }
+
+  .volume-control {
+    grid-column: 1 / -1;
+    width: min(320px, 100%);
   }
 
   .project-toolbar {
@@ -951,6 +1057,20 @@ cite {
 
   .sound-toggle {
     min-width: 126px;
+  }
+
+  .audio-console {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .audio-console .volume-control {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .audio-console .sound-toggle,
+  .audio-console .icon-button {
+    width: 100%;
   }
 
   .section-band {
@@ -1014,5 +1134,10 @@ cite {
     scroll-behavior: auto !important;
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+
+  .ambient-canvas,
+  .ghost-canvas {
+    display: none;
   }
 }
