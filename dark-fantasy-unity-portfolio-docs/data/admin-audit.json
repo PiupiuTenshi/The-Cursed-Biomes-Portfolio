@@ -113,5 +113,124 @@
     "metadata": {
       "sessionId": "admin_f357966a-4d1f-4c4a-a483-b0e777a69f4f"
     }
+  },
+  {
+    "id": "aud_aaae876f-6972-44ed-97b4-34a9cc84c9b7",
+    "timestamp": "2026-06-11T01:36:59.234Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "phase8_admin_test",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_ef95aba8-0769-4762-a178-abd7ed1cd135",
+    "timestamp": "2026-06-11T01:36:59.276Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521",
+    "metadata": {
+      "sessionId": "admin_9112738e-39bf-4582-b001-1bbe30c7170f"
+    }
+  },
+  {
+    "id": "aud_8a66b690-414a-4ed9-bcf6-70d22be2aa33",
+    "timestamp": "2026-06-11T01:38:47.012Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_98b22fb8-5326-4f1f-bc74-4255f94fbf26",
+    "timestamp": "2026-06-11T01:38:52.857Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852"
+    }
+  },
+  {
+    "id": "aud_23996481-4a72-4d7b-a923-a53a71a88214",
+    "timestamp": "2026-06-11T01:39:49.711Z",
+    "action": "ADMIN_MESSAGE_UPDATED",
+    "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852",
+    "ip": "127.0.0.1",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+      "status": "read"
+    }
+  },
+  {
+    "id": "aud_1b808f46-588a-4e79-91a6-64384f3b456b",
+    "timestamp": "2026-06-11T01:39:51.358Z",
+    "action": "ADMIN_MESSAGE_UPDATED",
+    "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852",
+    "ip": "127.0.0.1",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+      "status": "unread"
+    }
+  },
+  {
+    "id": "aud_2c523d27-b1c0-4b1b-a6bb-6206aa474d4f",
+    "timestamp": "2026-06-11T01:39:52.222Z",
+    "action": "ADMIN_MESSAGE_UPDATED",
+    "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852",
+    "ip": "127.0.0.1",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+      "status": "read"
+    }
+  },
+  {
+    "id": "aud_4cf56853-bd40-4a72-9ed8-8f31891e9cb3",
+    "timestamp": "2026-06-11T01:39:52.717Z",
+    "action": "ADMIN_MESSAGE_UPDATED",
+    "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852",
+    "ip": "127.0.0.1",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+      "status": "unread"
+    }
+  },
+  {
+    "id": "aud_628fad3b-45e9-43df-bd4a-0e71bd332161",
+    "timestamp": "2026-06-11T01:39:53.805Z",
+    "action": "ADMIN_MESSAGE_UPDATED",
+    "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852",
+    "ip": "127.0.0.1",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+      "status": "read"
+    }
+  },
+  {
+    "id": "aud_fc3a2a15-4ec4-4bcf-b8fa-0362313c3d60",
+    "timestamp": "2026-06-11T01:39:55.238Z",
+    "action": "ADMIN_MESSAGE_UPDATED",
+    "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852",
+    "ip": "127.0.0.1",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+      "status": "unread"
+    }
+  },
+  {
+    "id": "aud_15f2e1ef-1cc7-4f78-926d-9f781c51254c",
+    "timestamp": "2026-06-11T01:40:00.718Z",
+    "action": "ADMIN_MESSAGE_UPDATED",
+    "sessionId": "admin_8a2daec5-fc89-4f50-b47f-6bd579607852",
+    "ip": "127.0.0.1",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+      "status": "read"
+    }
   }
 ]

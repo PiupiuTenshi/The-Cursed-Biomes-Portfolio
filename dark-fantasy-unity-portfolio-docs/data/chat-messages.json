@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "msg_558a975d-7996-4c69-9611-ea3aaee93735",
+    "timestamp": "2026-06-11T01:39:35.778Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "Web này thật xịn",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "raw": null
+    },
+    "status": "read",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "updatedAt": "2026-06-11T01:40:00.717Z"
+  }
+]

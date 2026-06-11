@@ -92,6 +92,7 @@ initI18n();
 attachTilt(tiltItems);
 initAudioControls();
 initEffects();
+initAnalytics();
 loadGitHubRepos();
 
 function initI18n() {
@@ -347,11 +348,11 @@ function renderRepoCard(repo) {
     })
     : t('repo.meta.unknown');
   const topics = repo.topics.slice(0, 4).map((topic) => `<span>${escapeHtml(topic)}</span>`).join('');
-  const homepage = repo.homepage ? `<a href="${escapeAttribute(repo.homepage)}">${escapeHtml(t('repo.action.demo'))}</a>` : '';
+  const homepage = repo.homepage ? `<a href="${escapeAttribute(repo.homepage)}" data-project-action="demo" data-repo-name="${escapeAttribute(repo.name)}">${escapeHtml(t('repo.action.demo'))}</a>` : '';
   const tryNow = repo.tryNowUrl
-    ? `<a href="${escapeAttribute(repo.tryNowUrl)}">${escapeHtml(t('repo.action.tryNow'))}</a>`
-    : `<a href="#try-now" data-open-webgl>${escapeHtml(t('repo.action.preview'))}</a>`;
-  const docs = repo.caseStudyUrl ? `<a href="${escapeAttribute(repo.caseStudyUrl)}">${escapeHtml(t('repo.action.docs'))}</a>` : '';
+    ? `<a href="${escapeAttribute(repo.tryNowUrl)}" data-project-action="try-now" data-repo-name="${escapeAttribute(repo.name)}">${escapeHtml(t('repo.action.tryNow'))}</a>`
+    : `<a href="#try-now" data-open-webgl data-project-action="preview" data-repo-name="${escapeAttribute(repo.name)}">${escapeHtml(t('repo.action.preview'))}</a>`;
+  const docs = repo.caseStudyUrl ? `<a href="${escapeAttribute(repo.caseStudyUrl)}" data-project-action="docs" data-repo-name="${escapeAttribute(repo.name)}">${escapeHtml(t('repo.action.docs'))}</a>` : '';
   const description = repo.displayDescriptionKey
     ? t(repo.displayDescriptionKey)
     : repo.displayDescription ?? t('repo.defaultDescription');
@@ -369,7 +370,7 @@ function renderRepoCard(repo) {
       </div>
       ${topics ? `<div class="repo-topics">${topics}</div>` : ''}
       <div class="card-actions">
-        <a href="${escapeAttribute(repo.htmlUrl)}">${escapeHtml(t('repo.action.viewCode'))}</a>
+        <a href="${escapeAttribute(repo.htmlUrl)}" data-project-action="view-code" data-repo-name="${escapeAttribute(repo.name)}">${escapeHtml(t('repo.action.viewCode'))}</a>
         ${tryNow}
         ${docs}
         ${homepage}
@@ -388,6 +389,7 @@ projectFilters.forEach((button) => {
     activeProjectFilter = button.getAttribute('data-project-filter') ?? 'all';
     projectFilters.forEach((item) => item.classList.toggle('is-active', item === button));
     renderRepos();
+    logVisitorEvent('PROJECT_FILTER_CHANGED', { filter: activeProjectFilter });
   });
 });
 
@@ -420,6 +422,10 @@ audioVolume?.addEventListener('input', () => {
   if (!audioLoop || !audioVolume) return;
   audioLoop.volume = Number(audioVolume.value) / 100;
   saveAudioSettings();
+});
+
+audioVolume?.addEventListener('change', () => {
+  logVisitorEvent('AUDIO_VOLUME_CHANGED', { volume: audioLoop?.volume ?? 0 });
 });
 
 audioLoop?.addEventListener('ended', () => changeTrack(1));
@@ -480,7 +486,12 @@ webglFullscreen?.addEventListener('click', async () => {
 
 webglFrame?.addEventListener('load', () => {
   webglLoader?.classList.add('is-hidden');
-  trackWebglEvent('WEBGL_LOAD_READY');
+  trackWebglEvent('WEBGL_LOAD_COMPLETE');
+});
+
+webglFrame?.addEventListener('error', () => {
+  webglLoader?.classList.add('is-hidden');
+  trackWebglEvent('WEBGL_LOAD_FAILED');
 });
 
 function startDemoProgress() {
@@ -557,14 +568,17 @@ function isLikelyMobile() {
 }
 
 function trackWebglEvent(eventName, extra = {}) {
-  console.info('[webgl-event]', {
+  const payload = {
     eventName,
     gameSlug: webglDemo.slug,
     repoName: webglDemo.repoName,
     device: isLikelyMobile() ? 'mobile' : 'desktop',
     isPlaceholder: webglDemo.isPlaceholder,
     ...extra,
-  });
+  };
+
+  console.info('[webgl-event]', payload);
+  logVisitorEvent(eventName, payload);
 }
 
 function getWebglLoadLines() {
@@ -692,6 +706,49 @@ async function logVisitorEvent(eventType, metadata = {}) {
   }
 }
 
+function initAnalytics() {
+  logVisitorEvent('PAGE_VIEW', {
+    title: document.title,
+    language: currentLocale,
+    viewport: `${window.innerWidth}x${window.innerHeight}`,
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const projectLink = target.closest('[data-project-action]');
+    if (projectLink) {
+      logVisitorEvent('PROJECT_CLICK', {
+        action: projectLink.getAttribute('data-project-action'),
+        repoName: projectLink.getAttribute('data-repo-name'),
+        href: projectLink.getAttribute('href'),
+      });
+    }
+
+    const cvLink = target.closest('a[href*="/cv/"], a[href*="public/cv/"]');
+    if (cvLink) {
+      logVisitorEvent('CV_DOWNLOAD', { href: cvLink.getAttribute('href') });
+    }
+
+    const contactLink = target.closest('.contact-link');
+    if (contactLink) {
+      logVisitorEvent('CONTACT_LINK_CLICK', {
+        label: contactLink.textContent.trim(),
+        href: contactLink.getAttribute('href'),
+      });
+    }
+  });
+
+  window.addEventListener('error', (event) => {
+    logVisitorEvent('CLIENT_ERROR', {
+      message: event.message,
+      source: event.filename,
+      line: event.lineno,
+    });
+  });
+}
+
 function initAudioControls() {
   const settings = readAudioSettings();
   currentTrackIndex = clampIndex(settings.trackIndex ?? 0);
@@ -716,6 +773,7 @@ async function playCurrentTrack() {
   await audioLoop.play();
   updateAudioUi();
   saveAudioSettings();
+  logVisitorEvent('AUDIO_TOGGLED', { enabled: true, track: getTrackTitle(currentTrackIndex) });
   logVisitorEvent('AUDIO_PLAY', { track: getTrackTitle(currentTrackIndex) });
 }
 
@@ -725,6 +783,7 @@ function pauseAudio() {
   audioLoop.pause();
   updateAudioUi();
   saveAudioSettings();
+  logVisitorEvent('AUDIO_TOGGLED', { enabled: false, track: getTrackTitle(currentTrackIndex) });
   logVisitorEvent('AUDIO_PAUSE', { track: getTrackTitle(currentTrackIndex) });
 }
 

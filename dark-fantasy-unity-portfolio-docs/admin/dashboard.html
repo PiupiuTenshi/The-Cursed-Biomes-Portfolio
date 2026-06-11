@@ -30,6 +30,10 @@
           <strong data-kpi-events>0</strong>
         </article>
         <article>
+          <span>Sessions</span>
+          <strong data-kpi-sessions>0</strong>
+        </article>
+        <article>
           <span>Audit</span>
           <strong data-kpi-audit>0</strong>
         </article>
@@ -56,8 +60,59 @@
         </div>
       </section>
 
-      <section class="admin-card">
-        <h2>Visitor Events</h2>
+      <section class="admin-card span-2">
+        <div class="card-head">
+          <h2>Visitor Events</h2>
+          <button type="button" data-clear-event-filters>Clear Filters</button>
+        </div>
+        <form class="filter-grid" data-event-filters>
+          <label>
+            <span>Search</span>
+            <input name="q" placeholder="event, metadata, user agent..." />
+          </label>
+          <label>
+            <span>Event Type</span>
+            <select name="eventType" data-event-type-filter>
+              <option value="">All types</option>
+            </select>
+          </label>
+          <label>
+            <span>Date From</span>
+            <input name="dateFrom" type="date" />
+          </label>
+          <label>
+            <span>Date To</span>
+            <input name="dateTo" type="date" />
+          </label>
+          <label>
+            <span>Path</span>
+            <input name="path" placeholder="/" />
+          </label>
+          <label>
+            <span>IP</span>
+            <input name="ip" placeholder="127.0.0.1" />
+          </label>
+          <label>
+            <span>Session</span>
+            <input name="sessionId" placeholder="sess_..." />
+          </label>
+          <label>
+            <span>Repo</span>
+            <input name="repoName" placeholder="TechWeb-2026" />
+          </label>
+          <label>
+            <span>Sort</span>
+            <select name="sort">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </label>
+          <label>
+            <span>Limit</span>
+            <input name="limit" type="number" min="1" max="500" value="100" />
+          </label>
+        </form>
+        <div class="analytics-summary" data-events-summary></div>
         <div class="feed" data-events-feed></div>
       </section>
 

@@ -24,7 +24,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -97,7 +98,8 @@ label span {
   font-size: 0.86rem;
 }
 
-input {
+input,
+select {
   width: 100%;
   min-height: 42px;
   padding: 0 12px;
@@ -133,7 +135,7 @@ input {
 .kpis {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -170,6 +172,66 @@ input {
 .table-wrap {
   overflow: auto;
   margin-top: 14px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.filter-grid label {
+  min-width: 0;
+}
+
+.analytics-summary {
+  display: grid;
+  grid-template-columns: 0.55fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.analytics-summary article {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.analytics-summary span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.analytics-summary strong {
+  font-size: 1.55rem;
+}
+
+.analytics-summary div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.analytics-summary b {
+  max-width: 100%;
+  padding: 5px 8px;
+  overflow-wrap: anywhere;
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(184, 140, 255, 0.14);
+  font-size: 0.84rem;
+}
+
+.analytics-summary mark {
+  margin-left: 4px;
+  border-radius: 999px;
+  color: #150f1d;
+  background: var(--accent);
+  padding: 1px 6px;
 }
 
 table {
@@ -213,9 +275,19 @@ td {
   margin-bottom: 4px;
 }
 
+.feed small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 860px) {
   .dashboard-grid,
-  .kpis {
+  .kpis,
+  .filter-grid,
+  .analytics-summary {
     grid-template-columns: 1fr;
   }
 

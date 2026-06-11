@@ -137,5 +137,106 @@
     },
     "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_71b980f8-0504-430f-b605-021335ee005d",
+    "timestamp": "2026-06-11T01:36:30.928Z",
+    "eventType": "PHASE8_SMOKE_TEST",
+    "sessionId": "smoke_phase8",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "repoName": "TechWeb-2026"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521"
+  },
+  {
+    "id": "evt_7fed8196-c3c3-4455-ac7e-f3fda6f6640f",
+    "timestamp": "2026-06-11T01:37:26.024Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_1cfa0c7e-4b68-425f-af5f-b718cc406355",
+    "timestamp": "2026-06-11T01:37:26.100Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "mobile",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_5b628b27-1b81-42ca-a827-ff79d9b56b11",
+    "timestamp": "2026-06-11T01:38:47.021Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_21204c6c-332f-47ef-8883-7747bec9db7d",
+    "timestamp": "2026-06-11T01:39:18.956Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_8737b5dd-c1b6-4946-bf65-3df63a111fba",
+    "timestamp": "2026-06-11T01:39:19.036Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "mobile",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_603d7766-1df9-47d8-bed1-9532547183a2",
+    "timestamp": "2026-06-11T01:39:35.784Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "messageId": "msg_558a975d-7996-4c69-9611-ea3aaee93735"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
   }
 ]
