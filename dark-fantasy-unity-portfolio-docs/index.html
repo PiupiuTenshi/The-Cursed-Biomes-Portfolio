@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
+      data-i18n-content="meta.description"
       content="The Cursed Biomes Portfolio by Pham Minh Sang, a dark fantasy Unity developer portfolio shell."
     />
-    <title>The Cursed Biomes Portfolio</title>
+    <title data-i18n="meta.title">The Cursed Biomes Portfolio</title>
     <link rel="preload" href="public/images/avatar-dark-fantasy-v2.png" as="image" />
     <link rel="stylesheet" href="src/styles/phase1.css" />
   </head>
@@ -16,68 +17,74 @@
     <canvas class="ghost-canvas" data-ghost-canvas aria-hidden="true"></canvas>
     <div class="loading-gate" data-loading-gate>
       <div class="gate-frame">
-        <span class="gate-kicker">Moonlit gate</span>
-        <strong>The Cursed Biomes Portfolio</strong>
+        <span class="gate-kicker" data-i18n="loading.kicker">Moonlit gate</span>
+        <strong data-i18n="loading.title">The Cursed Biomes Portfolio</strong>
         <div class="gate-progress" aria-hidden="true"><span></span></div>
       </div>
     </div>
 
     <header class="site-header">
-      <a class="brand" href="#home" aria-label="Back to home">
+      <a class="brand" href="#home" aria-label="Back to home" data-i18n-aria-label="brand.aria">
         <span class="brand-mark">CB</span>
-        <span>The Cursed Biomes</span>
+        <span data-i18n="brand.name">The Cursed Biomes</span>
       </a>
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="#projects">Projects</a>
-        <a href="#try-now">Try Now</a>
-        <a href="#skills">Skills</a>
-        <a href="#library">Library</a>
-        <a href="#contact">Contact</a>
+      <nav class="main-nav" aria-label="Primary navigation" data-i18n-aria-label="nav.aria">
+        <a href="#projects" data-i18n="nav.projects">Projects</a>
+        <a href="#try-now" data-i18n="nav.tryNow">Try Now</a>
+        <a href="#skills" data-i18n="nav.skills">Skills</a>
+        <a href="#library" data-i18n="nav.library">Library</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
       </nav>
-      <div class="audio-console" aria-label="Ambient audio controls">
-        <button class="icon-button" type="button" data-audio-prev aria-label="Previous track">Prev</button>
+      <div class="header-tools">
+        <div class="language-switcher" aria-label="Language selector" data-i18n-aria-label="language.aria">
+          <button class="is-active" type="button" data-locale-button="en" data-i18n="language.en">EN</button>
+          <button type="button" data-locale-button="vi" data-i18n="language.vi">VI</button>
+        </div>
+        <div class="audio-console" aria-label="Ambient audio controls" data-i18n-aria-label="audio.aria">
+        <button class="icon-button" type="button" data-audio-prev aria-label="Previous track" data-i18n="audio.prev" data-i18n-aria-label="audio.prev.aria">Prev</button>
         <button class="sound-toggle" type="button" data-audio-toggle aria-pressed="false">
           Enable Sound
         </button>
-        <button class="icon-button" type="button" data-audio-next aria-label="Next track">Next</button>
+        <button class="icon-button" type="button" data-audio-next aria-label="Next track" data-i18n="audio.next" data-i18n-aria-label="audio.next.aria">Next</button>
         <label class="volume-control">
           <span data-audio-label>Abyss Forest</span>
-          <input data-audio-volume type="range" min="0" max="100" value="34" aria-label="Audio volume" />
+          <input data-audio-volume type="range" min="0" max="100" value="34" aria-label="Audio volume" data-i18n-aria-label="audio.volume.aria" />
         </label>
         <button class="icon-button" type="button" data-motion-toggle aria-pressed="false">
           Reduce Motion
         </button>
+        </div>
       </div>
     </header>
 
     <main id="home">
       <section class="hero section-band" data-reveal>
         <div class="hero-copy">
-          <p class="eyebrow">Unity Developer / Gameplay Programmer</p>
-          <h1>Pham Minh Sang</h1>
-          <p class="hero-lede">
+          <p class="eyebrow" data-i18n="hero.eyebrow">Unity Developer / Gameplay Programmer</p>
+          <h1 data-i18n="hero.name">Pham Minh Sang</h1>
+          <p class="hero-lede" data-i18n="hero.lede">
             A dark fantasy portfolio shaped like a game menu, built to showcase Unity systems,
             WebGL demos, live GitHub projects, and clean product thinking.
           </p>
-          <div class="hero-actions" aria-label="Hero actions">
-            <a class="button button-primary" href="#try-now">Enter Demo</a>
-            <a class="button" href="#projects">View Projects</a>
-            <a class="button button-quiet" href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf">
+          <div class="hero-actions" aria-label="Hero actions" data-i18n-aria-label="hero.actions.aria">
+            <a class="button button-primary" href="#try-now" data-i18n="hero.enterDemo">Enter Demo</a>
+            <a class="button" href="#projects" data-i18n="hero.viewProjects">View Projects</a>
+            <a class="button button-quiet" href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf" data-i18n="hero.downloadCv">
               Download CV
             </a>
           </div>
           <dl class="hero-stats">
             <div>
-              <dt>Focus</dt>
-              <dd>Unity / C#</dd>
+              <dt data-i18n="hero.stat.focus.label">Focus</dt>
+              <dd data-i18n="hero.stat.focus.value">Unity / C#</dd>
             </div>
             <div>
-              <dt>Mode</dt>
-              <dd>WebGL ready</dd>
+              <dt data-i18n="hero.stat.mode.label">Mode</dt>
+              <dd data-i18n="hero.stat.mode.value">WebGL ready</dd>
             </div>
             <div>
-              <dt>Handle</dt>
-              <dd>PiupiuTenshi</dd>
+              <dt data-i18n="hero.stat.handle.label">Handle</dt>
+              <dd data-i18n="hero.stat.handle.value">PiupiuTenshi</dd>
             </div>
           </dl>
         </div>
@@ -85,6 +92,7 @@
           <img
             src="public/images/avatar-dark-fantasy-v2.png"
             alt="Pham Minh Sang dark fantasy portfolio avatar"
+            data-i18n-alt="hero.avatar.alt"
           />
           <div class="portrait-runes" aria-hidden="true"></div>
         </div>
@@ -92,27 +100,27 @@
 
       <section class="character section-band" id="about" data-reveal>
         <div class="section-heading">
-          <p class="eyebrow">Character sheet</p>
-          <h2>Intern / Fresher Unity Developer</h2>
+          <p class="eyebrow" data-i18n="character.eyebrow">Character sheet</p>
+          <h2 data-i18n="character.title">Intern / Fresher Unity Developer</h2>
         </div>
         <div class="character-grid">
           <article class="panel">
-            <h3>Build style</h3>
-            <p>
+            <h3 data-i18n="character.build.title">Build style</h3>
+            <p data-i18n="character.build.body">
               Gameplay-first, UI-conscious, and comfortable moving between Unity, C#, backend
               APIs, automation, and portfolio-grade presentation.
             </p>
           </article>
           <article class="panel">
-            <h3>Current quest</h3>
-            <p>
+            <h3 data-i18n="character.quest.title">Current quest</h3>
+            <p data-i18n="character.quest.body">
               Turn project work into a sharp recruiter experience with live repos, WebGL proof,
               contact flow, and admin visibility in later phases.
             </p>
           </article>
           <article class="panel">
-            <h3>Contact routes</h3>
-            <p>
+            <h3 data-i18n="character.contact.title">Contact routes</h3>
+            <p data-i18n="character.contact.body">
               GitHub for code, Zalo for fast contact, CV for recruiter review, and chatbot for
               guided navigation.
             </p>
@@ -122,53 +130,54 @@
 
       <section class="projects section-band" id="projects" data-reveal>
         <div class="section-heading">
-          <p class="eyebrow">Live GitHub relics</p>
-          <h2>Dynamic project showcase</h2>
+          <p class="eyebrow" data-i18n="projects.eyebrow">Live GitHub relics</p>
+          <h2 data-i18n="projects.title">Dynamic project showcase</h2>
         </div>
-        <div class="project-toolbar" aria-label="Project filters">
+        <div class="project-toolbar" aria-label="Project filters" data-i18n-aria-label="projects.filters.aria">
           <div class="project-filters">
-            <button class="is-active" type="button" data-project-filter="all">All</button>
-            <button type="button" data-project-filter="featured">Featured</button>
-            <button type="button" data-project-filter="web">Web</button>
-            <button type="button" data-project-filter="security">Security</button>
-            <button type="button" data-project-filter="management">Management</button>
+            <button class="is-active" type="button" data-project-filter="all" data-i18n="projects.filter.all">All</button>
+            <button type="button" data-project-filter="featured" data-i18n="projects.filter.featured">Featured</button>
+            <button type="button" data-project-filter="web" data-i18n="projects.filter.web">Web</button>
+            <button type="button" data-project-filter="security" data-i18n="projects.filter.security">Security</button>
+            <button type="button" data-project-filter="management" data-i18n="projects.filter.management">Management</button>
           </div>
-          <p class="repo-status" data-repo-status>Preparing GitHub sync...</p>
+          <p class="repo-status" data-repo-status data-i18n="repo.status.prepare">Preparing GitHub sync...</p>
         </div>
         <div class="project-grid" data-project-grid aria-live="polite">
           <article class="project-card project-card-loading">
-            <span class="project-type">Loading</span>
-            <h3>Summoning repositories</h3>
-            <p>GitHub project relics are being fetched. Fallback data will appear if the API is unavailable.</p>
+            <span class="project-type" data-i18n="repo.loading.type">Loading</span>
+            <h3 data-i18n="repo.loading.title">Summoning repositories</h3>
+            <p data-i18n="repo.loading.body">GitHub project relics are being fetched. Fallback data will appear if the API is unavailable.</p>
           </article>
         </div>
       </section>
 
       <section class="try-now section-band" id="try-now" data-reveal>
         <div class="section-heading">
-          <p class="eyebrow">Unity WebGL Try Now</p>
-          <h2>Try Now gate</h2>
+          <p class="eyebrow" data-i18n="demo.eyebrow">Unity WebGL Try Now</p>
+          <h2 data-i18n="demo.title">Try Now gate</h2>
         </div>
         <div class="demo-shell">
           <div class="demo-viewport">
             <img
               src="public/images/ui-ux-complete.png"
               alt="Dark fantasy UI UX complete reference"
+              data-i18n-alt="demo.image.alt"
             />
             <div class="demo-overlay">
-              <span>Playable browser slot</span>
-              <strong>Open the WebGL gate in a lazy-loaded modal</strong>
+              <span data-i18n="demo.slot">Playable browser slot</span>
+              <strong data-i18n="demo.overlay">Open the WebGL gate in a lazy-loaded modal</strong>
             </div>
           </div>
           <div class="demo-controls">
-            <button type="button" data-demo-button>Try Now</button>
-            <button type="button" data-demo-reset>Reset Gate</button>
+            <button type="button" data-demo-button data-i18n="demo.tryNow">Try Now</button>
+            <button type="button" data-demo-reset data-i18n="demo.reset">Reset Gate</button>
           </div>
-          <p class="demo-note">
+          <p class="demo-note" data-i18n="demo.note">
             This Phase 3 slot uses a lightweight WebGL-style demo page. Replace
             `public/games/biome-gate` with a Unity WebGL build when it is ready.
           </p>
-          <div class="demo-progress" aria-label="Demo loading progress">
+          <div class="demo-progress" aria-label="Demo loading progress" data-i18n-aria-label="demo.progress.aria">
             <span data-demo-progress></span>
           </div>
         </div>
@@ -176,100 +185,102 @@
 
       <section class="skills section-band" id="skills" data-reveal>
         <div class="section-heading">
-          <p class="eyebrow">Skill runes</p>
-          <h2>Tools and systems</h2>
+          <p class="eyebrow" data-i18n="skills.eyebrow">Skill runes</p>
+          <h2 data-i18n="skills.title">Tools and systems</h2>
         </div>
         <div class="skill-grid">
-          <span>Unity</span>
-          <span>C#</span>
-          <span>Gameplay</span>
-          <span>WebGL</span>
-          <span>React</span>
-          <span>Node API</span>
-          <span>PostgreSQL</span>
-          <span>GitHub API</span>
-          <span>Admin UX</span>
-          <span>Automation</span>
+          <span data-i18n="skill.unity">Unity</span>
+          <span data-i18n="skill.csharp">C#</span>
+          <span data-i18n="skill.gameplay">Gameplay</span>
+          <span data-i18n="skill.webgl">WebGL</span>
+          <span data-i18n="skill.react">React</span>
+          <span data-i18n="skill.node">Node API</span>
+          <span data-i18n="skill.postgres">PostgreSQL</span>
+          <span data-i18n="skill.github">GitHub API</span>
+          <span data-i18n="skill.admin">Admin UX</span>
+          <span data-i18n="skill.automation">Automation</span>
         </div>
       </section>
 
       <section class="library section-band" id="library" data-reveal>
         <div class="section-heading">
-          <p class="eyebrow">Arcane library</p>
-          <h2>Quotes and books</h2>
+          <p class="eyebrow" data-i18n="library.eyebrow">Arcane library</p>
+          <h2 data-i18n="library.title">Quotes and books</h2>
         </div>
         <div class="library-grid">
           <blockquote>
-            <p>
+            <p data-i18n="library.quote">
               "Programs must be written for people to read, and only incidentally for machines
               to execute."
             </p>
-            <cite>Harold Abelson</cite>
+            <cite data-i18n="library.quoteAuthor">Harold Abelson</cite>
           </blockquote>
           <article class="book-card">
-            <h3>Game Programming Patterns</h3>
-            <p>Systems thinking for cleaner gameplay architecture.</p>
+            <h3 data-i18n="library.book.patterns.title">Game Programming Patterns</h3>
+            <p data-i18n="library.book.patterns.body">Systems thinking for cleaner gameplay architecture.</p>
           </article>
           <article class="book-card">
-            <h3>Clean Code</h3>
-            <p>Readable code habits for long-lived projects and teams.</p>
+            <h3 data-i18n="library.book.clean.title">Clean Code</h3>
+            <p data-i18n="library.book.clean.body">Readable code habits for long-lived projects and teams.</p>
           </article>
         </div>
       </section>
 
       <section class="contact section-band" id="contact" data-reveal>
         <div class="section-heading">
-          <p class="eyebrow">Contact portal</p>
-          <h2>Ready for recruiter review</h2>
+          <p class="eyebrow" data-i18n="contact.eyebrow">Contact portal</p>
+          <h2 data-i18n="contact.title">Ready for recruiter review</h2>
         </div>
         <div class="contact-grid">
-          <a class="contact-link" href="https://github.com/PiupiuTenshi">GitHub</a>
-          <a class="contact-link" href="https://zalo.me/0898087507">Zalo</a>
-          <a class="contact-link" href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf">CV</a>
+          <a class="contact-link" href="https://github.com/PiupiuTenshi" data-i18n="contact.github">GitHub</a>
+          <a class="contact-link" href="https://zalo.me/0898087507" data-i18n="contact.zalo">Zalo</a>
+          <a class="contact-link" href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf" data-i18n="contact.cv">CV</a>
         </div>
       </section>
     </main>
 
-    <aside class="chatbot" aria-label="Mini chatbot">
-      <button class="chatbot-toggle" type="button" data-chat-toggle aria-expanded="false">
+    <aside class="chatbot" aria-label="Mini chatbot" data-i18n-aria-label="chat.aria">
+      <button class="chatbot-toggle" type="button" data-chat-toggle aria-expanded="false" data-i18n="chat.toggle">
         Chat
       </button>
       <div class="chatbot-panel" data-chat-panel>
         <div class="chatbot-head">
-          <strong>Gate guide</strong>
-          <span>Contact mode</span>
+          <strong data-i18n="chat.head.title">Gate guide</strong>
+          <span data-i18n="chat.head.mode">Contact mode</span>
         </div>
         <div class="chatbot-messages" data-chat-messages>
-          <p class="bot">Choose a route or leave a message. I can save it for Sang.</p>
+          <p class="bot" data-i18n="chat.intro">Choose a route or leave a message. I can save it for Sang.</p>
         </div>
         <div class="quick-replies">
-          <button type="button" data-reply="Show Unity projects">Projects</button>
-          <button type="button" data-reply="Open WebGL demo">Demo</button>
-          <button type="button" data-reply="Download CV">CV</button>
-          <button type="button" data-reply="Contact via Zalo">Zalo</button>
+          <button type="button" data-reply-key="projects" data-i18n="chat.quick.projects">Projects</button>
+          <button type="button" data-reply-key="demo" data-i18n="chat.quick.demo">Demo</button>
+          <button type="button" data-reply-key="cv" data-i18n="chat.quick.cv">CV</button>
+          <button type="button" data-reply-key="zalo" data-i18n="chat.quick.zalo">Zalo</button>
         </div>
         <form class="chatbot-form" data-chat-form>
           <label>
-            <span>Message</span>
+            <span data-i18n="chat.form.message">Message</span>
             <textarea
               data-chat-input
               name="message"
               rows="3"
               maxlength="1200"
               placeholder="Tell Sang what you want to discuss..."
+              data-i18n-placeholder="chat.form.messagePlaceholder"
               required
             ></textarea>
           </label>
           <label>
-            <span>Email or Zalo optional</span>
+            <span data-i18n="chat.form.contact">Email or Zalo optional</span>
             <input
               data-contact-input
               name="contact"
               maxlength="240"
               placeholder="email@example.com or 089..."
+              data-i18n-placeholder="chat.form.contactPlaceholder"
             />
           </label>
-          <button type="submit">Send Message</button>
+          <button type="submit" data-i18n="chat.form.submit">Send Message</button>
           <p class="chatbot-status" data-chat-status aria-live="polite"></p>
         </form>
       </div>
@@ -279,36 +290,38 @@
       <div class="webgl-dialog" role="dialog" aria-modal="true" aria-labelledby="webgl-title">
         <div class="webgl-head">
           <div>
-            <p class="eyebrow">Try Now</p>
-            <h2 id="webgl-title">Biome Gate Demo</h2>
+            <p class="eyebrow" data-i18n="webgl.eyebrow">Try Now</p>
+            <h2 id="webgl-title" data-i18n="webgl.title">Biome Gate Demo</h2>
           </div>
-          <button type="button" data-webgl-close aria-label="Close WebGL demo">Close</button>
+          <button type="button" data-webgl-close aria-label="Close WebGL demo" data-i18n="webgl.close" data-i18n-aria-label="webgl.close.aria">Close</button>
         </div>
-        <div class="webgl-warning" data-webgl-warning>
+        <div class="webgl-warning" data-webgl-warning data-i18n="webgl.warning">
           Mobile devices may load WebGL slowly. Use fullscreen on desktop for the best run.
         </div>
         <div class="webgl-stage">
           <div class="webgl-loader" data-webgl-loader>
-            <strong data-webgl-line>Opening the cursed gate...</strong>
+            <strong data-webgl-line data-i18n="webgl.loader.opening">Opening the cursed gate...</strong>
             <span></span>
           </div>
           <iframe
             data-webgl-frame
             title="Biome Gate WebGL demo"
+            data-i18n-title="webgl.frame.title"
             loading="lazy"
             allow="fullscreen; gamepad; autoplay"
             allowfullscreen
           ></iframe>
         </div>
         <div class="webgl-actions">
-          <button type="button" data-webgl-fullscreen>Fullscreen</button>
-          <a href="public/games/biome-gate/index.html" data-webgl-open>Open Separate</a>
-          <a href="https://github.com/PiupiuTenshi" data-webgl-fallback>Fallback GitHub</a>
+          <button type="button" data-webgl-fullscreen data-i18n="webgl.fullscreen">Fullscreen</button>
+          <a href="public/games/biome-gate/index.html" data-webgl-open data-i18n="webgl.openSeparate">Open Separate</a>
+          <a href="https://github.com/PiupiuTenshi" data-webgl-fallback data-i18n="webgl.fallback">Fallback GitHub</a>
         </div>
       </div>
     </div>
 
     <audio data-audio-loop src="public/audio/track-01.ogg" preload="none" loop></audio>
+    <script src="src/scripts/site-content.js" defer></script>
     <script src="src/scripts/phase1.js" defer></script>
   </body>
 </html>

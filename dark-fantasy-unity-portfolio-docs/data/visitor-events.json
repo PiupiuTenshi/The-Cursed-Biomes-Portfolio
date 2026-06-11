@@ -20,5 +20,122 @@
     "metadata": {},
     "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_a7826dc1-499f-4f74-9380-fe47869b74d9",
+    "timestamp": "2026-06-10T19:21:48.064Z",
+    "eventType": "LANGUAGE_SWITCHED",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "locale": "en"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_b02ec41a-c7a4-4505-95af-fd664855723b",
+    "timestamp": "2026-06-10T19:21:49.638Z",
+    "eventType": "LANGUAGE_SWITCHED",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "locale": "vi"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_de220db7-384a-4224-bfb4-fa75ffda2651",
+    "timestamp": "2026-06-10T19:22:24.941Z",
+    "eventType": "AUDIO_PLAY",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "track": "Rừng Vực Sâu"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_f641fdbf-b5ce-4781-a202-1cc452397964",
+    "timestamp": "2026-06-10T19:22:45.737Z",
+    "eventType": "AUDIO_PAUSE",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "track": "Rừng Vực Sâu"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_f1eacc75-868d-4f78-b1b0-a9f18b19e972",
+    "timestamp": "2026-06-10T19:22:49.221Z",
+    "eventType": "AUDIO_PLAY",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "track": "Rừng Vực Sâu"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_ae70357b-04b3-4886-b572-04f3af261fd1",
+    "timestamp": "2026-06-10T19:22:52.728Z",
+    "eventType": "AUDIO_PAUSE",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "track": "Rừng Vực Sâu"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_c342d46a-54e7-4000-9677-57cfbc9cb90b",
+    "timestamp": "2026-06-10T19:24:28.537Z",
+    "eventType": "MOTION_TOGGLED",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "reducedMotion": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_3f065c60-7501-4753-ae37-de4feaebb115",
+    "timestamp": "2026-06-10T19:24:31.105Z",
+    "eventType": "MOTION_TOGGLED",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "reducedMotion": false
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_c6e70a79-75da-4315-aed0-7fb41b69c7d0",
+    "timestamp": "2026-06-10T19:24:42.985Z",
+    "eventType": "AUDIO_PLAY",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "track": "Rừng Vực Sâu"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
   }
 ]

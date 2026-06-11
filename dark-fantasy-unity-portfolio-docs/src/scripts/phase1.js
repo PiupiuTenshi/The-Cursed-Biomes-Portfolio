@@ -8,6 +8,7 @@ const audioVolume = document.querySelector('[data-audio-volume]');
 const audioLabel = document.querySelector('[data-audio-label]');
 const audioLoop = document.querySelector('[data-audio-loop]');
 const motionToggle = document.querySelector('[data-motion-toggle]');
+const localeButtons = document.querySelectorAll('[data-locale-button]');
 const ambientCanvas = document.querySelector('[data-ambient-canvas]');
 const ghostCanvas = document.querySelector('[data-ghost-canvas]');
 const demoButton = document.querySelector('[data-demo-button]');
@@ -16,7 +17,7 @@ const demoProgress = document.querySelector('[data-demo-progress]');
 const chatToggle = document.querySelector('[data-chat-toggle]');
 const chatPanel = document.querySelector('[data-chat-panel]');
 const chatMessages = document.querySelector('[data-chat-messages]');
-const quickReplies = document.querySelectorAll('[data-reply]');
+const quickReplies = document.querySelectorAll('[data-reply-key]');
 const chatForm = document.querySelector('[data-chat-form]');
 const chatInput = document.querySelector('[data-chat-input]');
 const contactInput = document.querySelector('[data-contact-input]');
@@ -40,32 +41,20 @@ const REPO_CACHE_KEY = 'cursed-biomes.github-repos.v1';
 const SESSION_KEY = 'cursed-biomes.session-id.v1';
 const AUDIO_SETTINGS_KEY = 'cursed-biomes.audio-settings.v1';
 const MOTION_SETTINGS_KEY = 'cursed-biomes.reduce-motion.v1';
+const LOCALE_SETTINGS_KEY = 'cursed-biomes.locale.v1';
 const REPO_CACHE_TTL_MS = 10 * 60 * 1000;
-const AUDIO_TRACKS = [
-  { title: 'Abyss Forest', src: 'public/audio/track-01.ogg', section: 'Home' },
-  { title: 'Blood Ruins', src: 'public/audio/track-02.ogg', section: 'Projects' },
-  { title: 'Obsidian Forge', src: 'public/audio/track-03.ogg', section: 'Skills' },
-  { title: 'Arcane Library', src: 'public/audio/track-04.ogg', section: 'Library' },
-  { title: 'Silent Graveyard', src: 'public/audio/track-05.ogg', section: 'Contact' },
-];
-const WEBGL_LOAD_LINES = [
-  'Opening the cursed gate...',
-  'Awakening forgotten biomes...',
-  'Binding WebGL spirits...',
-  'Summoning gameplay loop...',
-  'Enter the demo.',
-];
+const appContent = window.CursedBiomesContent || {};
+const translations = appContent.translations || { en: {} };
+const defaultLocale = appContent.defaultLocale || 'en';
+const supportedLocales = appContent.supportedLocales || [defaultLocale];
+const AUDIO_TRACKS = appContent.audioTracks || [];
+const WEBGL_LOAD_LINE_KEYS = appContent.webglLoadLineKeys || [];
+const webglDemo = appContent.webglDemo || {};
+const repoSettings = appContent.repoSettings || [];
+const fallbackRepos = appContent.fallbackRepos || [];
 
-const webglDemo = {
-  slug: 'biome-gate',
-  title: 'Biome Gate Demo',
-  repoName: 'Unity2DTopDown',
-  webglEnabled: true,
-  tryNowUrl: 'public/games/biome-gate/index.html',
-  fallbackUrl: 'https://github.com/PiupiuTenshi',
-  isPlaceholder: true,
-};
-
+let currentLocale = getInitialLocale();
+let lastRepoStatus = { key: 'repo.status.prepare', vars: {} };
 let activeProjectFilter = 'all';
 let visibleRepos = [];
 let webglLineTimer = null;
@@ -79,102 +68,6 @@ let ghostAnimationId = 0;
 let ambientParticles = [];
 let ghostPoints = [];
 const sessionId = getOrCreateSessionId();
-
-const repoSettings = [
-  {
-    owner: 'PiupiuTenshi',
-    repoName: 'TechWeb-2026',
-    visible: true,
-    featured: true,
-    priority: 1,
-    category: 'web',
-    tryNowUrl: null,
-    caseStudyUrl: '/projects/techweb-2026',
-  },
-  {
-    owner: 'PiupiuTenshi',
-    repoName: 'Privacy-Preserving-Vertical-Fragmentation-PII-Shield',
-    visible: true,
-    featured: true,
-    priority: 2,
-    category: 'security',
-    tryNowUrl: null,
-    caseStudyUrl: '/projects/pii-shield',
-    customTitle: 'PII Shield',
-  },
-  {
-    owner: 'PiupiuTenshi',
-    repoName: 'Academic-performance-management',
-    visible: true,
-    featured: true,
-    priority: 3,
-    category: 'management',
-    tryNowUrl: null,
-    caseStudyUrl: '/projects/academic-performance-management',
-    customTitle: 'Academic Performance',
-  },
-];
-
-const fallbackRepos = [
-  {
-    id: 1,
-    name: 'TechWeb-2026',
-    full_name: 'PiupiuTenshi/TechWeb-2026',
-    description: 'Web platform project prepared for live GitHub sync and case-study routing.',
-    html_url: 'https://github.com/PiupiuTenshi/TechWeb-2026',
-    homepage: null,
-    language: 'JavaScript',
-    stargazers_count: 0,
-    forks_count: 0,
-    open_issues_count: 0,
-    pushed_at: '2026-06-10T00:00:00Z',
-    updated_at: '2026-06-10T00:00:00Z',
-    archived: false,
-    fork: false,
-    topics: ['web', 'portfolio'],
-  },
-  {
-    id: 2,
-    name: 'Privacy-Preserving-Vertical-Fragmentation-PII-Shield',
-    full_name: 'PiupiuTenshi/Privacy-Preserving-Vertical-Fragmentation-PII-Shield',
-    description: 'Privacy-preserving vertical fragmentation project for PII protection.',
-    html_url: 'https://github.com/PiupiuTenshi/Privacy-Preserving-Vertical-Fragmentation-PII-Shield',
-    homepage: null,
-    language: 'Python',
-    stargazers_count: 0,
-    forks_count: 0,
-    open_issues_count: 0,
-    pushed_at: '2026-06-10T00:00:00Z',
-    updated_at: '2026-06-10T00:00:00Z',
-    archived: false,
-    fork: false,
-    topics: ['privacy', 'security', 'database'],
-  },
-  {
-    id: 3,
-    name: 'Academic-performance-management',
-    full_name: 'PiupiuTenshi/Academic-performance-management',
-    description: 'Academic performance management system for tracking learning outcomes.',
-    html_url: 'https://github.com/PiupiuTenshi/Academic-performance-management',
-    homepage: null,
-    language: 'C#',
-    stargazers_count: 0,
-    forks_count: 0,
-    open_issues_count: 0,
-    pushed_at: '2026-06-10T00:00:00Z',
-    updated_at: '2026-06-10T00:00:00Z',
-    archived: false,
-    fork: false,
-    topics: ['management', 'academic'],
-  },
-];
-
-const botReplies = {
-  'Show Unity projects': 'Project relics now sync from GitHub with local cache and fallback data.',
-  'Open WebGL demo': 'Use the Try Now gate to open the lazy-loaded WebGL modal. Full Unity export can replace the placeholder folder later.',
-  'Download CV': 'The CV route is wired, but the final PDF is still marked pending in the Phase 0 status doc.',
-  'Contact via Zalo': 'Use the Zalo portal in Contact for the fastest reply path.',
-};
 
 window.addEventListener('load', () => {
   window.setTimeout(() => {
@@ -195,10 +88,87 @@ const revealObserver = new IntersectionObserver(
 );
 
 revealItems.forEach((item) => revealObserver.observe(item));
+initI18n();
 attachTilt(tiltItems);
 initAudioControls();
 initEffects();
 loadGitHubRepos();
+
+function initI18n() {
+  applyTranslations();
+
+  localeButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const locale = button.getAttribute('data-locale-button') || defaultLocale;
+      setLocale(locale);
+    });
+  });
+}
+
+function setLocale(locale) {
+  if (!supportedLocales.includes(locale) || locale === currentLocale) return;
+  currentLocale = locale;
+
+  try {
+    localStorage.setItem(LOCALE_SETTINGS_KEY, currentLocale);
+  } catch {
+    // Locale persistence is optional.
+  }
+
+  applyTranslations();
+  updateAudioUi();
+  applyMotionPreference();
+  updateRepoStatus(lastRepoStatus.key, lastRepoStatus.vars);
+  renderRepos();
+  logVisitorEvent('LANGUAGE_SWITCHED', { locale: currentLocale });
+}
+
+function applyTranslations() {
+  document.documentElement.lang = currentLocale;
+  document.title = t('meta.title');
+
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
+    element.textContent = t(element.getAttribute('data-i18n'));
+  });
+
+  applyTranslatedAttribute('data-i18n-content', 'content');
+  applyTranslatedAttribute('data-i18n-placeholder', 'placeholder');
+  applyTranslatedAttribute('data-i18n-aria-label', 'aria-label');
+  applyTranslatedAttribute('data-i18n-alt', 'alt');
+  applyTranslatedAttribute('data-i18n-title', 'title');
+
+  localeButtons.forEach((button) => {
+    const locale = button.getAttribute('data-locale-button');
+    button.classList.toggle('is-active', locale === currentLocale);
+    button.setAttribute('aria-pressed', String(locale === currentLocale));
+  });
+}
+
+function applyTranslatedAttribute(keyAttribute, targetAttribute) {
+  document.querySelectorAll(`[${keyAttribute}]`).forEach((element) => {
+    element.setAttribute(targetAttribute, t(element.getAttribute(keyAttribute)));
+  });
+}
+
+function t(key, vars = {}) {
+  if (!key) return '';
+  const dictionary = translations[currentLocale] || {};
+  const fallbackDictionary = translations[defaultLocale] || {};
+  const value = dictionary[key] ?? fallbackDictionary[key] ?? key;
+  return String(value).replace(/\{([a-zA-Z0-9_]+)\}/g, (_, token) => vars[token] ?? '');
+}
+
+function getInitialLocale() {
+  try {
+    const saved = localStorage.getItem(LOCALE_SETTINGS_KEY);
+    if (supportedLocales.includes(saved)) return saved;
+  } catch {
+    // Fall through to browser language.
+  }
+
+  const browserLocale = navigator.language?.toLowerCase().startsWith('vi') ? 'vi' : defaultLocale;
+  return supportedLocales.includes(browserLocale) ? browserLocale : defaultLocale;
+}
 
 function attachTilt(items) {
   items.forEach((item) => {
@@ -221,13 +191,13 @@ function attachTilt(items) {
 async function loadGitHubRepos() {
   if (!projectGrid) return;
 
-  updateRepoStatus('Checking local relic cache...');
+  updateRepoStatus('repo.status.checking');
   const cached = readRepoCache();
 
   if (cached) {
     visibleRepos = prepareRepos(cached, 'cache');
     renderRepos();
-    updateRepoStatus(`Loaded ${visibleRepos.length} repos from cache. Refreshing GitHub...`);
+    updateRepoStatus('repo.status.cache', { count: visibleRepos.length });
   }
 
   try {
@@ -243,14 +213,14 @@ async function loadGitHubRepos() {
     writeRepoCache(repos);
     visibleRepos = prepareRepos(repos, 'github');
     renderRepos();
-    updateRepoStatus(`Live from GitHub. ${visibleRepos.length} visible repos.`);
+    updateRepoStatus('repo.status.live', { count: visibleRepos.length });
   } catch (error) {
     if (!cached) {
       visibleRepos = prepareRepos(fallbackRepos, 'fallback');
       renderRepos();
     }
 
-    updateRepoStatus(`Using fallback data. ${error.message}`);
+    updateRepoStatus('repo.status.fallback', { message: error.message });
   }
 }
 
@@ -289,6 +259,7 @@ function normalizeRepo(repo) {
     description: repo.description,
     htmlUrl: repo.html_url,
     homepage: repo.homepage,
+    descriptionKey: repo.descriptionKey,
     language: repo.language,
     topics: Array.isArray(repo.topics) ? repo.topics : [],
     stars: repo.stargazers_count ?? 0,
@@ -317,8 +288,8 @@ function mergeRepoSetting(repo, source) {
     tryNowUrl: setting?.tryNowUrl ?? null,
     caseStudyUrl: setting?.caseStudyUrl ?? null,
     displayName: setting?.customTitle ?? repo.name,
-    displayDescription:
-      setting?.customDescription ?? repo.description ?? 'No README description yet. Open GitHub to inspect the relic.',
+    displayDescriptionKey: setting?.customDescriptionKey ?? repo.descriptionKey ?? null,
+    displayDescription: setting?.customDescription ?? repo.description ?? null,
   };
 }
 
@@ -353,7 +324,13 @@ function renderRepos() {
   });
 
   if (repos.length === 0) {
-    projectGrid.innerHTML = '<article class="project-card project-card-loading"><span class="project-type">Empty</span><h3>No relics found</h3><p>Try another filter or wait for GitHub to wake up.</p></article>';
+    projectGrid.innerHTML = `
+      <article class="project-card project-card-loading">
+        <span class="project-type">${escapeHtml(t('repo.empty.type'))}</span>
+        <h3>${escapeHtml(t('repo.empty.title'))}</h3>
+        <p>${escapeHtml(t('repo.empty.body'))}</p>
+      </article>
+    `;
     return;
   }
 
@@ -363,33 +340,36 @@ function renderRepos() {
 
 function renderRepoCard(repo) {
   const pushed = repo.pushedAt
-    ? new Date(repo.pushedAt).toLocaleDateString(undefined, {
+    ? new Date(repo.pushedAt).toLocaleDateString(currentLocale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     })
-    : 'Unknown';
+    : t('repo.meta.unknown');
   const topics = repo.topics.slice(0, 4).map((topic) => `<span>${escapeHtml(topic)}</span>`).join('');
-  const homepage = repo.homepage ? `<a href="${escapeAttribute(repo.homepage)}">Demo</a>` : '';
+  const homepage = repo.homepage ? `<a href="${escapeAttribute(repo.homepage)}">${escapeHtml(t('repo.action.demo'))}</a>` : '';
   const tryNow = repo.tryNowUrl
-    ? `<a href="${escapeAttribute(repo.tryNowUrl)}">Try Now</a>`
-    : '<a href="#try-now" data-open-webgl>Preview</a>';
-  const docs = repo.caseStudyUrl ? `<a href="${escapeAttribute(repo.caseStudyUrl)}">Docs</a>` : '';
+    ? `<a href="${escapeAttribute(repo.tryNowUrl)}">${escapeHtml(t('repo.action.tryNow'))}</a>`
+    : `<a href="#try-now" data-open-webgl>${escapeHtml(t('repo.action.preview'))}</a>`;
+  const docs = repo.caseStudyUrl ? `<a href="${escapeAttribute(repo.caseStudyUrl)}">${escapeHtml(t('repo.action.docs'))}</a>` : '';
+  const description = repo.displayDescriptionKey
+    ? t(repo.displayDescriptionKey)
+    : repo.displayDescription ?? t('repo.defaultDescription');
 
   return `
     <article class="project-card" data-tilt data-category="${escapeAttribute(repo.category)}">
-      <span class="project-type">${escapeHtml(repo.featured ? `Featured / ${repo.category}` : repo.category)}</span>
+      <span class="project-type">${escapeHtml(repo.featured ? t('repo.featuredCategory', { category: repo.category }) : repo.category)}</span>
       <h3>${escapeHtml(repo.displayName)}</h3>
-      <p>${escapeHtml(repo.displayDescription)}</p>
+      <p>${escapeHtml(description)}</p>
       <div class="repo-meta">
-        <span>${escapeHtml(repo.language ?? 'Mixed')}</span>
-        <span>${repo.stars} stars</span>
-        <span>${repo.forks} forks</span>
-        <span>Pushed ${escapeHtml(pushed)}</span>
+        <span>${escapeHtml(repo.language ?? t('repo.meta.mixed'))}</span>
+        <span>${escapeHtml(t('repo.meta.stars', { count: repo.stars }))}</span>
+        <span>${escapeHtml(t('repo.meta.forks', { count: repo.forks }))}</span>
+        <span>${escapeHtml(t('repo.meta.pushed', { date: pushed }))}</span>
       </div>
       ${topics ? `<div class="repo-topics">${topics}</div>` : ''}
       <div class="card-actions">
-        <a href="${escapeAttribute(repo.htmlUrl)}">View Code</a>
+        <a href="${escapeAttribute(repo.htmlUrl)}">${escapeHtml(t('repo.action.viewCode'))}</a>
         ${tryNow}
         ${docs}
         ${homepage}
@@ -398,8 +378,9 @@ function renderRepoCard(repo) {
   `;
 }
 
-function updateRepoStatus(message) {
-  if (repoStatus) repoStatus.textContent = message;
+function updateRepoStatus(key, vars = {}) {
+  lastRepoStatus = { key, vars };
+  if (repoStatus) repoStatus.textContent = t(key, vars);
 }
 
 projectFilters.forEach((button) => {
@@ -555,12 +536,13 @@ function closeWebglDemo() {
 function rotateWebglLoadingLines() {
   stopWebglLoadingLines();
   let index = 0;
-  if (webglLine) webglLine.textContent = WEBGL_LOAD_LINES[index];
+  const lines = getWebglLoadLines();
+  if (webglLine) webglLine.textContent = lines[index] ?? '';
 
   webglLineTimer = window.setInterval(() => {
-    index = Math.min(index + 1, WEBGL_LOAD_LINES.length - 1);
-    if (webglLine) webglLine.textContent = WEBGL_LOAD_LINES[index];
-    if (index === WEBGL_LOAD_LINES.length - 1) stopWebglLoadingLines();
+    index = Math.min(index + 1, lines.length - 1);
+    if (webglLine) webglLine.textContent = lines[index] ?? '';
+    if (index === lines.length - 1) stopWebglLoadingLines();
   }, 650);
 }
 
@@ -585,6 +567,10 @@ function trackWebglEvent(eventName, extra = {}) {
   });
 }
 
+function getWebglLoadLines() {
+  return WEBGL_LOAD_LINE_KEYS.map((key) => t(key)).filter(Boolean);
+}
+
 chatToggle?.addEventListener('click', () => {
   const isOpen = chatPanel?.classList.toggle('is-open') ?? false;
   chatToggle.setAttribute('aria-expanded', String(isOpen));
@@ -592,9 +578,10 @@ chatToggle?.addEventListener('click', () => {
 
 quickReplies.forEach((button) => {
   button.addEventListener('click', () => {
-    const prompt = button.getAttribute('data-reply') ?? '';
+    const replyKey = button.getAttribute('data-reply-key') ?? '';
+    const prompt = t(`chat.quickMessage.${replyKey}`);
     appendChat('user', prompt);
-    appendChat('bot', botReplies[prompt] ?? 'That route is reserved for a later phase.');
+    appendChat('bot', t(`chat.reply.${replyKey}`) || t('chat.reply.fallback'));
   });
 });
 
@@ -606,7 +593,7 @@ chatForm?.addEventListener('submit', async (event) => {
   if (!message) return;
 
   appendChat('user', message);
-  setChatStatus('Saving message...');
+  setChatStatus(t('chat.status.saving'));
   chatForm.querySelector('button')?.setAttribute('disabled', 'true');
 
   try {
@@ -627,18 +614,18 @@ chatForm?.addEventListener('submit', async (event) => {
       throw new Error(payload.error || `Chat API responded with ${response.status}`);
     }
 
-    appendChat('bot', payload.reply || 'Saved. Sang can review this from the admin inbox.');
+    appendChat('bot', payload.reply || t('chat.reply.saved'));
     const actions = payload.adminUrl
-      ? [{ type: 'open_link', label: 'Open Admin Gate', href: payload.adminUrl }, ...(payload.actions || [])]
+      ? [{ type: 'open_link', label: t('chat.action.openAdmin'), href: payload.adminUrl }, ...(payload.actions || [])]
       : payload.actions || [];
     appendBotActions(actions);
-    setChatStatus(`Saved to inbox as ${payload.messageId}`);
+    setChatStatus(t('chat.status.saved', { messageId: payload.messageId }));
     chatInput.value = '';
     contactInput.value = '';
     logVisitorEvent('CHAT_MESSAGE_SENT', { messageId: payload.messageId });
   } catch (error) {
-    appendChat('bot', `I could not reach the local inbox yet: ${error.message}`);
-    setChatStatus('Run the local server to enable saving.');
+    appendChat('bot', t('chat.reply.inboxError', { message: error.message }));
+    setChatStatus(t('chat.status.unavailable'));
   } finally {
     chatForm.querySelector('button')?.removeAttribute('disabled');
   }
@@ -729,7 +716,7 @@ async function playCurrentTrack() {
   await audioLoop.play();
   updateAudioUi();
   saveAudioSettings();
-  logVisitorEvent('AUDIO_PLAY', { track: AUDIO_TRACKS[currentTrackIndex].title });
+  logVisitorEvent('AUDIO_PLAY', { track: getTrackTitle(currentTrackIndex) });
 }
 
 function pauseAudio() {
@@ -738,19 +725,20 @@ function pauseAudio() {
   audioLoop.pause();
   updateAudioUi();
   saveAudioSettings();
-  logVisitorEvent('AUDIO_PAUSE', { track: AUDIO_TRACKS[currentTrackIndex].title });
+  logVisitorEvent('AUDIO_PAUSE', { track: getTrackTitle(currentTrackIndex) });
 }
 
 function changeTrack(direction) {
   const wasPlaying = Boolean(audioLoop && !audioLoop.paused);
   setTrack(currentTrackIndex + direction, wasPlaying);
-  logVisitorEvent('AUDIO_TRACK_CHANGE', { track: AUDIO_TRACKS[currentTrackIndex].title });
+  logVisitorEvent('AUDIO_TRACK_CHANGE', { track: getTrackTitle(currentTrackIndex) });
 }
 
 function setTrack(index, shouldPlay) {
   if (!audioLoop) return;
   currentTrackIndex = clampIndex(index);
   const track = AUDIO_TRACKS[currentTrackIndex];
+  if (!track) return;
   audioLoop.src = track.src;
   audioLoop.loop = true;
   updateAudioUi();
@@ -763,9 +751,9 @@ function setTrack(index, shouldPlay) {
 
 function updateAudioUi() {
   const track = AUDIO_TRACKS[currentTrackIndex];
-  if (audioLabel) audioLabel.textContent = `${track.title} / ${track.section}`;
+  if (audioLabel && track) audioLabel.textContent = `${t(track.titleKey)} / ${t(track.sectionKey)}`;
   if (audioToggle) {
-    audioToggle.textContent = audioEnabled && audioLoop && !audioLoop.paused ? 'Mute Sound' : 'Enable Sound';
+    audioToggle.textContent = audioEnabled && audioLoop && !audioLoop.paused ? t('audio.mute') : t('audio.enable');
     audioToggle.setAttribute('aria-pressed', String(audioEnabled && audioLoop && !audioLoop.paused));
   }
 }
@@ -791,7 +779,13 @@ function saveAudioSettings() {
 }
 
 function clampIndex(index) {
+  if (AUDIO_TRACKS.length === 0) return 0;
   return (index + AUDIO_TRACKS.length) % AUDIO_TRACKS.length;
+}
+
+function getTrackTitle(index) {
+  const track = AUDIO_TRACKS[index];
+  return track ? t(track.titleKey) : '';
 }
 
 function initEffects() {
@@ -819,7 +813,7 @@ function initEffects() {
 function applyMotionPreference() {
   document.body.classList.toggle('is-motion-reduced', reducedMotion);
   if (motionToggle) {
-    motionToggle.textContent = reducedMotion ? 'Motion On' : 'Reduce Motion';
+    motionToggle.textContent = reducedMotion ? t('motion.enable') : t('motion.reduce');
     motionToggle.setAttribute('aria-pressed', String(reducedMotion));
   }
 

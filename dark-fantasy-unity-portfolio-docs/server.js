@@ -48,7 +48,7 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, {
         ok: true,
         service: 'cursed-biomes-local',
-        phase: 6,
+        phase: 8,
         timestamp: new Date().toISOString(),
       });
     }
@@ -88,7 +88,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (req.method === 'GET' && url.pathname === '/api/admin/events') {
-        return handleAdminEvents(res);
+        return handleAdminEvents(res, url);
       }
 
       if (req.method === 'GET' && url.pathname === '/api/admin/repos') {
@@ -323,15 +323,105 @@ async function handleAdminMessagePatch(req, res, messageId, session) {
   sendJson(res, 200, { ok: true, message });
 }
 
-function handleAdminEvents(res) {
-  const events = readJsonArray(EVENTS_FILE)
-    .slice()
-    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+function handleAdminEvents(res, url) {
+  const filters = getEventFilters(url.searchParams);
+  const allEvents = readJsonArray(EVENTS_FILE).slice();
+  const filteredEvents = allEvents
+    .filter((event) => matchesEventFilters(event, filters))
+    .sort((a, b) => {
+      const delta = Date.parse(a.timestamp) - Date.parse(b.timestamp);
+      return filters.sort === 'oldest' ? delta : -delta;
+    });
+  const limitedEvents = filteredEvents.slice(0, filters.limit);
 
   sendJson(res, 200, {
-    events,
-    total: events.length,
+    events: limitedEvents,
+    total: filteredEvents.length,
+    totalUnfiltered: allEvents.length,
+    filters,
+    eventTypes: getUniqueValues(allEvents, 'eventType'),
+    paths: getUniqueValues(allEvents, 'path'),
+    summary: summarizeEvents(filteredEvents),
   });
+}
+
+function getEventFilters(searchParams) {
+  return {
+    q: normalizeText(searchParams.get('q') || '', 120).toLowerCase(),
+    eventType: normalizeText(searchParams.get('eventType') || '', 80),
+    dateFrom: normalizeText(searchParams.get('dateFrom') || '', 32),
+    dateTo: normalizeText(searchParams.get('dateTo') || '', 32),
+    ip: normalizeText(searchParams.get('ip') || '', 80).toLowerCase(),
+    path: normalizeText(searchParams.get('path') || '', 160).toLowerCase(),
+    sessionId: normalizeText(searchParams.get('sessionId') || '', 120).toLowerCase(),
+    repoName: normalizeText(searchParams.get('repoName') || '', 160).toLowerCase(),
+    sort: searchParams.get('sort') === 'oldest' ? 'oldest' : 'newest',
+    limit: clampNumber(Number(searchParams.get('limit') || 100), 1, 500),
+  };
+}
+
+function matchesEventFilters(event, filters) {
+  const timestamp = Date.parse(event.timestamp || '');
+  const from = filters.dateFrom ? Date.parse(filters.dateFrom) : null;
+  const to = filters.dateTo ? Date.parse(`${filters.dateTo}T23:59:59.999`) : null;
+
+  if (filters.eventType && event.eventType !== filters.eventType) return false;
+  if (from && timestamp < from) return false;
+  if (to && timestamp > to) return false;
+  if (filters.ip && !String(event.ip || '').toLowerCase().includes(filters.ip)) return false;
+  if (filters.path && !String(event.path || '').toLowerCase().includes(filters.path)) return false;
+  if (filters.sessionId && !String(event.sessionId || '').toLowerCase().includes(filters.sessionId)) return false;
+  if (filters.repoName && !String(event.metadata?.repoName || '').toLowerCase().includes(filters.repoName)) return false;
+  if (filters.q && !eventSearchText(event).includes(filters.q)) return false;
+
+  return true;
+}
+
+function eventSearchText(event) {
+  return [
+    event.eventType,
+    event.sessionId,
+    event.path,
+    event.referrer,
+    event.ip,
+    event.userAgent,
+    JSON.stringify(event.metadata || {}),
+  ].join(' ').toLowerCase();
+}
+
+function summarizeEvents(events) {
+  const byType = {};
+  const byPath = {};
+  const uniqueSessions = new Set();
+
+  events.forEach((event) => {
+    byType[event.eventType || 'UNKNOWN'] = (byType[event.eventType || 'UNKNOWN'] || 0) + 1;
+    byPath[event.path || '/'] = (byPath[event.path || '/'] || 0) + 1;
+    if (event.sessionId) uniqueSessions.add(event.sessionId);
+  });
+
+  return {
+    uniqueSessions: uniqueSessions.size,
+    byType: topEntries(byType, 8),
+    byPath: topEntries(byPath, 8),
+  };
+}
+
+function topEntries(source, limit) {
+  return Object.entries(source)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([name, count]) => ({ name, count }));
+}
+
+function getUniqueValues(items, key) {
+  return [...new Set(items.map((item) => item[key]).filter(Boolean))]
+    .sort((a, b) => String(a).localeCompare(String(b)));
+}
+
+function clampNumber(value, min, max) {
+  if (!Number.isFinite(value)) return min;
+  return Math.max(min, Math.min(max, Math.floor(value)));
 }
 
 function handleAdminRepos(res) {
