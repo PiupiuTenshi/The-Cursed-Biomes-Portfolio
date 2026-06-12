@@ -288,9 +288,20 @@ async function notifyNewContact(entry) {
     } catch (e) {
       console.error('Notification errors (unable to stringify)', entry.id, errors);
     }
+    try {
+      const debugResults = results.map((r) => {
+        if (r.status === 'fulfilled') return { status: 'fulfilled' };
+        const reason = r.reason instanceof Error ? (r.reason.stack || r.reason.message) : String(r.reason);
+        return { status: 'rejected', reason };
+      });
+      console.error('Notification debug results for', entry.id, JSON.stringify(debugResults, null, 2));
+    } catch (e) {
+      console.error('Failed to stringify notification results for', entry.id, e && e.message ? e.message : e);
+    }
   }
 
   return { sent, failed, skipped: false, errors };
+
 }
 
 async function sendZaloWebhookNotification(entry) {
