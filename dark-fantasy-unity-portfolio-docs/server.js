@@ -19,9 +19,23 @@ const REPO_SETTINGS_FILE = path.join(ROOT, 'src', 'config', 'repo-settings.json'
 const MAX_BODY_BYTES = 16 * 1024;
 const GATE_TTL_MS = 5 * 60 * 1000;
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
-const ADMIN_GATE_PHRASE = ENV.ADMIN_GATE_PHRASE || 'moonlit-biomes';
-const ADMIN_PASSWORD = ENV.ADMIN_PASSWORD || 'admin123';
-const ADMIN_PASSWORD_SHA256 = normalizePasswordHash(ENV.ADMIN_PASSWORD_SHA256 || ENV.ADMIN_PASSWORD_HASH || '');
+const ADMIN_GATE_PHRASE =
+  process.env.ADMIN_GATE_PHRASE ||
+  ENV.ADMIN_GATE_PHRASE ||
+  'moonlit-biomes';
+
+const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD ||
+  ENV.ADMIN_PASSWORD ||
+  'admin123';
+
+const ADMIN_PASSWORD_SHA256 = normalizePasswordHash(
+  process.env.ADMIN_PASSWORD_SHA256 ||
+  process.env.ADMIN_PASSWORD_HASH ||
+  ENV.ADMIN_PASSWORD_SHA256 ||
+  ENV.ADMIN_PASSWORD_HASH ||
+  ''
+);
 const NOTIFY_EMAIL_TO = ENV.NOTIFY_EMAIL_TO || ENV.ADMIN_NOTIFY_EMAIL || '';
 const NOTIFY_EMAIL_FROM = ENV.NOTIFY_EMAIL_FROM || ENV.SMTP_FROM || ENV.SMTP_USER || '';
 const SMTP_HOST = ENV.SMTP_HOST || '';
