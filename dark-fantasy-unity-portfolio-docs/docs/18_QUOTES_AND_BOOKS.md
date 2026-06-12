@@ -46,6 +46,23 @@ Category: Software / Game Design / Clean Code
 Language: EN/VI optional
 ```
 
+## 2.1. Runtime quote data
+
+Quote card now reads from `window.CursedBiomesContent.libraryQuotes` in `src/scripts/site-content.js`.
+On every page load, `src/scripts/phase1.js` picks one random quote and renders it into:
+
+```html
+[data-random-quote]
+[data-random-quote-author]
+```
+
+When switching locale, the page keeps the same random quote index and swaps to the matching localized quote.
+Add more quotes by appending objects:
+
+```js
+{ text: '"Quote text"', author: 'Author or note' }
+```
+
 ## 3. Recommended books/resources
 
 > Chỉ nên link sách miễn phí/hợp pháp hoặc trang mua chính thức. Không nên đưa link EPUB lậu vào portfolio.
@@ -100,4 +117,3 @@ Cần cho làm việc nhóm: branch, merge, rebase, remote, conflict, tag, relea
 ### The Nature of Code
 
 Hợp để học particle, force, vector, flocking, emergence. Những thứ này có thể biến thành hiệu ứng trong game hoặc background portfolio.
-

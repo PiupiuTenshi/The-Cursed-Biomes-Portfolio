@@ -41,11 +41,11 @@ npm start
 Then open:
 
 ```txt
-http://127.0.0.1:3000
+http://127.0.0.1:3001
 ```
 
 Admin inbox JSON for development:
 
 ```txt
-http://127.0.0.1:3000/api/admin/messages
+http://127.0.0.1:3001/api/admin/messages
 ```

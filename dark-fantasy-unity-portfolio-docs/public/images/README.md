@@ -12,6 +12,10 @@ Current UI/UX reference:
 
 - ui-ux-complete.png
 
+Current Try Now preview:
+
+- try-now-gate-pixel-v2.png
+
 Target optimized filename for production:
 
 - avatar-dark-fantasy-v2.webp

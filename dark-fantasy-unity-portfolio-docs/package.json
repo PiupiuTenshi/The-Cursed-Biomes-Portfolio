@@ -1,10 +1,19 @@
 {
   "name": "dark-fantasy-unity-portfolio",
-  "version": "0.6.0",
+  "version": "0.9.0",
   "private": true,
   "description": "Static dark fantasy Unity portfolio with local hidden admin and chatbot contact pipeline.",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check src/scripts/phase1.js"
+    "check": "node --check server.js && node --check src/scripts/site-content.js && node --check src/scripts/phase1.js && node --check admin/dashboard.js && node --check scripts/build-static.js && node --check scripts/release-check.js && node --check scripts/smoke-test.js",
+    "build": "node scripts/build-static.js",
+    "books:sync": "node scripts/sync-local-books.js",
+    "books:covers": "node scripts/generate-book-page-covers.js",
+    "release:check": "node scripts/release-check.js",
+    "test:smoke": "node scripts/smoke-test.js"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.0.0",
+    "pdfjs-dist": "^6.0.227"
   }
 }
