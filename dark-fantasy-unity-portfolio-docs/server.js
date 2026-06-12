@@ -36,13 +36,26 @@ const ADMIN_PASSWORD_SHA256 = normalizePasswordHash(
   ENV.ADMIN_PASSWORD_HASH ||
   ''
 );
-const NOTIFY_EMAIL_TO = ENV.NOTIFY_EMAIL_TO || ENV.ADMIN_NOTIFY_EMAIL || '';
-const NOTIFY_EMAIL_FROM = ENV.NOTIFY_EMAIL_FROM || ENV.SMTP_FROM || ENV.SMTP_USER || '';
-const SMTP_HOST = ENV.SMTP_HOST || '';
-const SMTP_PORT = Number(ENV.SMTP_PORT || 587);
-const SMTP_SECURE = String(ENV.SMTP_SECURE || '').toLowerCase() === 'true' || SMTP_PORT === 465;
-const SMTP_USER = ENV.SMTP_USER || '';
-const SMTP_PASS = ENV.SMTP_PASS || '';
+function envValue(...keys) {
+  for (const key of keys) {
+    const value = process.env[key] || ENV[key];
+    if (value && String(value).trim()) {
+      return String(value).trim();
+    }
+  }
+  return '';
+}
+
+const NOTIFY_EMAIL_TO = envValue('NOTIFY_EMAIL_TO', 'ADMIN_NOTIFY_EMAIL');
+const NOTIFY_EMAIL_FROM = envValue('NOTIFY_EMAIL_FROM', 'SMTP_FROM', 'SMTP_USER');
+
+const SMTP_HOST = envValue('SMTP_HOST');
+const SMTP_PORT = Number(envValue('SMTP_PORT') || 587);
+const SMTP_SECURE =
+  envValue('SMTP_SECURE').toLowerCase() === 'true' || SMTP_PORT === 465;
+
+const SMTP_USER = envValue('SMTP_USER');
+const SMTP_PASS = envValue('SMTP_PASS');
 const ZALO_WEBHOOK_URL = ENV.ZALO_WEBHOOK_URL || ENV.ZALO_NOTIFY_WEBHOOK_URL || '';
 const FACEBOOK_PROFILE_URL = ENV.NEXT_PUBLIC_FACEBOOK_URL || ENV.FACEBOOK_PROFILE_URL || 'https://www.facebook.com/MahiruShiina.tym.1207';
 const MESSENGER_URL = ENV.NEXT_PUBLIC_MESSENGER_URL || ENV.MESSENGER_URL || 'https://m.me/MahiruShiina.tym.1207';
