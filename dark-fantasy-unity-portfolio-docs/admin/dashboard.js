@@ -86,7 +86,7 @@ function renderMessages(messages) {
   messagesBody.innerHTML = messages.map((message) => `
     <tr>
       <td>${escapeHtml(formatTime(message.timestamp))}</td>
-      <td>${escapeHtml(message.visitorContact?.email || message.visitorContact?.zalo || message.visitorContact?.raw || 'None')}</td>
+      <td>${renderContactActions(message.visitorContact)}</td>
       <td>${escapeHtml(message.message)}</td>
       <td>${escapeHtml(message.status)}</td>
       <td>
@@ -106,6 +106,66 @@ function renderMessages(messages) {
       loadDashboard();
     });
   });
+
+  messagesBody.querySelectorAll('[data-copy-contact]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const value = button.getAttribute('data-copy-contact') || '';
+      await copyText(value);
+      const previous = button.textContent;
+      button.textContent = 'Copied';
+      window.setTimeout(() => {
+        button.textContent = previous;
+      }, 1200);
+    });
+  });
+}
+
+function renderContactActions(contact = {}) {
+  const actions = [];
+  const email = contact.email || '';
+  const zalo = normalizePhone(contact.zalo || contact.raw || '');
+  const raw = contact.raw || '';
+
+  if (email) {
+    const subject = 'Portfolio contact reply';
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}`;
+    actions.push(`<a class="contact-action" href="${escapeAttribute(gmailUrl)}" target="_blank" rel="noreferrer">Gmail</a>`);
+    actions.push(`<a class="contact-action" href="mailto:${escapeAttribute(email)}?subject=${encodeURIComponent(subject)}">Mail app</a>`);
+    actions.push(`<button class="contact-action" type="button" data-copy-contact="${escapeAttribute(email)}">Copy</button>`);
+  }
+
+  if (zalo) {
+    actions.push(`<a class="contact-action" href="https://zalo.me/${escapeAttribute(zalo)}" target="_blank" rel="noreferrer">Zalo</a>`);
+  }
+
+  if (!actions.length && raw) {
+    actions.push(`<span>${escapeHtml(raw)}</span>`);
+  }
+
+  return actions.length ? `<div class="contact-actions">${actions.join('')}</div>` : 'None';
+}
+
+async function copyText(value) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const input = document.createElement('textarea');
+  input.value = value;
+  input.setAttribute('readonly', '');
+  input.style.position = 'fixed';
+  input.style.opacity = '0';
+  document.body.append(input);
+  input.select();
+  document.execCommand('copy');
+  input.remove();
+}
+
+function normalizePhone(value) {
+  const digits = String(value || '').replace(/[^\d+]/g, '');
+  if (!digits || digits.length < 8) return '';
+  return digits.replace(/^\+84/, '0');
 }
 
 function renderFeed(target, items, titleFn) {

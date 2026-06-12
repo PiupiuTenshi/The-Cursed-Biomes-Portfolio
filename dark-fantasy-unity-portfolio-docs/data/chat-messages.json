@@ -15,5 +15,379 @@
     "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
     "updatedAt": "2026-06-11T01:40:00.717Z"
+  },
+  {
+    "id": "msg_0af3abf2-eecf-4419-8406-a3ff06d310ac",
+    "timestamp": "2026-06-11T04:01:14.135Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "admin-gate: biomes",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "raw": null
+    },
+    "status": "read",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "updatedAt": "2026-06-11T07:58:45.900Z"
+  },
+  {
+    "id": "msg_8e85213f-cc93-42ca-b19e-8d93471b4736",
+    "timestamp": "2026-06-11T07:37:44.767Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "chào bạn",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "read",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "updatedAt": "2026-06-11T07:58:44.648Z"
+  },
+  {
+    "id": "msg_5aea75ed-5227-4802-84e0-8edbe6d1433c",
+    "timestamp": "2026-06-11T07:59:40.051Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "Hello",
+    "visitorContact": {
+      "email": null,
+      "zalo": "0917884685",
+      "raw": "0917884685"
+    },
+    "status": "read",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "updatedAt": "2026-06-11T12:52:53.770Z"
+  },
+  {
+    "id": "msg_201a7bf1-ee8c-4569-934d-b8881b55175b",
+    "timestamp": "2026-06-11T08:00:10.813Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "Hi",
+    "visitorContact": {
+      "email": null,
+      "zalo": "0898087507",
+      "raw": "0898087507"
+    },
+    "status": "read",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "updatedAt": "2026-06-11T12:52:54.523Z"
+  },
+  {
+    "id": "msg_d70a1f29-c914-45ee-8cac-b5dfcf6994b0",
+    "timestamp": "2026-06-11T13:19:40.506Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "Src code",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_db733412-5bff-40be-8a11-0faa2194baba",
+    "timestamp": "2026-06-11T13:25:26.970Z",
+    "sessionId": "codex-email-test",
+    "page": "/",
+    "language": "vi",
+    "message": "TEST Messenger/chatbot email notification from local portfolio",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "facebook": "https://www.facebook.com/MahiruShiina.tym.1207",
+      "raw": "Messenger: https://www.facebook.com/MahiruShiina.tym.1207"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521"
+  },
+  {
+    "id": "msg_4b5713fe-76d3-4306-a8c1-a7c4842e96cf",
+    "timestamp": "2026-06-11T13:28:27.734Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "HEo thối",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_2d8a6df6-e9c7-48ea-a363-fcd0575a6c94",
+    "timestamp": "2026-06-11T13:31:23.115Z",
+    "sessionId": "sess_d8655fbe-aec2-4754-8b91-7726369ab980",
+    "page": "/",
+    "language": "vi",
+    "message": "chao bạn Heo",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_02408cf1-3bd9-486d-a2bf-ac5246ac03bc",
+    "timestamp": "2026-06-11T14:01:30.224Z",
+    "sessionId": "test-session-123",
+    "page": "/test",
+    "language": "en",
+    "message": "Test email delivery from chatbot",
+    "visitorContact": {
+      "email": "test@example.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "test@example.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8521"
+  },
+  {
+    "id": "msg_e8b0b69f-f18c-4032-aed5-1d81f4f133f6",
+    "timestamp": "2026-06-11T14:05:51.835Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "hello Hell",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_8477bb7f-fef5-4174-a5b8-cebe5a041c0d",
+    "timestamp": "2026-06-11T16:12:43.208Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "hi",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "facebook": "https://www.facebook.com/k.nguyen.thuy.lynh",
+      "raw": "https://www.facebook.com/k.nguyen.thuy.lynh"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_af213338-2b32-49fa-ab9b-8ece125afc2b",
+    "timestamp": "2026-06-11T16:18:39.236Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "Cảm ơn ad",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "facebook": "https://www.facebook.com/k.nguyen.thuy.lynh",
+      "raw": "https://www.facebook.com/k.nguyen.thuy.lynh"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_6a42bedd-b672-4733-b209-0cb8a312f809",
+    "timestamp": "2026-06-11T16:30:53.512Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "Mọi thứ",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_ce459a5a-28ca-43a4-8ffd-6aa011a8dd1c",
+    "timestamp": "2026-06-11T16:40:34.435Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "test",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_280c0be6-9bf2-4e93-8cdb-6a6b3dcc7b49",
+    "timestamp": "2026-06-11T16:43:18.159Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "Pixel2d",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_99ebfde4-cd36-4028-a1d6-fef4928e5eeb",
+    "timestamp": "2026-06-11T16:46:31.825Z",
+    "sessionId": "sess_b2aa65a3-7cc6-4499-98d0-8152abd85e2a",
+    "page": "/",
+    "language": "en",
+    "message": "sang",
+    "visitorContact": {
+      "email": null,
+      "zalo": "0917884685",
+      "facebook": null,
+      "raw": "0917884685"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.124.0 Chrome/148.0.7778.97 Electron/42.2.0 Safari/537.36"
+  },
+  {
+    "id": "msg_92eca9b1-5891-447f-85ce-fa5f26147624",
+    "timestamp": "2026-06-11T16:47:45.635Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "sang",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_d12c3398-7c40-4759-9e55-e41be047670a",
+    "timestamp": "2026-06-11T16:52:05.238Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "TEST cuối",
+    "visitorContact": {
+      "email": null,
+      "zalo": "0917884685",
+      "facebook": null,
+      "raw": "0917884685"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_2f239360-c302-4f8f-89de-cbd199da8deb",
+    "timestamp": "2026-06-11T17:10:19.688Z",
+    "sessionId": "sess_2017dee9-0ebc-4bb7-9f7d-1eefa769e4fc",
+    "page": "/",
+    "language": "vi",
+    "message": "Hello Sáng",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "171.251.232.127",
+    "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36"
+  },
+  {
+    "id": "msg_1a8749cd-a23f-4221-b4f0-c5d5136508d9",
+    "timestamp": "2026-06-12T07:50:38.734Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "Lần cuối test",
+    "visitorContact": {
+      "email": "sang62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sang62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_72f85f8c-6030-49f7-86d2-5a5620e65499",
+    "timestamp": "2026-06-12T07:51:56.621Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "test cuối cùng Heo thúi",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "facebook": "https://www.facebook.com/k.nguyen.thuy.lynh",
+      "raw": "https://www.facebook.com/k.nguyen.thuy.lynh"
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_62d8507d-ffc6-4887-9eab-93c3b547b86c",
+    "timestamp": "2026-06-12T07:53:07.962Z",
+    "sessionId": "sess_2017dee9-0ebc-4bb7-9f7d-1eefa769e4fc",
+    "page": "/",
+    "language": "vi",
+    "message": "Sáng đẹp zai",
+    "visitorContact": {
+      "email": "sanv62375@gmail.com",
+      "zalo": null,
+      "facebook": null,
+      "raw": "sanv62375@gmail.com"
+    },
+    "status": "unread",
+    "ip": "103.199.56.121",
+    "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36"
   }
 ]

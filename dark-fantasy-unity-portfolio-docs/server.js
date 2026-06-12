@@ -2,10 +2,15 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const net = require('net');
+const tls = require('tls');
+const { Readable } = require('stream');
 
 const ROOT = __dirname;
-const ENV = loadEnv(path.join(ROOT, '.env.local'));
-const PORT = Number(process.env.PORT || ENV.PORT || 3000);
+const ENV = loadEnv(path.join(ROOT, '.env'));
+const PORT = Number(process.env.PORT || ENV.PORT || 3001);
+const NODE_ENV = process.env.NODE_ENV || ENV.NODE_ENV || 'development';
+const HOST = process.env.HOST || ENV.HOST || (NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1');
 const DATA_DIR = path.join(ROOT, 'data');
 const MESSAGES_FILE = path.join(DATA_DIR, 'chat-messages.json');
 const EVENTS_FILE = path.join(DATA_DIR, 'visitor-events.json');
@@ -16,7 +21,42 @@ const GATE_TTL_MS = 5 * 60 * 1000;
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
 const ADMIN_GATE_PHRASE = ENV.ADMIN_GATE_PHRASE || 'moonlit-biomes';
 const ADMIN_PASSWORD = ENV.ADMIN_PASSWORD || 'admin123';
-const ADMIN_PASSWORD_SHA256 = ENV.ADMIN_PASSWORD_SHA256 || '';
+const ADMIN_PASSWORD_SHA256 = normalizePasswordHash(ENV.ADMIN_PASSWORD_SHA256 || ENV.ADMIN_PASSWORD_HASH || '');
+const NOTIFY_EMAIL_TO = ENV.NOTIFY_EMAIL_TO || ENV.ADMIN_NOTIFY_EMAIL || '';
+const NOTIFY_EMAIL_FROM = ENV.NOTIFY_EMAIL_FROM || ENV.SMTP_FROM || ENV.SMTP_USER || '';
+const SMTP_HOST = ENV.SMTP_HOST || '';
+const SMTP_PORT = Number(ENV.SMTP_PORT || 587);
+const SMTP_SECURE = String(ENV.SMTP_SECURE || '').toLowerCase() === 'true' || SMTP_PORT === 465;
+const SMTP_USER = ENV.SMTP_USER || '';
+const SMTP_PASS = ENV.SMTP_PASS || '';
+const ZALO_WEBHOOK_URL = ENV.ZALO_WEBHOOK_URL || ENV.ZALO_NOTIFY_WEBHOOK_URL || '';
+const FACEBOOK_PROFILE_URL = ENV.NEXT_PUBLIC_FACEBOOK_URL || ENV.FACEBOOK_PROFILE_URL || 'https://www.facebook.com/MahiruShiina.tym.1207';
+const MESSENGER_URL = ENV.NEXT_PUBLIC_MESSENGER_URL || ENV.MESSENGER_URL || 'https://m.me/MahiruShiina.tym.1207';
+const MESSENGER_WEBHOOK_URL = ENV.MESSENGER_WEBHOOK_URL || ENV.FACEBOOK_MESSENGER_WEBHOOK_URL || '';
+const NOTIFICATION_TIMEOUT_MS = Number(ENV.NOTIFICATION_TIMEOUT_MS || 8000);
+const MAX_STORED_MESSAGES = Number(ENV.MAX_STORED_MESSAGES || 2000);
+const MAX_STORED_EVENTS = Number(ENV.MAX_STORED_EVENTS || 5000);
+const MAX_STORED_AUDIT = Number(ENV.MAX_STORED_AUDIT || 2000);
+
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "connect-src 'self' https://api.github.com",
+    "img-src 'self' data:",
+    "media-src 'self'",
+    "frame-src 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join('; '),
+};
 
 const gateTokens = new Map();
 const adminSessions = new Map();
@@ -25,12 +65,17 @@ const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'application/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.webp': 'image/webp',
   '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.otf': 'font/otf',
+  '.ttf': 'font/ttf',
   '.ogg': 'audio/ogg',
   '.mp3': 'audio/mpeg',
   '.pdf': 'application/pdf',
@@ -48,7 +93,8 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, {
         ok: true,
         service: 'cursed-biomes-local',
-        phase: 8,
+        phase: 9,
+        environment: NODE_ENV,
         timestamp: new Date().toISOString(),
       });
     }
@@ -59,6 +105,10 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'POST' && url.pathname === '/api/events') {
       return handleEvent(req, res);
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/books/inline') {
+      return handleInlineBook(req, res, url);
     }
 
     if (req.method === 'POST' && url.pathname === '/api/admin/login') {
@@ -112,8 +162,8 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`The Cursed Biomes Portfolio is running at http://127.0.0.1:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`The Cursed Biomes Portfolio is running at http://${HOST}:${PORT}`);
 });
 
 async function handleChatMessage(req, res) {
@@ -146,12 +196,110 @@ async function handleChatMessage(req, res) {
   };
 
   appendJsonEntry(MESSAGES_FILE, entry);
+  const notifications = await notifyNewContact(entry);
 
   sendJson(res, 201, {
     reply: getBotReply(message, Boolean(visitorContact.email || visitorContact.zalo || visitorContact.raw)),
     saved: true,
     messageId: entry.id,
+    notifications,
     actions: getBotActions(message),
+  });
+}
+
+async function notifyNewContact(entry) {
+  const tasks = [];
+
+  if (ZALO_WEBHOOK_URL) {
+    tasks.push(sendZaloWebhookNotification(entry));
+  }
+
+  if (MESSENGER_WEBHOOK_URL) {
+    tasks.push(sendMessengerWebhookNotification(entry));
+  }
+
+  if (SMTP_HOST && NOTIFY_EMAIL_TO && NOTIFY_EMAIL_FROM) {
+    tasks.push(sendEmailNotification(entry));
+  }
+
+  if (tasks.length === 0) {
+    appendSystemAudit('CONTACT_NOTIFICATION_SKIPPED', {
+      messageId: entry.id,
+      reason: 'not_configured',
+    });
+    return { sent: 0, failed: 0, skipped: true };
+  }
+
+  const results = await Promise.allSettled(tasks);
+  const sent = results.filter((result) => result.status === 'fulfilled').length;
+  const failed = results.length - sent;
+
+  appendSystemAudit('CONTACT_NOTIFICATION_RESULT', {
+    messageId: entry.id,
+    sent,
+    failed,
+    channels: [
+      ZALO_WEBHOOK_URL ? 'zalo_webhook' : null,
+      MESSENGER_WEBHOOK_URL ? 'messenger_webhook' : null,
+      SMTP_HOST && NOTIFY_EMAIL_TO && NOTIFY_EMAIL_FROM ? 'email_smtp' : null,
+    ].filter(Boolean),
+  });
+
+  return { sent, failed, skipped: false };
+}
+
+async function sendZaloWebhookNotification(entry) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), NOTIFICATION_TIMEOUT_MS);
+  const response = await fetch(ZALO_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(makeNotificationPayload(entry)),
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timeout));
+
+  if (!response.ok) {
+    throw new Error(`Zalo webhook responded with ${response.status}`);
+  }
+}
+
+async function sendMessengerWebhookNotification(entry) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), NOTIFICATION_TIMEOUT_MS);
+  const response = await fetch(MESSENGER_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(makeNotificationPayload(entry, 'messenger')),
+    signal: controller.signal,
+  });
+  clearTimeout(timeout);
+
+  if (!response.ok) {
+    throw new Error(`Messenger webhook responded with ${response.status}`);
+  }
+}
+
+async function sendEmailNotification(entry) {
+  const recipients = NOTIFY_EMAIL_TO.split(',').map((item) => item.trim()).filter(Boolean);
+  if (recipients.length === 0) return;
+
+  const message = buildEmailMessage({
+    from: NOTIFY_EMAIL_FROM,
+    to: recipients,
+    subject: `New portfolio contact - ${entry.visitorContact.email || entry.visitorContact.zalo || entry.id}`,
+    text: formatNotificationText(entry),
+    html: formatNotificationHtml(entry),
+  });
+
+  await sendSmtpMail({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE,
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+    from: NOTIFY_EMAIL_FROM,
+    to: recipients,
+    message,
   });
 }
 
@@ -236,6 +384,7 @@ async function handleAdminLogin(req, res) {
   appendAudit(req, 'ADMIN_LOGIN_SUCCESS', { sessionId: session.id });
 
   res.writeHead(200, {
+    ...SECURITY_HEADERS,
     'Content-Type': 'application/json; charset=utf-8',
     'Set-Cookie': makeCookie('admin_session', sessionToken, SESSION_TTL_MS),
     'Cache-Control': 'no-store',
@@ -251,6 +400,7 @@ function handleAdminLogout(req, res) {
 
   appendAudit(req, 'ADMIN_LOGOUT', {});
   res.writeHead(200, {
+    ...SECURITY_HEADERS,
     'Content-Type': 'application/json; charset=utf-8',
     'Set-Cookie': makeCookie('admin_session', '', 0),
     'Cache-Control': 'no-store',
@@ -430,6 +580,70 @@ function handleAdminRepos(res) {
   });
 }
 
+async function handleInlineBook(req, res, url) {
+  const rawUrl = normalizeText(url.searchParams.get('url') || '', 1200);
+  const parsed = parseAllowedBookUrl(rawUrl);
+
+  if (!parsed) {
+    return sendJson(res, 400, { error: 'Invalid book URL' });
+  }
+
+  const headers = {
+    Accept: 'application/pdf',
+    'User-Agent': 'CursedBiomesPortfolio/1.0',
+  };
+  if (req.headers.range) {
+    headers.Range = req.headers.range;
+  }
+
+  const upstream = await fetch(parsed.href, { headers });
+  if (!upstream.ok && upstream.status !== 206) {
+    return sendJson(res, 502, { error: `Book upstream responded with ${upstream.status}` });
+  }
+
+  const fileName = decodeURIComponent(parsed.pathname.split('/').pop() || 'book.pdf').replace(/[^\w .()-]+/g, '-');
+  const responseHeaders = {
+    ...SECURITY_HEADERS,
+    'Content-Type': upstream.headers.get('content-type') || 'application/pdf',
+    'Content-Disposition': `inline; filename="${fileName}"`,
+    'Accept-Ranges': upstream.headers.get('accept-ranges') || 'bytes',
+    'Cache-Control': 'public, max-age=3600',
+  };
+
+  copyHeader(upstream, responseHeaders, 'content-length');
+  copyHeader(upstream, responseHeaders, 'content-range');
+  copyHeader(upstream, responseHeaders, 'etag');
+  copyHeader(upstream, responseHeaders, 'last-modified');
+
+  res.writeHead(upstream.status, responseHeaders);
+
+  if (!upstream.body) {
+    return res.end();
+  }
+
+  Readable.fromWeb(upstream.body).on('error', () => {
+    if (!res.headersSent) res.writeHead(502, SECURITY_HEADERS);
+    res.end();
+  }).pipe(res);
+}
+
+function parseAllowedBookUrl(rawUrl) {
+  try {
+    const parsed = new URL(rawUrl);
+    const allowedPath = /^\/PiupiuTenshi\/GameProgramBooks\/[^/]+\/.+\.pdf$/i;
+    if (parsed.protocol !== 'https:' || parsed.hostname !== 'raw.githubusercontent.com') return null;
+    if (!allowedPath.test(parsed.pathname)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function copyHeader(upstream, target, headerName) {
+  const value = upstream.headers.get(headerName);
+  if (value) target[headerName.replace(/\b\w/g, (char) => char.toUpperCase())] = value;
+}
+
 function handleAdminAudit(res) {
   const audit = readJsonArray(AUDIT_FILE)
     .slice()
@@ -461,6 +675,11 @@ function verifyAdminPassword(password) {
   return timingSafeEqualText(password, ADMIN_PASSWORD);
 }
 
+function normalizePasswordHash(value) {
+  const hash = String(value || '').trim();
+  return /^[a-f0-9]{64}$/i.test(hash) ? hash : '';
+}
+
 function serveStatic(requestPath, res) {
   const cleanPath = decodeURIComponent(requestPath.split('?')[0]);
   const relativePath = cleanPath === '/' ? 'index.html' : cleanPath.replace(/^\/+/, '');
@@ -477,8 +696,9 @@ function serveStatic(requestPath, res) {
 
     const ext = path.extname(absolutePath).toLowerCase();
     res.writeHead(200, {
+      ...SECURITY_HEADERS,
       'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
-      'Cache-Control': ['.html', '.css', '.js'].includes(ext) ? 'no-store' : 'public, max-age=300',
+      'Cache-Control': getStaticCacheControl(ext),
     });
     fs.createReadStream(absolutePath).pipe(res);
   });
@@ -519,10 +739,10 @@ function getBotReply(message, hasContact) {
     return 'I saved your message. You can also use the CV portal while Sang reviews it.';
   }
 
-  if (normalized.includes('zalo') || normalized.includes('contact')) {
+  if (normalized.includes('messenger') || normalized.includes('facebook') || normalized.includes('zalo') || normalized.includes('contact')) {
     return hasContact
       ? 'Thanks, I saved your contact route for Sang.'
-      : 'I saved your message. Add an email or Zalo next time if you want a direct reply path.';
+      : 'I saved your message. Add an email, Messenger, or Zalo next time if you want a direct reply path.';
   }
 
   if (normalized.includes('project') || normalized.includes('github')) {
@@ -535,7 +755,7 @@ function getBotReply(message, hasContact) {
 
   return hasContact
     ? 'Thanks! I saved your message and contact route for Sang.'
-    : 'Thanks! I saved your message for Sang. Email or Zalo is optional if you want a reply.';
+    : 'Thanks! I saved your message for Sang. Email, Messenger, or Zalo is optional if you want a reply.';
 }
 
 function getBotActions(message) {
@@ -546,8 +766,8 @@ function getBotActions(message) {
     actions.push({ type: 'open_link', label: 'Download CV', href: 'public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf' });
   }
 
-  if (normalized.includes('zalo') || normalized.includes('contact')) {
-    actions.push({ type: 'open_link', label: 'Open Zalo', href: 'https://zalo.me/0898087507' });
+  if (normalized.includes('messenger') || normalized.includes('facebook') || normalized.includes('zalo') || normalized.includes('contact')) {
+    actions.push({ type: 'open_link', label: 'Open Messenger', href: MESSENGER_URL });
   }
 
   if (normalized.includes('demo') || normalized.includes('webgl') || normalized.includes('unity')) {
@@ -562,12 +782,525 @@ function getBotActions(message) {
 }
 
 function parseContact(raw) {
-  if (!raw) return { email: null, zalo: null, raw: null };
+  if (!raw) return { email: null, zalo: null, facebook: null, raw: null };
 
   const email = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || null;
   const zalo = raw.match(/(?:zalo\s*:?\s*)?(\+?\d[\d\s.-]{7,})/i)?.[1]?.replace(/\s+/g, '') || null;
+  const facebook = raw.match(/https?:\/\/(?:www\.)?facebook\.com\/[^\s]+/i)?.[0] || null;
 
-  return { email, zalo, raw };
+  return { email, zalo, facebook, raw };
+}
+
+function makeNotificationPayload(entry, channel = 'webhook') {
+  return {
+    type: 'portfolio_contact',
+    title: 'New portfolio contact',
+    channel,
+    messageId: entry.id,
+    timestamp: entry.timestamp,
+    page: entry.page,
+    language: entry.language,
+    contact: entry.visitorContact,
+    message: entry.message,
+    ip: entry.ip,
+    adminUrl: makeAbsoluteUrl('/admin/dashboard.html#messages'),
+    messengerUrl: MESSENGER_URL,
+    facebookProfileUrl: FACEBOOK_PROFILE_URL,
+  };
+}
+
+function formatNotificationText(entry) {
+  const contact = entry.visitorContact || {};
+  const zaloUrl = makeZaloUrl(contact.zalo);
+
+  return [
+    'New portfolio contact',
+    '',
+    `Time: ${entry.timestamp}`,
+    `Message ID: ${entry.id}`,
+    `Page: ${entry.page || '/'}`,
+    `Language: ${entry.language || 'unknown'}`,
+    `Email: ${contact.email || '-'}`,
+    `Zalo: ${zaloUrl || contact.zalo || '-'}`,
+    `Facebook: ${contact.facebook || '-'}`,
+    `-------------------------------------------`,
+    `Raw contact: ${contact.raw || '-'}`,
+    `IP: ${entry.ip || '-'}`,
+    '',
+    'Message:',
+    entry.message,
+    '',
+    `Open admin: ${makeAbsoluteUrl('/admin/dashboard.html#messages')}`,
+  ].join('\n');
+}
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function normalizeZaloPhone(phone = '') {
+  const digits = String(phone || '').replace(/\D/g, '');
+
+  if (!digits) return '';
+
+  // 0898087507 -> 84898087507
+  if (digits.startsWith('0')) {
+    return `84${digits.slice(1)}`;
+  }
+
+  // 84898087507 -> giữ nguyên
+  if (digits.startsWith('84')) {
+    return digits;
+  }
+
+  return digits;
+}
+
+function makeZaloUrl(phone = '') {
+  const normalizedPhone = normalizeZaloPhone(phone);
+  return normalizedPhone ? `https://zalo.me/${normalizedPhone}` : '';
+}
+
+function formatZaloHtml(phone = '') {
+  const zaloUrl = makeZaloUrl(phone);
+
+  if (!zaloUrl) return '-';
+
+  return `
+    <a href="${escapeHtml(zaloUrl)}" target="_blank" rel="noopener" style="
+      color:#b7ffca;
+      text-decoration:underline;
+      font-weight:700;
+    ">
+      ${escapeHtml(phone)} → OPEN_ZALO
+    </a>
+  `;
+}
+
+function nl2br(value = '') {
+  return escapeHtml(value).replace(/\n/g, '<br>');
+}
+
+function formatNotificationHtml(entry) {
+  const contact = entry.visitorContact || {};
+  const adminUrl = makeAbsoluteUrl('/admin/dashboard.html#messages');
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body style="margin:0; padding:0; background:#05070a;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="
+    background:#05070a;
+    padding:32px 0;
+  ">
+    <tr>
+      <td align="center">
+
+        <table width="680" cellpadding="0" cellspacing="0" border="0" style="
+          width:680px;
+          max-width:94%;
+          background:#080c10;
+          border:1px solid #1f8f4d;
+          border-radius:12px;
+          font-family:Consolas, Monaco, 'Courier New', monospace;
+          color:#d6ffe3;
+        ">
+
+          <tr>
+            <td style="
+              padding:22px 26px;
+              border-bottom:1px solid #1f8f4d;
+              background:#07110b;
+            ">
+              <div style="
+                font-size:13px;
+                color:#7cff9b;
+                letter-spacing:1px;
+              ">
+                &gt; PORTFOLIO_CONTACT_SYSTEM
+              </div>
+
+              <div style="
+                margin-top:10px;
+                font-size:26px;
+                line-height:1.3;
+                font-weight:700;
+                color:#ffffff;
+              ">
+                NEW MESSAGE RECEIVED<span style="color:#7cff9b;">_</span>
+              </div>
+
+              <div style="
+                margin-top:8px;
+                font-size:13px;
+                color:#6ee7b7;
+              ">
+                STATUS: <span style="color:#facc15;">PENDING_ADMIN_REVIEW</span>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:26px;">
+
+              <div style="
+                color:#7cff9b;
+                font-size:13px;
+                margin-bottom:10px;
+              ">
+                ┌─ MESSAGE_PAYLOAD ───────────────────────────────
+              </div>
+
+              <div style="
+                background:#020403;
+                border:1px solid #244f35;
+                border-radius:8px;
+                padding:18px;
+                margin-bottom:22px;
+                color:#ffffff;
+                font-family:Consolas, Monaco, 'Courier New', monospace;
+                font-size:21px;
+                line-height:1.55;
+                font-weight:700;
+              ">
+                ${nl2br(entry.message || '-')}
+              </div>
+
+              <div style="
+                color:#7cff9b;
+                font-size:13px;
+                margin-bottom:14px;
+              ">
+                └────────────────────────────────────────────────
+              </div>
+
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="
+                font-family:Consolas, Monaco, 'Courier New', monospace;
+                font-size:14px;
+                line-height:1.8;
+                color:#d6ffe3;
+                background:#050806;
+                border:1px solid #183926;
+                border-radius:8px;
+              ">
+                <tr>
+                  <td style="padding:14px 16px; color:#7cff9b; width:36%;">
+                    &gt; TIME
+                  </td>
+                  <td style="padding:14px 16px; color:#ffffff;">
+                    ${escapeHtml(entry.timestamp || '-')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px; color:#7cff9b;">
+                    &gt; MESSAGE_ID
+                  </td>
+                  <td style="padding:8px 16px; color:#ffffff;">
+                    ${escapeHtml(entry.id || '-')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px; color:#7cff9b;">
+                    &gt; PAGE
+                  </td>
+                  <td style="padding:8px 16px; color:#ffffff;">
+                    ${escapeHtml(entry.page || '/')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px; color:#7cff9b;">
+                    &gt; LANGUAGE
+                  </td>
+                  <td style="padding:8px 16px; color:#ffffff;">
+                    ${escapeHtml(entry.language || 'unknown')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px; color:#7cff9b;">
+                    &gt; EMAIL
+                  </td>
+                  <td style="padding:8px 16px; color:#ffffff;">
+                    ${escapeHtml(contact.email || '-')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px; color:#7cff9b;">
+                    &gt; ZALO
+                  </td>
+                  <td style="padding:8px 16px; color:#ffffff;">
+                    ${formatZaloHtml(contact.zalo || '-')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px; color:#7cff9b;">
+                    &gt; FACEBOOK
+                  </td>
+                  <td style="padding:8px 16px; color:#ffffff;">
+                    ${escapeHtml(contact.facebook || '-')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px; color:#7cff9b;">
+                    &gt; RAW_CONTACT
+                  </td>
+                  <td style="padding:8px 16px; color:#ffffff;">
+                    ${escapeHtml(contact.raw || '-')}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:8px 16px 14px 16px; color:#7cff9b;">
+                    &gt; IP
+                  </td>
+                  <td style="padding:8px 16px 14px 16px; color:#ffffff;">
+                    ${escapeHtml(entry.ip || '-')}
+                  </td>
+                </tr>
+              </table>
+
+              <div style="
+                margin-top:26px;
+                text-align:center;
+              ">
+                <a href="${escapeHtml(adminUrl)}" style="
+                  display:inline-block;
+                  background:#0f2f1c;
+                  border:1px solid #35ff73;
+                  color:#b7ffca;
+                  text-decoration:none;
+                  font-family:Consolas, Monaco, 'Courier New', monospace;
+                  font-size:15px;
+                  font-weight:700;
+                  padding:14px 22px;
+                  border-radius:6px;
+                  letter-spacing:1px;
+                ">
+                  &gt; OPEN_ADMIN_DASHBOARD
+                </a>
+              </div>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="
+              padding:16px 26px;
+              border-top:1px solid #1f8f4d;
+              background:#07110b;
+              color:#6ee7b7;
+              font-size:12px;
+              text-align:center;
+              font-family:Consolas, Monaco, 'Courier New', monospace;
+            ">
+              SYSTEM_LOG :: Portfolio contact notification generated successfully.
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+function makeAbsoluteUrl(pathname) {
+  const base = ENV.NEXT_PUBLIC_SITE_URL || `http://${HOST}:${PORT}`;
+  return new URL(pathname, base.endsWith('/') ? base : `${base}/`).toString();
+}
+
+function buildEmailMessage({ from, to, subject, text, html }) {
+  const boundary = `boundary_${crypto.randomUUID()}`;
+
+  return [
+    `From: ${sanitizeMailHeader(from)}`,
+    `To: ${to.map(sanitizeMailHeader).join(', ')}`,
+    `Subject: ${encodeMailHeader(subject)}`,
+    `Date: ${new Date().toUTCString()}`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    text || '',
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    html || '',
+    '',
+    `--${boundary}--`,
+    '',
+  ].join('\r\n');
+}
+
+async function sendSmtpMail({ host, port, secure, user, pass, from, to, message }) {
+  let socket = await connectSmtpSocket({ host, port, secure });
+  let reader = createSmtpReader(socket);
+
+  await readSmtpResponse(reader, [220]);
+  await sendSmtpCommand(socket, reader, `EHLO ${sanitizeSmtpToken(HOST || 'localhost')}`, [250]);
+
+  if (!secure) {
+    await sendSmtpCommand(socket, reader, 'STARTTLS', [220]);
+    socket = tls.connect({ socket, servername: host });
+    reader = createSmtpReader(socket);
+    await onceEvent(socket, 'secureConnect');
+    await sendSmtpCommand(socket, reader, `EHLO ${sanitizeSmtpToken(HOST || 'localhost')}`, [250]);
+  }
+
+  if (user && pass) {
+    await sendSmtpCommand(socket, reader, 'AUTH LOGIN', [334]);
+    await sendSmtpCommand(socket, reader, Buffer.from(user).toString('base64'), [334]);
+    await sendSmtpCommand(socket, reader, Buffer.from(pass).toString('base64'), [235]);
+  }
+
+  await sendSmtpCommand(socket, reader, `MAIL FROM:<${sanitizeSmtpAddress(from)}>`, [250]);
+  for (const recipient of to) {
+    await sendSmtpCommand(socket, reader, `RCPT TO:<${sanitizeSmtpAddress(recipient)}>`, [250, 251]);
+  }
+  await sendSmtpCommand(socket, reader, 'DATA', [354]);
+  socket.write(`${dotStuffSmtpMessage(message)}\r\n.\r\n`);
+  await readSmtpResponse(reader, [250]);
+  await sendSmtpCommand(socket, reader, 'QUIT', [221]);
+  socket.end();
+}
+
+function connectSmtpSocket({ host, port, secure }) {
+  return new Promise((resolve, reject) => {
+    const socket = secure
+      ? tls.connect({ host, port, servername: host })
+      : net.connect({ host, port });
+    const timer = setTimeout(() => {
+      socket.destroy(new Error('SMTP connection timed out'));
+    }, NOTIFICATION_TIMEOUT_MS);
+
+    socket.once(secure ? 'secureConnect' : 'connect', () => {
+      clearTimeout(timer);
+      resolve(socket);
+    });
+    socket.once('error', (error) => {
+      clearTimeout(timer);
+      reject(error);
+    });
+  });
+}
+
+function createSmtpReader(socket) {
+  let buffer = '';
+  const waiters = [];
+
+  socket.on('data', (chunk) => {
+    buffer += chunk.toString('utf8');
+    flush();
+  });
+
+  socket.on('error', (error) => {
+    while (waiters.length > 0) waiters.shift().reject(error);
+  });
+
+  function flush() {
+    let response = extractSmtpResponse();
+    while (response && waiters.length > 0) {
+      waiters.shift().resolve(response);
+      response = extractSmtpResponse();
+    }
+  }
+
+  function extractSmtpResponse() {
+    const match = buffer.match(/(?:^|\r\n)(\d{3}) [^\r\n]*(?:\r\n|$)/);
+    if (!match) return null;
+    const end = match.index + match[0].length;
+    const raw = buffer.slice(0, end);
+    buffer = buffer.slice(end);
+    return { code: Number(match[1]), raw };
+  }
+
+  return {
+    read() {
+      const response = extractSmtpResponse();
+      if (response) return Promise.resolve(response);
+      return new Promise((resolve, reject) => waiters.push({ resolve, reject }));
+    },
+  };
+}
+
+async function sendSmtpCommand(socket, reader, command, expectedCodes) {
+  socket.write(`${command}\r\n`);
+  return readSmtpResponse(reader, expectedCodes);
+}
+
+async function readSmtpResponse(reader, expectedCodes) {
+  const response = await withTimeout(reader.read(), NOTIFICATION_TIMEOUT_MS, 'SMTP response timed out');
+  if (!expectedCodes.includes(response.code)) {
+    throw new Error(`SMTP expected ${expectedCodes.join('/')} but got ${response.code}: ${response.raw.trim()}`);
+  }
+  return response;
+}
+
+function onceEvent(target, eventName) {
+  return new Promise((resolve, reject) => {
+    target.once(eventName, resolve);
+    target.once('error', reject);
+  });
+}
+
+function withTimeout(promise, timeoutMs, message) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), timeoutMs);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
+function sanitizeMailHeader(value) {
+  return String(value || '').replace(/[\r\n]+/g, ' ').trim();
+}
+
+function encodeMailHeader(value) {
+  return `=?UTF-8?B?${Buffer.from(sanitizeMailHeader(value), 'utf8').toString('base64')}?=`;
+}
+
+function sanitizeSmtpToken(value) {
+  return String(value || 'localhost').replace(/[^a-zA-Z0-9.-]/g, '-');
+}
+
+function sanitizeSmtpAddress(value) {
+  return String(value || '').replace(/[<>\r\n]/g, '').trim();
+}
+
+function dotStuffSmtpMessage(message) {
+  return String(message).replace(/^\./gm, '..');
 }
 
 function normalizeText(value, maxLength) {
@@ -594,7 +1327,18 @@ function readJsonArray(filePath) {
 function appendJsonEntry(filePath, entry) {
   const data = readJsonArray(filePath);
   data.push(entry);
+  const limit = getJsonFileLimit(filePath);
+  if (limit > 0 && data.length > limit) {
+    data.splice(0, data.length - limit);
+  }
   fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
+}
+
+function getJsonFileLimit(filePath) {
+  if (filePath === MESSAGES_FILE) return MAX_STORED_MESSAGES;
+  if (filePath === EVENTS_FILE) return MAX_STORED_EVENTS;
+  if (filePath === AUDIT_FILE) return MAX_STORED_AUDIT;
+  return 0;
 }
 
 function appendAudit(req, action, metadata) {
@@ -604,6 +1348,17 @@ function appendAudit(req, action, metadata) {
     action,
     ip: getClientIp(req),
     userAgent: req.headers['user-agent'] || '',
+    metadata,
+  });
+}
+
+function appendSystemAudit(action, metadata) {
+  appendJsonEntry(AUDIT_FILE, {
+    id: `aud_${crypto.randomUUID()}`,
+    timestamp: new Date().toISOString(),
+    action,
+    ip: 'server',
+    userAgent: 'notification-worker',
     metadata,
   });
 }
@@ -668,6 +1423,7 @@ function timingSafeEqualText(a, b) {
 
 function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
+    ...SECURITY_HEADERS,
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
   });
@@ -676,8 +1432,18 @@ function sendJson(res, statusCode, payload) {
 
 function sendText(res, statusCode, text) {
   res.writeHead(statusCode, {
+    ...SECURITY_HEADERS,
     'Content-Type': 'text/plain; charset=utf-8',
     'Cache-Control': 'no-store',
   });
   res.end(text);
+}
+
+function getStaticCacheControl(ext) {
+  if (ext === '.html') return 'no-store';
+  if (ext === '.js' || ext === '.css' || ext === '.json') return 'public, max-age=300, must-revalidate';
+  if (['.png', '.jpg', '.jpeg', '.webp', '.svg', '.woff2', '.woff', '.otf', '.ttf', '.ogg', '.mp3', '.pdf'].includes(ext)) {
+    return 'public, max-age=31536000, immutable';
+  }
+  return 'public, max-age=300';
 }

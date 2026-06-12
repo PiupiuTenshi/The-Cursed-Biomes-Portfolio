@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install
+        run: npm install
+
+      - name: Check syntax
+        run: npm run check
+
+      - name: Build static bundle
+        run: npm run build
+
+      - name: Release check
+        run: npm run release:check
+
+      - name: Smoke test server
+        run: |
+          npm start &
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:3001/api/health && break
+            sleep 1
+          done
+          npm run test:smoke

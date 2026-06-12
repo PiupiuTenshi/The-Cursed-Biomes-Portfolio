@@ -9,7 +9,14 @@
       content="The Cursed Biomes Portfolio by Pham Minh Sang, a dark fantasy Unity developer portfolio shell."
     />
     <title data-i18n="meta.title">The Cursed Biomes Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="preload" href="public/images/avatar-dark-fantasy-v2.png" as="image" />
+    <link rel="preload" href="public/images/try-now-gate-pixel-v2.png" as="image" />
     <link rel="stylesheet" href="src/styles/phase1.css" />
   </head>
   <body>
@@ -36,23 +43,34 @@
         <a href="#contact" data-i18n="nav.contact">Contact</a>
       </nav>
       <div class="header-tools">
-        <div class="language-switcher" aria-label="Language selector" data-i18n-aria-label="language.aria">
-          <button class="is-active" type="button" data-locale-button="en" data-i18n="language.en">EN</button>
-          <button type="button" data-locale-button="vi" data-i18n="language.vi">VI</button>
-        </div>
-        <div class="audio-console" aria-label="Ambient audio controls" data-i18n-aria-label="audio.aria">
-        <button class="icon-button" type="button" data-audio-prev aria-label="Previous track" data-i18n="audio.prev" data-i18n-aria-label="audio.prev.aria">Prev</button>
-        <button class="sound-toggle" type="button" data-audio-toggle aria-pressed="false">
-          Enable Sound
+        <button
+          class="settings-toggle"
+          type="button"
+          data-settings-toggle
+          aria-expanded="false"
+          aria-label="Open settings"
+          data-i18n-aria-label="settings.open.aria"
+        >
+          ⚙
         </button>
-        <button class="icon-button" type="button" data-audio-next aria-label="Next track" data-i18n="audio.next" data-i18n-aria-label="audio.next.aria">Next</button>
-        <label class="volume-control">
-          <span data-audio-label>Abyss Forest</span>
-          <input data-audio-volume type="range" min="0" max="100" value="34" aria-label="Audio volume" data-i18n-aria-label="audio.volume.aria" />
-        </label>
-        <button class="icon-button" type="button" data-motion-toggle aria-pressed="false">
-          Reduce Motion
-        </button>
+        <div class="settings-popover" data-settings-panel>
+          <div class="settings-head">
+            <strong data-i18n="settings.title">Settings</strong>
+            <button type="button" data-settings-close aria-label="Close settings" data-i18n-aria-label="settings.close.aria">×</button>
+          </div>
+          <div class="language-switcher" aria-label="Language selector" data-i18n-aria-label="language.aria">
+            <button class="is-active" type="button" data-locale-button="en" data-i18n="language.en">EN</button>
+            <button type="button" data-locale-button="vi" data-i18n="language.vi">VI</button>
+          </div>
+          <div class="audio-console" aria-label="Ambient audio controls" data-i18n-aria-label="audio.aria">
+            <button class="sound-toggle" type="button" data-audio-toggle aria-pressed="true">
+              Mute Sound
+            </button>
+            <label class="volume-control">
+              <span data-audio-label>Abyss Forest</span>
+              <input data-audio-volume type="range" min="0" max="100" value="34" aria-label="Audio volume" data-i18n-aria-label="audio.volume.aria" />
+            </label>
+          </div>
         </div>
       </div>
     </header>
@@ -67,9 +85,16 @@
             WebGL demos, live GitHub projects, and clean product thinking.
           </p>
           <div class="hero-actions" aria-label="Hero actions" data-i18n-aria-label="hero.actions.aria">
-            <a class="button button-primary" href="#try-now" data-i18n="hero.enterDemo">Enter Demo</a>
-            <a class="button" href="#projects" data-i18n="hero.viewProjects">View Projects</a>
-            <a class="button button-quiet" href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf" data-i18n="hero.downloadCv">
+            <a class="button button-primary" href="#try-now" data-hero-action="demo" data-i18n="hero.enterDemo">Enter Demo</a>
+            <a class="button" href="#projects" data-hero-action="projects" data-i18n="hero.viewProjects">View Projects</a>
+            <a
+              class="button button-quiet"
+              href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf"
+              target="_blank"
+              rel="noreferrer"
+              data-hero-action="cv"
+              data-i18n="hero.downloadCv"
+            >
               Download CV
             </a>
           </div>
@@ -160,8 +185,8 @@
         <div class="demo-shell">
           <div class="demo-viewport">
             <img
-              src="public/images/ui-ux-complete.png"
-              alt="Dark fantasy UI UX complete reference"
+              src="public/images/try-now-gate-pixel-v2.png"
+              alt="2D pixel dark fantasy biome gate preview"
               data-i18n-alt="demo.image.alt"
             />
             <div class="demo-overlay">
@@ -208,21 +233,29 @@
           <h2 data-i18n="library.title">Quotes and books</h2>
         </div>
         <div class="library-grid">
-          <blockquote>
-            <p data-i18n="library.quote">
+          <blockquote data-random-quote-card>
+            <p data-i18n="library.quote" data-random-quote>
               "Programs must be written for people to read, and only incidentally for machines
               to execute."
             </p>
-            <cite data-i18n="library.quoteAuthor">Harold Abelson</cite>
+            <cite data-i18n="library.quoteAuthor" data-random-quote-author>Harold Abelson</cite>
           </blockquote>
-          <article class="book-card">
-            <h3 data-i18n="library.book.patterns.title">Game Programming Patterns</h3>
-            <p data-i18n="library.book.patterns.body">Systems thinking for cleaner gameplay architecture.</p>
-          </article>
-          <article class="book-card">
-            <h3 data-i18n="library.book.clean.title">Clean Code</h3>
-            <p data-i18n="library.book.clean.body">Readable code habits for long-lived projects and teams.</p>
-          </article>
+          <div class="book-recommendations">
+            <div class="book-rail-head">
+              <p class="repo-status" data-books-status data-i18n="books.status.loading">Loading GameProgramBooks...</p>
+              <div class="book-rail-actions">
+                <button type="button" data-books-toggle data-i18n="books.showAll">Show all</button>
+                <a href="https://github.com/PiupiuTenshi/GameProgramBooks" data-i18n="books.repoLink">View repo</a>
+              </div>
+            </div>
+            <div class="books-grid" data-books-grid aria-live="polite">
+              <article class="book-card">
+                <span>EPUB</span>
+                <h3 data-i18n="library.book.patterns.title">Game Programming Patterns</h3>
+                <p data-i18n="library.book.patterns.body">Systems thinking for cleaner gameplay architecture.</p>
+              </article>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -232,9 +265,27 @@
           <h2 data-i18n="contact.title">Ready for recruiter review</h2>
         </div>
         <div class="contact-grid">
-          <a class="contact-link" href="https://github.com/PiupiuTenshi" data-i18n="contact.github">GitHub</a>
-          <a class="contact-link" href="https://zalo.me/0898087507" data-i18n="contact.zalo">Zalo</a>
-          <a class="contact-link" href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf" data-i18n="contact.cv">CV</a>
+          <a class="contact-link" href="https://github.com/PiupiuTenshi">
+            <span class="contact-icon" aria-hidden="true">GH</span>
+            <span>
+              <strong data-i18n="contact.github">GitHub</strong>
+              <small data-i18n="contact.githubHint">Code relics and repositories</small>
+            </span>
+          </a>
+          <a class="contact-link" href="https://m.me/MahiruShiina.tym.1207" target="_blank" rel="noreferrer">
+            <span class="contact-icon" aria-hidden="true">MS</span>
+            <span>
+              <strong data-i18n="contact.messenger">Messenger</strong>
+              <small data-i18n="contact.messengerHint">Fast Facebook inbox route</small>
+            </span>
+          </a>
+          <a class="contact-link" href="public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf">
+            <span class="contact-icon" aria-hidden="true">CV</span>
+            <span>
+              <strong data-i18n="contact.cv">CV</strong>
+              <small data-i18n="contact.cvHint">Recruiter-ready PDF profile</small>
+            </span>
+          </a>
         </div>
       </section>
     </main>
@@ -255,7 +306,7 @@
           <button type="button" data-reply-key="projects" data-i18n="chat.quick.projects">Projects</button>
           <button type="button" data-reply-key="demo" data-i18n="chat.quick.demo">Demo</button>
           <button type="button" data-reply-key="cv" data-i18n="chat.quick.cv">CV</button>
-          <button type="button" data-reply-key="zalo" data-i18n="chat.quick.zalo">Zalo</button>
+          <button type="button" data-reply-key="messenger" data-i18n="chat.quick.messenger">Messenger</button>
         </div>
         <form class="chatbot-form" data-chat-form>
           <label>
@@ -320,7 +371,49 @@
       </div>
     </div>
 
-    <audio data-audio-loop src="public/audio/track-01.ogg" preload="none" loop></audio>
+    <div class="project-preview-modal" data-project-preview-modal aria-hidden="true">
+      <div class="project-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="project-preview-title">
+        <div class="project-preview-head">
+          <div>
+            <p class="eyebrow" data-i18n="projectPreview.eyebrow">Repo preview</p>
+            <h2 id="project-preview-title" data-project-preview-title>Repository</h2>
+            <span data-project-preview-meta></span>
+          </div>
+          <button type="button" data-project-preview-close aria-label="Close preview" data-i18n="projectPreview.close">Close</button>
+        </div>
+        <div class="project-preview-stage">
+          <aside class="project-preview-summary" data-project-preview-summary></aside>
+          <article class="project-preview-readme" data-project-preview-readme>
+            <p data-i18n="projectPreview.loading">Loading README...</p>
+          </article>
+        </div>
+        <div class="project-preview-actions">
+          <a href="#" target="_blank" rel="noreferrer" data-project-preview-code data-i18n="repo.action.viewCode">View Code</a>
+          <a href="#" target="_blank" rel="noreferrer" data-project-preview-demo data-i18n="repo.action.demo">Demo</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="book-reader-modal" data-book-reader-modal aria-hidden="true">
+      <div class="book-reader-dialog" role="dialog" aria-modal="true" aria-labelledby="book-reader-title">
+        <div class="book-reader-head">
+          <div>
+            <p class="eyebrow" data-i18n="bookReader.eyebrow">Archive reader</p>
+            <h2 id="book-reader-title" data-book-reader-title>Book</h2>
+            <span data-book-reader-meta></span>
+          </div>
+          <button type="button" data-book-reader-close aria-label="Close book reader" data-i18n="bookReader.close">Close</button>
+        </div>
+        <div class="book-reader-stage">
+          <iframe data-book-reader-frame title="Book reader" data-i18n-title="bookReader.frameTitle"></iframe>
+        </div>
+        <div class="book-reader-actions">
+          <a href="#" target="_blank" rel="noreferrer" data-book-reader-open data-i18n="bookReader.openRaw">Open raw file</a>
+        </div>
+      </div>
+    </div>
+
+    <audio data-audio-loop src="public/audio/track-01.ogg" preload="auto" autoplay loop></audio>
     <script src="src/scripts/site-content.js" defer></script>
     <script src="src/scripts/phase1.js" defer></script>
   </body>
