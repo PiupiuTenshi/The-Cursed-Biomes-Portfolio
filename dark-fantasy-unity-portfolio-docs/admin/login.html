@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Gate - The Cursed Biomes</title>
+    <link rel="stylesheet" href="/admin/admin.css" />
+  </head>
+  <body class="admin-auth">
+    <main class="auth-shell">
+      <section class="auth-panel">
+        <p class="eyebrow">Hidden sanctum</p>
+        <h1>Admin Gate</h1>
+        <p class="muted">Gate token accepted from chatbot command. Enter the server-side admin password.</p>
+        <form data-login-form>
+          <label>
+            <span>Gate token</span>
+            <input data-gate-token name="gateToken" readonly />
+          </label>
+          <label>
+            <span>Password</span>
+            <input data-password name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit">Enter Dashboard</button>
+          <p class="status" data-status></p>
+        </form>
+      </section>
+    </main>
+    <script src="/admin/login.js" defer></script>
+  </body>
+</html>

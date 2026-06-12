@@ -1,0 +1,12 @@
+[
+  {
+    "slug": "biome-gate",
+    "title": "Biome Gate Demo",
+    "repoName": "Unity2DTopDown",
+    "webglEnabled": true,
+    "tryNowUrl": "public/games/biome-gate/index.html",
+    "fallbackUrl": "https://github.com/PiupiuTenshi",
+    "demoLabel": "Quick Preview",
+    "isPlaceholder": true
+  }
+]

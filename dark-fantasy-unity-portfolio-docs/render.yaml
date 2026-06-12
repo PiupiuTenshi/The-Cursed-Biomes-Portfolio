@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: cursed-biomes-portfolio
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run check && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: ADMIN_GATE_PHRASE
+        sync: false
+      - key: ADMIN_PASSWORD_SHA256
+        sync: false
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false

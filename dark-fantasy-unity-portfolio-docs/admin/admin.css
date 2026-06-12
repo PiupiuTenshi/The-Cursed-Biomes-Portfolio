@@ -1,0 +1,345 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap");
+
+:root {
+  color-scheme: dark;
+  --bg: #08090d;
+  --panel: rgba(18, 21, 30, 0.86);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #f1efe7;
+  --muted: #aeb5c2;
+  --accent: #d9a441;
+  --primary: #b88cff;
+  --font-dearpix: "DeArPix", "DearPix", "DeArPix Viet Hoa", "Be Vietnam Pro", system-ui, sans-serif;
+  font-family: var(--font-dearpix);
+}
+
+@font-face {
+  font-family: "DeArPix";
+  src:
+    local("DeArPix"),
+    local("DeArPix 1.94 Regular"),
+    local("DeArPix 1.94"),
+    local("DearPix"),
+    local("DeArPix Viet Hoa"),
+    url("../public/fonts/DeArPix.woff2") format("woff2"),
+    url("../public/fonts/DeArPix.woff") format("woff"),
+    url("../public/fonts/DeArPix.otf") format("opentype"),
+    url("../public/fonts/DeArPix.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 14% 10%, rgba(123, 63, 178, 0.28), transparent 30rem),
+    linear-gradient(180deg, #08090d, #111018 56%, #07080c);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 40px;
+  border: 1px solid rgba(184, 140, 255, 0.34);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(123, 63, 178, 0.3);
+  cursor: pointer;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.muted,
+.status {
+  color: var(--muted);
+}
+
+.admin-auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.auth-shell {
+  width: min(520px, 100%);
+}
+
+.auth-panel,
+.admin-card,
+.kpis article {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+}
+
+.auth-panel {
+  padding: 28px;
+}
+
+.auth-panel h1,
+.admin-header h1,
+.admin-card h2 {
+  margin: 8px 0 0;
+}
+
+form {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+}
+
+label span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(16px, 4vw, 44px);
+  border-bottom: 1px solid var(--border);
+  background: rgba(8, 9, 13, 0.86);
+  backdrop-filter: blur(16px);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 16px;
+  width: min(1320px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 56px;
+}
+
+.kpis {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kpis article {
+  padding: 16px;
+}
+
+.kpis span {
+  color: var(--muted);
+}
+
+.kpis strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 2rem;
+}
+
+.admin-card {
+  min-width: 0;
+  padding: 18px;
+}
+
+.span-2 {
+  grid-column: 1 / -1;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.table-wrap {
+  overflow: auto;
+  margin-top: 14px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.filter-grid label {
+  min-width: 0;
+}
+
+.analytics-summary {
+  display: grid;
+  grid-template-columns: 0.55fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.analytics-summary article {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.analytics-summary span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.analytics-summary strong {
+  font-size: 1.55rem;
+}
+
+.analytics-summary div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.analytics-summary b {
+  max-width: 100%;
+  padding: 5px 8px;
+  overflow-wrap: anywhere;
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(184, 140, 255, 0.14);
+  font-size: 0.84rem;
+}
+
+.analytics-summary mark {
+  margin-left: 4px;
+  border-radius: 999px;
+  color: #150f1d;
+  background: var(--accent);
+  padding: 1px 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 820px;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--accent);
+  font-size: 0.82rem;
+}
+
+td {
+  color: var(--muted);
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.contact-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(70, 226, 255, 0.26);
+  border-radius: 6px;
+  color: #8ff3ff;
+  background: rgba(70, 226, 255, 0.08);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.contact-action:hover,
+.contact-action:focus-visible {
+  border-color: rgba(70, 226, 255, 0.48);
+  box-shadow: 0 0 16px rgba(70, 226, 255, 0.14);
+}
+
+.feed {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.feed article {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.feed strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.feed small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .dashboard-grid,
+  .kpis,
+  .filter-grid,
+  .analytics-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
