@@ -260,6 +260,15 @@ async function notifyNewContact(entry) {
   const results = await Promise.allSettled(tasks);
   const sent = results.filter((result) => result.status === 'fulfilled').length;
   const failed = results.length - sent;
+  const errors = results
+    .filter((r) => r.status === 'rejected')
+    .map((r) => {
+      try {
+        return String((r.reason && (r.reason.message || r.reason)) || r.reason);
+      } catch (e) {
+        return String(r.reason || e.message || 'unknown');
+      }
+    });
 
   appendSystemAudit('CONTACT_NOTIFICATION_RESULT', {
     messageId: entry.id,
@@ -270,9 +279,18 @@ async function notifyNewContact(entry) {
       MESSENGER_WEBHOOK_URL ? 'messenger_webhook' : null,
       SMTP_HOST && NOTIFY_EMAIL_TO && NOTIFY_EMAIL_FROM ? 'email_smtp' : null,
     ].filter(Boolean),
+    errors,
   });
 
-  return { sent, failed, skipped: false };
+  if (errors.length > 0) {
+    try {
+      console.error('Notification errors for message', entry.id, errors.join(' | '));
+    } catch (e) {
+      console.error('Notification errors (unable to stringify)', entry.id, errors);
+    }
+  }
+
+  return { sent, failed, skipped: false, errors };
 }
 
 async function sendZaloWebhookNotification(entry) {
