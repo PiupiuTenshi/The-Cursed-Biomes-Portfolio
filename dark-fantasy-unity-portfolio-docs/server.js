@@ -7,7 +7,10 @@ const tls = require('tls');
 const { Readable } = require('stream');
 
 const ROOT = __dirname;
-const ENV = loadEnv(path.join(ROOT, '.env'));
+const ENV = {
+  ...loadEnv(path.join(ROOT, '.env')),
+  ...process.env,
+};
 const PORT = Number(process.env.PORT || ENV.PORT || 3001);
 const NODE_ENV = process.env.NODE_ENV || ENV.NODE_ENV || 'development';
 const HOST = process.env.HOST || ENV.HOST || (NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1');
@@ -56,6 +59,8 @@ const SMTP_SECURE =
 
 const SMTP_USER = envValue('SMTP_USER');
 const SMTP_PASS = envValue('SMTP_PASS');
+const RESEND_API_KEY = ENV.RESEND_API_KEY || '';
+const RESEND_FROM = ENV.RESEND_FROM || NOTIFY_EMAIL_FROM || '';
 const ZALO_WEBHOOK_URL = ENV.ZALO_WEBHOOK_URL || ENV.ZALO_NOTIFY_WEBHOOK_URL || '';
 const FACEBOOK_PROFILE_URL = ENV.NEXT_PUBLIC_FACEBOOK_URL || ENV.FACEBOOK_PROFILE_URL || 'https://www.facebook.com/MahiruShiina.tym.1207';
 const MESSENGER_URL = ENV.NEXT_PUBLIC_MESSENGER_URL || ENV.MESSENGER_URL || 'https://m.me/MahiruShiina.tym.1207';
@@ -245,7 +250,9 @@ async function notifyNewContact(entry) {
     tasks.push(sendMessengerWebhookNotification(entry));
   }
 
-  if (SMTP_HOST && NOTIFY_EMAIL_TO && NOTIFY_EMAIL_FROM) {
+  if (RESEND_API_KEY && RESEND_FROM && NOTIFY_EMAIL_TO) {
+    tasks.push(sendResendEmailNotification(entry));
+  } else if (SMTP_HOST && NOTIFY_EMAIL_TO && NOTIFY_EMAIL_FROM) {
     tasks.push(sendEmailNotification(entry));
   }
 
@@ -258,6 +265,13 @@ async function notifyNewContact(entry) {
   }
 
   const results = await Promise.allSettled(tasks);
+
+  results.forEach((result, index) => {
+    if (result.status === 'rejected') {
+      console.error(`[CONTACT_NOTIFICATION_FAILED_${index}]`, result.reason);
+    }
+  });
+
   const sent = results.filter((result) => result.status === 'fulfilled').length;
   const failed = results.length - sent;
   const errors = results
@@ -277,6 +291,7 @@ async function notifyNewContact(entry) {
     channels: [
       ZALO_WEBHOOK_URL ? 'zalo_webhook' : null,
       MESSENGER_WEBHOOK_URL ? 'messenger_webhook' : null,
+      RESEND_API_KEY && RESEND_FROM && NOTIFY_EMAIL_TO ? 'email_resend_api' : null,
       SMTP_HOST && NOTIFY_EMAIL_TO && NOTIFY_EMAIL_FROM ? 'email_smtp' : null,
     ].filter(Boolean),
     errors,
@@ -333,6 +348,37 @@ async function sendMessengerWebhookNotification(entry) {
   if (!response.ok) {
     throw new Error(`Messenger webhook responded with ${response.status}`);
   }
+}
+
+async function sendResendEmailNotification(entry) {
+  const recipients = NOTIFY_EMAIL_TO
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (recipients.length === 0) return;
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: RESEND_FROM,
+      to: recipients,
+      subject: `New portfolio contact - ${entry.visitorContact.email || entry.visitorContact.zalo || entry.id}`,
+      text: formatNotificationText(entry),
+      html: formatNotificationHtml(entry),
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`Resend email failed ${response.status}: ${detail}`);
+  }
+
+  return response.json();
 }
 
 async function sendEmailNotification(entry) {
