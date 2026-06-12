@@ -4,8 +4,8 @@ services:
     runtime: node
     plan: free
     rootDir: dark-fantasy-unity-portfolio-docs
-    buildCommand: npm install && npm run check && npm run build
-    startCommand: npm start
+    buildCommand: cd dark-fantasy-unity-portfolio-docs && npm install && npm run check && npm run build
+    startCommand: cd dark-fantasy-unity-portfolio-docs && npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
