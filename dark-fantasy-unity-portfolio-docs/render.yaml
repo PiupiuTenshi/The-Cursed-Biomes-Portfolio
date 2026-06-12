@@ -3,6 +3,7 @@ services:
     name: cursed-biomes-portfolio
     runtime: node
     plan: free
+    rootDir: dark-fantasy-unity-portfolio-docs
     buildCommand: npm install && npm run check && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
