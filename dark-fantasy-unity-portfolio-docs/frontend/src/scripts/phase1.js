@@ -163,6 +163,7 @@ initButtonFeedback();
 initHeroActions();
 initEffects();
 initAnalytics();
+initBooksWheelScroll();
 loadGitHubRepos();
 loadGameProgramBooks();
 
@@ -954,6 +955,11 @@ function openBookReader(book) {
 }
 
 function makeBookViewerUrl(book) {
+  if (isCloudflareDeployment()) {
+    if (book.drivePreviewUrl) return book.drivePreviewUrl;
+    return `public/books/drive-missing.html?title=${encodeURIComponent(book.name)}`;
+  }
+
   if (book.localUrl) {
     return `public/books/reader.html?file=${encodeURIComponent(book.localUrl)}&title=${encodeURIComponent(book.name)}`;
   }
@@ -967,6 +973,11 @@ function makeBookViewerUrl(book) {
   }
   if (book.drivePreviewUrl) return book.drivePreviewUrl;
   return `public/books/drive-missing.html?title=${encodeURIComponent(book.name)}`;
+}
+
+function isCloudflareDeployment() {
+  return /(?:^|\.)workers\.dev$/i.test(window.location.hostname)
+    || /(?:^|\.)pages\.dev$/i.test(window.location.hostname);
 }
 
 function hydrateBookRuntimeData(book) {
@@ -1203,6 +1214,28 @@ projectFilters.forEach((button) => {
     logVisitorEvent('PROJECT_FILTER_CHANGED', { filter: activeProjectFilter });
   });
 });
+
+function initBooksWheelScroll() {
+  if (!booksGrid) return;
+
+  booksGrid.addEventListener('wheel', (event) => {
+    if (event.shiftKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+
+    const maxScrollLeft = booksGrid.scrollWidth - booksGrid.clientWidth;
+    if (maxScrollLeft <= 1) return;
+
+    const direction = Math.sign(event.deltaY);
+    const canScroll = direction > 0
+      ? booksGrid.scrollLeft < maxScrollLeft - 1
+      : booksGrid.scrollLeft > 1;
+
+    // At either end, release the wheel so the page can continue scrolling normally.
+    if (!canScroll) return;
+
+    event.preventDefault();
+    booksGrid.scrollLeft += event.deltaY;
+  }, { passive: false });
+}
 
 projectPagination?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-project-page]');

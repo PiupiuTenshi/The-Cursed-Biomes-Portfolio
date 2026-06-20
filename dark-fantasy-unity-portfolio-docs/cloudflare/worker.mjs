@@ -73,7 +73,8 @@ async function login(request, env) {
   const tokenValue = `adm_${crypto.randomUUID()}`, id = `admin_${crypto.randomUUID()}`;
   await env.DB.prepare('INSERT INTO admin_sessions (token_hash,id,created_at,expires_at,ip) VALUES (?,?,?,?,?)').bind(await hash(tokenValue), id, new Date().toISOString(), Date.now() + SESSION_TTL_MS, clientIp(request)).run();
   await audit(env, 'ADMIN_LOGIN_SUCCESS', request, id, {});
-  return json({ ok: true, redirectTo: '/admin/dashboard.html' }, 200, { 'set-cookie': cookie('admin_session', tokenValue, SESSION_TTL_MS) });
+  const redirectTo = body.returnTo === '/?admin=1' ? '/?admin=1' : '/admin/dashboard.html';
+  return json({ ok: true, redirectTo }, 200, { 'set-cookie': cookie('admin_session', tokenValue, SESSION_TTL_MS) });
 }
 
 async function logout(request, env) { if (!sameOrigin(request, env)) return json({ error: 'Invalid request origin' }, 403); const token = cookies(request).admin_session; if (token) await env.DB.prepare('DELETE FROM admin_sessions WHERE token_hash=?').bind(await hash(token)).run(); return json({ ok: true }, 200, { 'set-cookie': cookie('admin_session', '', 0) }); }

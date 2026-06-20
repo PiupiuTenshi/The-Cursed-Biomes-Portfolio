@@ -1178,6 +1178,7 @@ cite {
   grid-auto-columns: minmax(170px, 210px);
   gap: 12px;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
   padding-bottom: 8px;
   scroll-snap-type: x proximity;
 }

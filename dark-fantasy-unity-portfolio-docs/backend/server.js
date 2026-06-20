@@ -75,6 +75,7 @@ const TRUST_PROXY = envValue('TRUST_PROXY').toLowerCase() === 'true';
 const EXPECTED_ORIGIN = getExpectedOrigin(ENV.NEXT_PUBLIC_SITE_URL);
 const RATE_LIMITS = {
   chat: { limit: readBoundedEnvInt('RATE_LIMIT_CHAT_MAX', 12, 1, 1000), windowMs: 10 * 60 * 1000 },
+  gate: { limit: readBoundedEnvInt('RATE_LIMIT_GATE_MAX', 20, 1, 1000), windowMs: 15 * 60 * 1000 },
   event: { limit: readBoundedEnvInt('RATE_LIMIT_EVENT_MAX', 90, 1, 5000), windowMs: 60 * 1000 },
   login: { limit: readBoundedEnvInt('RATE_LIMIT_LOGIN_MAX', 5, 1, 100), windowMs: 15 * 60 * 1000 },
 };
@@ -153,7 +154,6 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'POST' && url.pathname === '/api/chat/messages') {
-      if (!enforceRateLimit(req, res, 'chat')) return;
       return handleChatMessage(req, res);
     }
 
@@ -258,6 +258,9 @@ async function handleChatMessage(req, res) {
   if (!message) {
     return sendJson(res, 400, { error: 'Message is required' });
   }
+
+  const isGateCommand = /^\/(?:open\s+gate|auth)\s*:/i.test(message);
+  if (!enforceRateLimit(req, res, isGateCommand ? 'gate' : 'chat')) return;
 
   const gateResult = handleGateCommand(message, req, sessionId);
   if (gateResult) {
@@ -512,6 +515,7 @@ async function handleAdminLogin(req, res) {
   const payload = await readJsonBody(req);
   const gateToken = normalizeText(payload.gateToken, 120);
   const password = typeof payload.password === 'string' ? payload.password : '';
+  const redirectTo = payload.returnTo === '/?admin=1' ? '/?admin=1' : '/admin/dashboard.html';
   const tokenState = gateTokens.get(gateToken);
 
   if (!tokenState || tokenState.used || tokenState.expiresAt < Date.now()) {
@@ -542,7 +546,7 @@ async function handleAdminLogin(req, res) {
     'Set-Cookie': makeCookie('admin_session', sessionToken, SESSION_TTL_MS),
     'Cache-Control': 'no-store',
   });
-  res.end(JSON.stringify({ ok: true, redirectTo: '/admin/dashboard.html' }));
+  res.end(JSON.stringify({ ok: true, redirectTo }));
 }
 
 function handleAdminLogout(req, res) {

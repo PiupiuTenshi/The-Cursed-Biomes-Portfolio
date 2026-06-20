@@ -55,6 +55,12 @@
         white-space: nowrap;
       }
 
+      .reader-progress {
+        margin-top: 4px;
+        color: var(--cyan);
+        font-size: 0.72rem;
+      }
+
       .reader-controls {
         display: inline-flex;
         align-items: center;
@@ -139,10 +145,12 @@
         <button type="button" data-zoom-out aria-label="Thu nhỏ">-</button>
         <button type="button" data-zoom-in aria-label="Phóng to">+</button>
         <button type="button" data-fit aria-label="Vừa màn hình">Fit</button>
+        <button type="button" data-bookmark aria-label="Đánh dấu trang">🔖</button>
         <button type="button" data-reload aria-label="Tải lại">Reload</button>
       </div>
     </header>
     <main>
+      <div class="reader-progress" data-reader-progress></div>
       <div class="reader-status" data-status>Đang tải PDF...</div>
       <div class="reader-pages" data-pages hidden></div>
     </main>

@@ -23,7 +23,16 @@ COPY_TARGETS.forEach((target) => {
   const destination = path.join(DIST, target);
   const stats = fs.statSync(source);
   if (stats.isDirectory()) {
-    fs.cpSync(source, destination, { recursive: true });
+    fs.cpSync(source, destination, {
+      recursive: true,
+      filter: (candidate) => {
+        const relative = path.relative(FRONTEND, candidate);
+        // Cloudflare Workers Assets limits each file to 25 MiB. Books remain
+        // available in local Node development and use Drive/GitHub fallbacks
+        // after the Cloudflare deploy.
+        return !relative.startsWith(`public${path.sep}books${path.sep}`) || !/\.pdf$/i.test(candidate);
+      },
+    });
     return;
   }
 

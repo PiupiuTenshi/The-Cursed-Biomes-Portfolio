@@ -9,5 +9,5 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "cursed-biomes-portfolio"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "9b05fa00-2c95-4b66-8e8f-e13ba4812b9f"
 migrations_dir = "cloudflare/migrations"

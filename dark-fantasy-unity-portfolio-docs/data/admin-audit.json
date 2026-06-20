@@ -1344,5 +1344,146 @@
     "metadata": {
       "sessionId": "admin_e8642b59-bb50-473e-9f90-c87fd8faf6e4"
     }
+  },
+  {
+    "id": "aud_68fdf9c3-857e-43e3-860e-d15571b4c146",
+    "timestamp": "2026-06-20T12:49:05.749Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_c22868a5-b45e-4eba-9660-352be1e427e8",
+    "timestamp": "2026-06-20T12:49:31.547Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "sessionId": "admin_2a5bc134-c17d-4f64-bfbe-82ff9ba727fe"
+    }
+  },
+  {
+    "id": "aud_5e0ad297-665f-4de8-a9a2-d340e32ddf70",
+    "timestamp": "2026-06-20T12:49:35.885Z",
+    "action": "ADMIN_LOGOUT",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {}
+  },
+  {
+    "id": "aud_4f8e81d2-3d74-42c7-9b91-42057736ba3a",
+    "timestamp": "2026-06-20T12:49:57.852Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_004d0467-f35e-41fb-ae58-47e893043a23",
+    "timestamp": "2026-06-20T12:50:21.457Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "sessionId": "admin_5d010aa6-11b0-48a3-ac62-d07876482347"
+    }
+  },
+  {
+    "id": "aud_1c1617ac-486a-4da3-a3b0-98d3d0342aa1",
+    "timestamp": "2026-06-20T12:51:38.336Z",
+    "action": "ADMIN_LOGOUT",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {}
+  },
+  {
+    "id": "aud_48112073-0ccc-4fe0-b10d-b10fdf7745f0",
+    "timestamp": "2026-06-20T12:51:54.481Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_8bda5102-48af-4ca8-ac7a-52a011163513",
+    "timestamp": "2026-06-20T12:56:00.147Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "sessionId": "admin_a29fbff6-c454-4f63-9157-bea4d3b29c77"
+    }
+  },
+  {
+    "id": "aud_ce22c30f-d3d6-4b41-805c-4af083967218",
+    "timestamp": "2026-06-20T12:58:55.392Z",
+    "action": "ADMIN_LOGIN_DENIED",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "reason": "invalid_gate_token"
+    }
+  },
+  {
+    "id": "aud_ee6e7ce2-fdbf-487e-bf84-02e7fc658eef",
+    "timestamp": "2026-06-20T12:58:56.538Z",
+    "action": "ADMIN_LOGIN_DENIED",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "reason": "invalid_gate_token"
+    }
+  },
+  {
+    "id": "aud_9c05bec0-e32a-43dc-bdbd-52a206ea3ef4",
+    "timestamp": "2026-06-20T12:59:20.423Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_3ebdb87b-f5e8-4f8a-9ac2-afbbcf9dae71",
+    "timestamp": "2026-06-20T13:03:16.487Z",
+    "action": "ADMIN_GATE_ACCEPTED",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "command": "/open gate: ***"
+    }
+  },
+  {
+    "id": "aud_e953a853-6b0d-4ad7-acad-b4c93163abb8",
+    "timestamp": "2026-06-20T13:03:57.506Z",
+    "action": "ADMIN_LOGIN_DENIED",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "reason": "invalid_password"
+    }
+  },
+  {
+    "id": "aud_4fb827e3-d9b4-42d8-8b1e-ef4723cc0d87",
+    "timestamp": "2026-06-20T13:04:15.064Z",
+    "action": "ADMIN_LOGIN_SUCCESS",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0",
+    "metadata": {
+      "sessionId": "admin_899705fe-d856-4501-915c-7a6c800440ce"
+    }
   }
 ]

@@ -6891,5 +6891,499 @@
     "metadata": {},
     "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_7b345d08-f3da-4671-a73c-0e0910733c54",
+    "timestamp": "2026-06-20T12:00:36.557Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_b2aa65a3-7cc6-4499-98d0-8152abd85e2a",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "en",
+      "viewport": "803x419"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.125.0 Chrome/148.0.7778.97 Electron/42.2.0 Safari/537.36"
+  },
+  {
+    "id": "evt_5b45ff4d-52ee-4386-b889-5283d1d96d18",
+    "timestamp": "2026-06-20T12:00:42.793Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_4854719f-841e-4987-86c8-ede8eb13a619",
+    "timestamp": "2026-06-20T12:00:42.876Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_e1147b0c-695e-4ba9-bed9-21876739367a",
+    "timestamp": "2026-06-20T12:00:52.111Z",
+    "eventType": "BOOKS_TOGGLE_ALL",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "expanded": true,
+      "count": 52
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_eaf09824-2e56-41cd-9a2f-e89875ed8a76",
+    "timestamp": "2026-06-20T12:07:34.645Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Fundamentals of Computer Graphics, Fourth Edition",
+      "path": "07.Computer Graphics/Begin CG Theory/Fundamentals of Computer Graphics, Fourth Edition.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_b939c9e0-8570-4822-b183-ed0c62f57891",
+    "timestamp": "2026-06-20T12:10:08.525Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_8507fc13-7556-4a81-a119-de84c1e5fd94",
+    "timestamp": "2026-06-20T12:10:08.602Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_a59fdae0-fe10-4b42-b686-3bb1cce04bea",
+    "timestamp": "2026-06-20T12:10:13.707Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne",
+      "path": "01.Computer Science/Algorithm/Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_1bebb3fb-b512-4450-bf73-f7f3305da12d",
+    "timestamp": "2026-06-20T12:10:32.091Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne",
+      "path": "01.Computer Science/Algorithm/Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_143c70dc-6b9b-47a3-aee0-d2bb249bb353",
+    "timestamp": "2026-06-20T12:11:09.499Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne",
+      "path": "01.Computer Science/Algorithm/Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_696745f6-7d4f-45c3-937a-5b22e08bdc17",
+    "timestamp": "2026-06-20T12:11:32.163Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne",
+      "path": "01.Computer Science/Algorithm/Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_bed1ddf0-6071-46ea-818c-5642b5d58b50",
+    "timestamp": "2026-06-20T12:35:32.861Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_17ea82c0-3908-4f1f-b3ad-9979b17321c6",
+    "timestamp": "2026-06-20T12:35:32.868Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_a0f69eeb-ca4d-48f4-ad0d-0b7e7b4c94c0",
+    "timestamp": "2026-06-20T12:35:35.275Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Introduction to Algorithms",
+      "path": "01.Computer Science/Algorithm/Introduction to Algorithms.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_debb30c5-506e-4cbb-a339-80cfb48fa9c7",
+    "timestamp": "2026-06-20T12:35:44.044Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Introduction to Algorithms",
+      "path": "01.Computer Science/Algorithm/Introduction to Algorithms.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_08727191-8aee-4331-8b97-a085ceb86792",
+    "timestamp": "2026-06-20T12:35:49.823Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {
+      "bookName": "Introduction to Algorithms",
+      "path": "01.Computer Science/Algorithm/Introduction to Algorithms.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_fa15a678-c883-4697-8c24-30bd79336714",
+    "timestamp": "2026-06-20T12:49:05.767Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_68320850-0fbe-49b9-b84e-dc030aa2e314",
+    "timestamp": "2026-06-20T12:49:36.120Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_a9b203b3-02fd-47d1-a6cf-d99c2bc66484",
+    "timestamp": "2026-06-20T12:49:36.166Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_a77ed7ac-4f34-4abb-8110-712967ca9ced",
+    "timestamp": "2026-06-20T12:49:57.869Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_86e9e7d1-f85d-4d2c-abca-89e446f165a6",
+    "timestamp": "2026-06-20T12:51:38.626Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_f7183b70-b289-41a2-b5c9-13615f498509",
+    "timestamp": "2026-06-20T12:51:38.689Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_812f76be-987f-4676-9503-a2886e301173",
+    "timestamp": "2026-06-20T12:51:54.493Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_d8931b44-ef25-4bb5-b18a-46210d1236f5",
+    "timestamp": "2026-06-20T12:59:00.637Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_e5377272-ca4b-4de1-8a7a-aee7076b8a62",
+    "timestamp": "2026-06-20T12:59:00.699Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_61f466a5-4317-4840-a36e-284a2c1198e1",
+    "timestamp": "2026-06-20T12:59:20.440Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_2c1c7c01-0d01-4030-8914-0b17dd8cc08d",
+    "timestamp": "2026-06-20T13:02:27.595Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_1cbb058c-f86c-4fe8-a935-aafc4f5823fb",
+    "timestamp": "2026-06-20T13:02:27.678Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_879cab59-4f88-4d52-ac36-0f0bae1c75a3",
+    "timestamp": "2026-06-20T13:03:16.504Z",
+    "eventType": "CHAT_MESSAGE_SENT",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/dashboard.html",
+    "metadata": {},
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_9f201987-ca2f-4db5-bf70-734aed7021c7",
+    "timestamp": "2026-06-20T13:04:15.366Z",
+    "eventType": "PAGE_VIEW",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/login.html?gateToken=gate_6312867f-dbcb-4fed-b675-9c745f1affda",
+    "metadata": {
+      "title": "The Cursed Biomes Portfolio",
+      "language": "vi",
+      "viewport": "1912x948"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_04337ffb-1836-4f3d-aaa6-59d9ea768d67",
+    "timestamp": "2026-06-20T13:04:15.424Z",
+    "eventType": "WEBGL_LOAD_COMPLETE",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/login.html?gateToken=gate_6312867f-dbcb-4fed-b675-9c745f1affda",
+    "metadata": {
+      "eventName": "WEBGL_LOAD_COMPLETE",
+      "gameSlug": "biome-gate",
+      "repoName": "Unity2DTopDown",
+      "device": "desktop",
+      "isPlaceholder": true
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_23c36e9f-19ff-4375-ba65-a7dc3302868f",
+    "timestamp": "2026-06-20T13:04:22.353Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/login.html?gateToken=gate_6312867f-dbcb-4fed-b675-9c745f1affda",
+    "metadata": {
+      "bookName": "Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne",
+      "path": "01.Computer Science/Algorithm/Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_ca2bcd08-53dd-4042-b338-cf5d9727dbb6",
+    "timestamp": "2026-06-20T13:04:32.543Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/login.html?gateToken=gate_6312867f-dbcb-4fed-b675-9c745f1affda",
+    "metadata": {
+      "bookName": "Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne",
+      "path": "01.Computer Science/Algorithm/Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "evt_70246a75-fce8-4895-b099-049e1d5f4785",
+    "timestamp": "2026-06-20T13:04:50.151Z",
+    "eventType": "BOOK_READER_OPEN",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "path": "/",
+    "referrer": "http://127.0.0.1:3001/admin/login.html?gateToken=gate_6312867f-dbcb-4fed-b675-9c745f1affda",
+    "metadata": {
+      "bookName": "Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne",
+      "path": "01.Computer Science/Algorithm/Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.pdf"
+    },
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
   }
 ]

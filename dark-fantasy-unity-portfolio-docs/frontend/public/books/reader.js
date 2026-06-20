@@ -9,6 +9,8 @@ const zoomIn = document.querySelector('[data-zoom-in]');
 const zoomOut = document.querySelector('[data-zoom-out]');
 const fit = document.querySelector('[data-fit]');
 const reload = document.querySelector('[data-reload]');
+const bookmarkButton = document.querySelector('[data-bookmark]');
+const readerProgress = document.querySelector('[data-reader-progress]');
 
 const params = new URLSearchParams(window.location.search);
 const rawFile = params.get('file') || '';
@@ -17,8 +19,10 @@ let pdfDoc = null;
 let scale = 1.15;
 let renderToken = 0;
 let pageObserver = null;
+let currentPage = 1;
 const renderedPages = new Map();
 const DEFAULT_CHUNK_SIZE = 256 * 1024;
+const readerStateKey = `cursed-biomes.reader-state.v1:${rawFile}`;
 
 titleEl.textContent = title;
 setControls(false);
@@ -40,6 +44,7 @@ fit.addEventListener('click', () => {
 });
 
 reload.addEventListener('click', loadPdf);
+bookmarkButton.addEventListener('click', toggleBookmark);
 
 async function loadPdf() {
   try {
@@ -56,6 +61,7 @@ async function loadPdf() {
     pagesEl.hidden = false;
     setControls(true);
     buildPageShells();
+    restoreReadingPosition();
   } catch (error) {
     statusEl.hidden = false;
     pagesEl.hidden = true;
@@ -93,6 +99,11 @@ function buildPageShells() {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) renderPage(entry.target);
+        if (entry.isIntersecting) {
+          currentPage = Number(entry.target.dataset.pageNumber) || 1;
+          saveReadingPosition();
+          updateBookmarkUi();
+        }
       });
     },
     { rootMargin: '900px 0px', threshold: 0.01 },
@@ -243,7 +254,48 @@ class ChunkedBookTransport extends pdfjsLib.PDFDataRangeTransport {
 }
 
 function setControls(enabled) {
-  [zoomIn, zoomOut, fit, reload].forEach((button) => {
+  [zoomIn, zoomOut, fit, reload, bookmarkButton].forEach((button) => {
     button.disabled = !enabled;
   });
+}
+
+function getReaderState() {
+  try {
+    const state = JSON.parse(localStorage.getItem(readerStateKey) || '{}');
+    return { page: Number(state.page) || 1, bookmarks: Array.isArray(state.bookmarks) ? state.bookmarks : [] };
+  } catch {
+    return { page: 1, bookmarks: [] };
+  }
+}
+
+function saveReaderState(state) {
+  try { localStorage.setItem(readerStateKey, JSON.stringify(state)); } catch { /* Local persistence is optional. */ }
+}
+
+function saveReadingPosition() {
+  const state = getReaderState();
+  saveReaderState({ ...state, page: currentPage });
+}
+
+function restoreReadingPosition() {
+  const page = Math.min(Math.max(getReaderState().page, 1), pdfDoc?.numPages || 1);
+  currentPage = page;
+  requestAnimationFrame(() => pagesEl.querySelector(`[data-page-number="${page}"]`)?.scrollIntoView({ block: 'start' }));
+  updateBookmarkUi();
+}
+
+function toggleBookmark() {
+  const state = getReaderState();
+  const bookmarks = new Set(state.bookmarks.map(Number));
+  if (bookmarks.has(currentPage)) bookmarks.delete(currentPage); else bookmarks.add(currentPage);
+  saveReaderState({ ...state, page: currentPage, bookmarks: [...bookmarks].sort((a, b) => a - b) });
+  updateBookmarkUi();
+}
+
+function updateBookmarkUi() {
+  const bookmarks = getReaderState().bookmarks.map(Number);
+  const bookmarked = bookmarks.includes(currentPage);
+  bookmarkButton.textContent = bookmarked ? '🔖✓' : '🔖';
+  bookmarkButton.title = bookmarked ? `Đã đánh dấu trang ${currentPage}` : `Đánh dấu trang ${currentPage}`;
+  readerProgress.textContent = `Đang đọc đến trang ${currentPage}${bookmarks.length ? ` · Đánh dấu: ${bookmarks.join(', ')}` : ''}`;
 }

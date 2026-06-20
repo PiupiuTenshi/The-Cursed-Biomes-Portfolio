@@ -21,11 +21,14 @@
             <span>Password</span>
             <input data-password name="password" type="password" autocomplete="current-password" required />
           </label>
-          <button type="submit">Enter Dashboard</button>
+          <div class="auth-actions">
+            <button type="submit" data-login-destination="/admin/dashboard.html">Open admin dashboard</button>
+            <button type="submit" data-login-destination="/?admin=1">Return to portfolio in admin mode</button>
+          </div>
           <p class="status" data-status></p>
         </form>
       </section>
     </main>
-    <script src="/admin/login.js" defer></script>
+    <script src="/admin/login.js?v=20260620-return-mode-2" defer></script>
   </body>
 </html>
