@@ -4,11 +4,16 @@
   "private": true,
   "description": "Static dark fantasy Unity portfolio with local hidden admin and chatbot contact pipeline.",
   "scripts": {
-    "start": "node server.js",
-    "check": "node --check server.js && node --check src/scripts/site-content.js && node --check src/scripts/phase1.js && node --check admin/dashboard.js && node --check scripts/build-static.js && node --check scripts/release-check.js && node --check scripts/smoke-test.js",
+    "start": "node backend/server.js",
+    "check": "node --check backend/server.js && node --check frontend/src/scripts/site-content.js && node --check frontend/src/scripts/phase1.js && node --check frontend/admin/dashboard.js && node --check frontend/public/books/reader.js && node --check scripts/build-static.js && node --check scripts/release-check.js && node --check scripts/smoke-test.js",
     "build": "node scripts/build-static.js",
+    "cf:dev": "npx wrangler dev",
+    "cf:d1:local": "npx wrangler d1 migrations apply cursed-biomes-portfolio --local",
+    "cf:deploy": "npm run build && npx wrangler deploy",
     "books:sync": "node scripts/sync-local-books.js",
+    "books:drive:sync-all": "node scripts/sync-all-game-program-books-to-drive.js",
     "books:covers": "node scripts/generate-book-page-covers.js",
+    "books:drive:upload": "node scripts/upload-books-to-drive.js",
     "release:check": "node scripts/release-check.js",
     "test:smoke": "node scripts/smoke-test.js"
   },

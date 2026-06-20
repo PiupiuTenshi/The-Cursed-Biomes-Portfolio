@@ -1,42 +1,26 @@
-# 25 - Phase 6 Status
+# 25 - Trạng thái Phase 6
 
-Last updated: 2026-06-11
+Cập nhật lần cuối: 2026-06-11
 
-## Completed
+## Đã hoàn thành
 
-- Ambient audio controls expanded from one toggle to a full mini console:
-  - Enable/Mute
-  - Previous track
-  - Next track
-  - Volume slider
-  - Track/biome label
-- All 5 legal OGG loops are wired:
-  - `track-01.ogg` - Abyss Forest
-  - `track-02.ogg` - Blood Ruins
-  - `track-03.ogg` - Obsidian Forge
-  - `track-04.ogg` - Arcane Library
-  - `track-05.ogg` - Silent Graveyard
-- Audio remains user-gesture gated and does not autoplay.
-- Audio settings persist in `localStorage`.
-- WebGL modal still pauses portfolio audio and resumes it afterward when possible.
-- Added visual effects:
-  - full-page ambient particle/fog canvas
-  - desktop mouse ghost trail
-  - morph/glow card hover polish
-  - rune-like shimmer on panels and demo shell
-- Added Reduce Motion toggle with persisted setting.
-- Effects pause when the tab is hidden and respect `prefers-reduced-motion`.
-- Audio/motion actions emit best-effort local events through `/api/events`.
+- Điều khiển ambient audio đã mở rộng thành mini console: bật/tắt tiếng, bài trước/sau, volume và nhãn track/biome.
+- Đã nối đủ 5 loop OGG: Abyss Forest, Blood Ruins, Obsidian Forge, Arcane Library và Silent Graveyard.
+- Audio chỉ chạy sau thao tác người dùng, setting được lưu trong `localStorage`.
+- WebGL modal dừng âm thanh portfolio và khôi phục lại khi có thể.
+- Có particle/fog canvas toàn trang, ghost trail chuột desktop, hover morph/glow và shimmer rune cho panel/demo shell.
+- Có nút Reduce Motion lưu setting; hiệu ứng dừng khi tab ẩn và tôn trọng `prefers-reduced-motion`.
+- Action audio/motion gửi event best-effort qua `/api/events`.
 
-## Still Pending
+## Việc còn lại
 
-- Add a true 3D relic model with Three.js or React Three Fiber if the project moves into a framework build.
-- Add FPS sampling/performance telemetry in Phase 8.
-- Add richer audio UI icons if a frontend icon library is introduced.
-- Add per-section auto-track switching if desired.
+- Thêm relic 3D thật bằng Three.js hoặc React Three Fiber nếu chuyển sang framework.
+- Thêm lấy mẫu FPS/telemetry hiệu năng ở Phase 8.
+- Thêm icon audio phong phú hơn nếu dùng thư viện icon.
+- Có thể tự chuyển track theo section.
 
-## QA Notes
+## Ghi chú QA
 
-- Test audio only after clicking `Enable Sound`.
-- Use `Reduce Motion` to disable canvases and heavy visual effects.
-- On mobile, particle count is reduced and ghost trail is skipped.
+- Chỉ kiểm tra audio sau khi bấm `Enable Sound`.
+- Dùng `Reduce Motion` để tắt canvas và hiệu ứng nặng.
+- Trên mobile số particle được giảm, ghost trail bị bỏ qua.

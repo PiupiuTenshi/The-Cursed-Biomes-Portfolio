@@ -389,5 +389,39 @@
     "status": "unread",
     "ip": "103.199.56.121",
     "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36"
+  },
+  {
+    "id": "msg_6b972ee9-ff34-429e-8890-05fb12158095",
+    "timestamp": "2026-06-18T16:43:32.792Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "open gates:moonlit-biomes",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "facebook": null,
+      "raw": null
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+  },
+  {
+    "id": "msg_aff9e8fa-d919-441b-a1ad-e073ea6b3aef",
+    "timestamp": "2026-06-18T16:43:47.331Z",
+    "sessionId": "sess_1c5eaa5c-d33f-4d18-aad2-ecd4a7d41807",
+    "page": "/",
+    "language": "vi",
+    "message": "/open gates:moonlit-biomes",
+    "visitorContact": {
+      "email": null,
+      "zalo": null,
+      "facebook": null,
+      "raw": null
+    },
+    "status": "unread",
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
   }
 ]

@@ -1,39 +1,25 @@
-# 20 - Phase 1 Status
+# 20 - Trạng thái Phase 1
 
-Last updated: 2026-06-11
+Cập nhật lần cuối: 2026-06-11
 
-## Completed
+## Đã hoàn thành
 
-- Static portfolio shell added at `index.html`.
-- Project section was upgraded in Phase 2 to render dynamic GitHub repos while keeping the Phase 1 shell.
-- Responsive dark fantasy styling added at `src/styles/phase1.css`.
-- Basic interactions added at `src/scripts/phase1.js`.
-- Phase 1 sections are present:
-  - Loading Gate
-  - Hero
-  - About / Character Sheet
-  - Featured Projects
-  - Unity Try Now placeholder
-  - Skills
-  - Quotes
-  - Books
-  - Contact
-  - Mini chatbot UI
-- Animation basics are present:
-  - Loading gate progress
-  - Section reveal with IntersectionObserver
-  - Light 3D hover tilt
-  - Button and card glow states
-- Audio is user-gesture gated through the header sound button.
+- Đã thêm khung portfolio tĩnh tại `index.html`.
+- Khu vực dự án đã được nâng cấp ở Phase 2 để render repo GitHub động nhưng vẫn giữ khung Phase 1.
+- Đã thêm giao diện dark fantasy responsive tại `src/styles/phase1.css`.
+- Đã thêm tương tác cơ bản tại `src/scripts/phase1.js`.
+- Các khu vực của Phase 1 gồm: Loading Gate, Hero, Giới thiệu/Character Sheet, Dự án nổi bật, Unity Try Now placeholder, Kỹ năng, Quotes, Sách, Liên hệ và chatbot mini.
+- Đã có animation cơ bản: tiến trình loading gate, section reveal bằng `IntersectionObserver`, tilt 3D nhẹ khi hover, glow cho button/card.
+- Âm thanh chỉ được bật sau thao tác qua nút sound ở header.
 
-## Still Pending
+## Việc còn lại
 
-- Replace the static project copy with live GitHub API data in Phase 2. Completed in `docs/21_PHASE2_STATUS.md`.
-- Replace the Try Now placeholder with a real Unity WebGL build in Phase 3.
-- Add real chatbot persistence and backend contact pipeline in Phase 4.
-- Add final CV PDF at `public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf`.
-- Add production hero/background variants if the avatar-led hero needs a wider first-viewport image.
+- Thay nội dung dự án tĩnh bằng GitHub API live ở Phase 2; đã hoàn thành tại `docs/21_PHASE2_STATUS.md`.
+- Thay Try Now placeholder bằng Unity WebGL thật ở Phase 3.
+- Thêm persistence chatbot và luồng liên hệ backend ở Phase 4.
+- Thêm CV PDF cuối cùng tại `public/cv/Pham-Minh-Sang-Unity-Developer-CV.pdf`.
+- Thêm biến thể hero/nền production nếu hero hiện tại cần ảnh màn hình đầu rộng hơn.
 
-## How To Preview
+## Cách xem trước
 
-Open `index.html` directly in a browser. No backend or build step is required for Phase 1.
+Mở trực tiếp `index.html` trong trình duyệt. Phase 1 không cần backend hoặc bước build.

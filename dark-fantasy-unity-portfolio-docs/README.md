@@ -49,6 +49,17 @@ contact:
 
 ```txt
 README.md
+/frontend
+  index.html
+  admin/
+  public/
+  src/
+/backend
+  server.js
+/data
+  chat-messages.json
+  visitor-events.json
+  admin-audit.json
 /docs
   01_PRODUCT_BRIEF.md
   02_PHASE_ROADMAP.md
@@ -68,6 +79,10 @@ README.md
   16_FUTURE_ROADMAP.md
   17_ASSET_GUIDE.md
   18_QUOTES_AND_BOOKS.md
+  31_PROJECT_STRUCTURE.md
+  32_SECURITY_AUDIT_AND_HARDENING.md
+  33_HUONG_DAN_XU_LY_SECRET_LO_DU_LIEU.md
+  34_CLOUDFLARE_PAGES_WORKERS_D1.md
 /templates
   env.example
   repo-config.example.json
@@ -113,4 +128,3 @@ deploy:
 3. Dùng `templates/env.example` để tạo `.env.local`.
 4. Dùng `templates/repo-config.example.json` làm dữ liệu seed cho admin repo visibility.
 5. Khi build web, bám theo thứ tự phase trong `02_PHASE_ROADMAP.md`.
-

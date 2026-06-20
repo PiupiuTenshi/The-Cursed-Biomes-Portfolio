@@ -1,35 +1,27 @@
-# 21 - Phase 2 Status
+# 21 - Trạng thái Phase 2
 
-Last updated: 2026-06-11
+Cập nhật lần cuối: 2026-06-11
 
-## Completed
+## Đã hoàn thành
 
-- Project cards now load dynamically from the public GitHub API:
+- Card dự án tải động từ GitHub API công khai:
   - `https://api.github.com/users/PiupiuTenshi/repos?sort=updated&direction=desc&per_page=100`
-- Repos are normalized in `src/scripts/phase1.js` into the Phase 2 display model.
-- Admin-style overlay settings are applied for:
-  - `TechWeb-2026`
-  - `Privacy-Preserving-Vertical-Fragmentation-PII-Shield`
-  - `Academic-performance-management`
-- Public sorting is implemented:
-  - featured first
-  - priority ascending
-  - pushed date descending
-  - stars descending
-  - name ascending
-- Local cache is implemented with `localStorage` and a 10 minute TTL.
-- Fallback repo data is rendered if GitHub API fails or rate limits.
-- Project filters are available for All, Featured, Web, Security, and Management.
-- Seed overlay config is mirrored in `src/config/repo-settings.json` for future backend/admin migration.
+- Repo được chuẩn hoá trong `src/scripts/phase1.js` sang model hiển thị của Phase 2.
+- Đã áp dụng setting overlay kiểu admin cho `TechWeb-2026`, `Privacy-Preserving-Vertical-Fragmentation-PII-Shield` và `Academic-performance-management`.
+- Đã có thứ tự công khai: featured trước, priority tăng dần, ngày push giảm dần, stars giảm dần, rồi theo tên.
+- Đã có cache local bằng `localStorage`, TTL 10 phút.
+- Hiển thị dữ liệu fallback khi GitHub API lỗi hoặc bị rate limit.
+- Có bộ lọc Tất cả, Nổi bật, Web, Security và Quản lý.
+- Cấu hình overlay seed được phản chiếu tại `src/config/repo-settings.json` để chuẩn bị chuyển sang backend/admin.
 
-## Still Pending
+## Việc còn lại
 
-- Replace client-side GitHub fetch with `/api/github/repos` backend proxy when the backend exists.
-- Move `repoSettings` from static JS into DB-backed admin visibility settings.
-- Add event tracking payloads for project views, code clicks, Try Now clicks, docs clicks, and filter changes.
-- Add richer project screenshots/covers when available.
-- Add admin route for hiding/showing repos in Phase 5.
+- Thay GitHub fetch phía client bằng backend proxy `/api/github/repos` khi backend phù hợp.
+- Chuyển `repoSettings` từ JavaScript tĩnh sang setting admin có DB.
+- Thêm tracking cho lượt xem dự án, click code, Try Now, docs và thay đổi bộ lọc.
+- Thêm cover/ảnh chụp dự án phong phú hơn.
+- Thêm route admin để ẩn/hiện repo ở Phase 5.
 
-## Preview Notes
+## Ghi chú xem trước
 
-Opening `index.html` directly still works. GitHub fetching requires internet access in the browser; otherwise fallback data appears.
+Mở trực tiếp `index.html` vẫn hoạt động. Trình duyệt cần Internet để fetch GitHub; nếu không sẽ hiện dữ liệu fallback.

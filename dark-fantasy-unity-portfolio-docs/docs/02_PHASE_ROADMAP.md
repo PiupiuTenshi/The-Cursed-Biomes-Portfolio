@@ -217,7 +217,6 @@ Tạo cảm giác “game menu dark fantasy”.
 - Volume slider.
 - Mute/unmute.
 - Mouse ghost trail kiểu tua thời gian.
-- Mouse ghost trail kiểu tua thời gian.
 - Morph border/rune frames.
 - Blur glass cards.
 - Floating particles.

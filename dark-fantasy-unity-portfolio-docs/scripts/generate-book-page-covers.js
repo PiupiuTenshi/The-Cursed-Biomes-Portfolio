@@ -4,7 +4,8 @@ const { pathToFileURL } = require('url');
 const { createCanvas } = require('@napi-rs/canvas');
 
 const ROOT = path.resolve(__dirname, '..');
-const OUT_DIR = path.join(ROOT, 'public', 'images', 'books');
+const FRONTEND = path.join(ROOT, 'frontend');
+const OUT_DIR = path.join(FRONTEND, 'public', 'images', 'books');
 
 const books = [
   {

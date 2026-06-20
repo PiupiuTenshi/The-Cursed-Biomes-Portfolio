@@ -75,6 +75,10 @@
       </div>
     </header>
 
+    <div class="site-notice" data-site-notice hidden aria-live="polite">
+      <span data-site-notice-text></span>
+    </div>
+
     <main id="home">
       <section class="hero section-band" data-reveal>
         <div class="hero-copy">
@@ -175,6 +179,7 @@
             <p data-i18n="repo.loading.body">GitHub project relics are being fetched. Fallback data will appear if the API is unavailable.</p>
           </article>
         </div>
+        <nav class="project-pagination" data-project-pagination aria-label="Project pages" data-i18n-aria-label="projects.pagination.aria" hidden></nav>
       </section>
 
       <section class="try-now section-band" id="try-now" data-reveal>

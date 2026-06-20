@@ -1,53 +1,26 @@
-# 28 - Phase 9 Status
+# 28 - Trạng thái Phase 9
 
-Last updated: 2026-06-11
+Cập nhật lần cuối: 2026-06-20
 
-## Completed
+## Đã hoàn thành
 
-- Added production-ready server behavior:
-  - `NODE_ENV=production` binds to `0.0.0.0`
-  - local development keeps `127.0.0.1`
-  - `/api/health` now reports Phase 9 and environment
-- Added security headers to static, API, and text responses:
-  - `Content-Security-Policy`
-  - `X-Content-Type-Options`
-  - `X-Frame-Options`
-  - `Referrer-Policy`
-  - `Permissions-Policy`
-  - `Cross-Origin-Opener-Policy`
-- Added production cache policy:
-  - HTML/API: no-store
-  - JS/CSS/JSON: short revalidation
-  - images/audio/PDF: long immutable cache
-- Added CI/CD files:
-  - `.github/workflows/ci.yml`
-  - `render.yaml`
-  - `railway.json`
-  - `netlify.toml`
-- Added release/deploy scripts:
-  - `npm run check`
-  - `npm run build`
-  - `npm run release:check`
-  - `npm run test:smoke`
-- Added static deployment bundle generation to `dist/`.
-- Added production env template:
-  - `.env.production.example`
-- Added SEO/deploy support files:
-  - `robots.txt`
-  - `sitemap.xml`
-- Added deployment guide:
-  - `docs/29_DEPLOYMENT_GUIDE.md`
-- Package version updated to `0.9.0`.
+- Đã thêm hành vi server production: `NODE_ENV=production` bind `0.0.0.0`, local dùng `127.0.0.1`, `/api/health` trả environment.
+- Response static/API/text có CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`; production có HSTS.
+- Cache production: HTML/API không cache, JS/CSS/JSON revalidate ngắn, ảnh/audio/PDF cache immutable dài.
+- Có file CI/CD: `.github/workflows/ci.yml`, `render.yaml`, `railway.json`, `netlify.toml`.
+- Có các script `npm run check`, `npm run build`, `npm run release:check`, `npm run test:smoke` và bundle static `dist/`.
+- Có template production `.env.production.example`, `robots.txt`, `sitemap.xml` và deployment guide.
+- Đã bổ sung hardening theo `docs/32_SECURITY_AUDIT_AND_HARDENING.md`.
 
-## Still Pending
+## Việc còn lại
 
-- Real online deployment still needs account credentials/tokens for Netlify/Vercel, Render/Railway, and a custom domain.
-- Database is still JSON-file based locally. `DATABASE_URL` is documented for future Supabase/Neon migration, but the app does not yet write to Postgres.
-- Static frontend deployment cannot save chat/admin analytics unless it points to a deployed backend or the full Node server is deployed.
-- `robots.txt` and `sitemap.xml` still use `https://your-domain.com`; replace this with the real domain before production launch.
+- Deploy online vẫn cần credential tài khoản host và custom domain.
+- Database hiện là JSON local; `DATABASE_URL` mới là hướng migration sau này.
+- Static frontend không thể lưu chat/admin analytics nếu không có backend deploy.
+- Phải thay `https://your-domain.com` trong robots/sitemap trước production.
 
-## QA Notes
+## Ghi chú QA
 
-- Run `npm run release:check` before pushing.
-- Run `npm run build` to create the `dist/` frontend bundle.
-- Run the server, then `npm run test:smoke` to check local health and critical static routes.
+- Chạy `npm run release:check` trước khi push.
+- Chạy `npm run build` để tạo `dist/`.
+- Chạy server rồi `npm run test:smoke` để kiểm tra health và static route cốt lõi.

@@ -9,6 +9,8 @@ const localeButtons = document.querySelectorAll('[data-locale-button]');
 const settingsToggle = document.querySelector('[data-settings-toggle]');
 const settingsPanel = document.querySelector('[data-settings-panel]');
 const settingsClose = document.querySelector('[data-settings-close]');
+const siteNotice = document.querySelector('[data-site-notice]');
+const siteNoticeText = document.querySelector('[data-site-notice-text]');
 const ambientCanvas = document.querySelector('[data-ambient-canvas]');
 const ghostCanvas = document.querySelector('[data-ghost-canvas]');
 const demoButton = document.querySelector('[data-demo-button]');
@@ -25,6 +27,7 @@ const chatStatus = document.querySelector('[data-chat-status]');
 const projectGrid = document.querySelector('[data-project-grid]');
 const repoStatus = document.querySelector('[data-repo-status]');
 const projectFilters = document.querySelectorAll('[data-project-filter]');
+const projectPagination = document.querySelector('[data-project-pagination]');
 const booksGrid = document.querySelector('[data-books-grid]');
 const booksStatus = document.querySelector('[data-books-status]');
 const booksToggle = document.querySelector('[data-books-toggle]');
@@ -61,6 +64,9 @@ const SESSION_KEY = 'cursed-biomes.session-id.v1';
 const AUDIO_SETTINGS_KEY = 'cursed-biomes.audio-settings.v1';
 const LOCALE_SETTINGS_KEY = 'cursed-biomes.locale.v1';
 const REPO_CACHE_TTL_MS = 10 * 60 * 1000;
+const GITHUB_FETCH_TIMEOUT_MS = 7000;
+const PROJECTS_PER_PAGE = 6;
+const PROJECT_PAGE_TRANSITION_MS = 440;
 const appContent = window.CursedBiomesContent || {};
 const translations = appContent.translations || { en: {} };
 const defaultLocale = appContent.defaultLocale || 'en';
@@ -72,8 +78,9 @@ const repoSettings = appContent.repoSettings || [];
 const fallbackRepos = appContent.fallbackRepos || [];
 const booksRepo = appContent.booksRepo || {};
 const fallbackBooks = appContent.fallbackBooks || [];
+const bookDrivePreviews = appContent.bookDrivePreviews || [];
 const libraryQuotes = appContent.libraryQuotes || {};
-const BOOKS_CACHE_KEY = 'cursed-biomes.game-program-books.v2';
+const BOOKS_CACHE_KEY = 'cursed-biomes.game-program-books.v4';
 const PROJECT_README_CACHE_KEY = 'cursed-biomes.project-readmes.v1';
 const BOOKS_CACHE_TTL_MS = 60 * 60 * 1000;
 const BOOKS_COLLAPSED_COUNT = 5;
@@ -87,10 +94,10 @@ const LOCAL_BOOK_COVERS = [
   { match: 'game engine architecture', src: 'public/images/books/game-engine-architecture-page1.png' },
 ];
 const LOCAL_BOOK_FILES = [
-  { match: 'game programming patterns', src: 'public/books/game-programming-patterns.pdf' },
-  { match: 'clean code', src: 'public/books/clean-code.pdf' },
-  { match: 'unity in action', src: 'public/books/unity-in-action.pdf' },
-  { match: 'game engine architecture', src: 'public/books/game-engine-architecture.pdf' },
+  { match: 'game programming patterns', slug: 'game-programming-patterns', src: 'public/books/game-programming-patterns.pdf' },
+  { match: 'clean code', slug: 'clean-code', src: 'public/books/clean-code.pdf' },
+  { match: 'unity in action', slug: 'unity-in-action', src: 'public/books/unity-in-action.pdf' },
+  { match: 'game engine architecture', slug: 'game-engine-architecture', src: 'public/books/game-engine-architecture.pdf' },
 ];
 const fallbackBookItems = fallbackBooks.map(normalizeFallbackBook);
 
@@ -99,6 +106,9 @@ let activeQuoteIndex = pickRandomQuoteIndex();
 let lastRepoStatus = { key: 'repo.status.prepare', vars: {} };
 let lastBooksStatus = { key: 'books.status.loading', vars: {} };
 let activeProjectFilter = 'all';
+let activeProjectPage = 1;
+let isProjectPageTransitioning = false;
+let projectPageTransitionTimer = null;
 let visibleRepos = [];
 let currentBooks = [];
 let allBooksExpanded = false;
@@ -124,6 +134,12 @@ window.addEventListener('load', () => {
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
+      if (shouldPinProjectReveal(entry.target) && entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+        return;
+      }
+
       if (entry.isIntersecting && entry.intersectionRatio >= 0.18) {
         entry.target.classList.add('is-visible');
         return;
@@ -139,6 +155,7 @@ const revealObserver = new IntersectionObserver(
 
 revealItems.forEach((item) => revealObserver.observe(item));
 initI18n();
+initSiteNotice();
 attachTilt(tiltItems);
 initAudioControls();
 initSettingsMenu();
@@ -176,6 +193,27 @@ function initI18n() {
       setLocale(locale);
     });
   });
+}
+
+async function initSiteNotice() {
+  if (!siteNotice || !siteNoticeText) return;
+
+  try {
+    const response = await fetch('/api/notice', { headers: { Accept: 'application/json' } });
+    if (!response.ok) return;
+    const payload = await response.json();
+    const message = String(payload.message || '').trim();
+
+    if (!payload.enabled || !message) {
+      siteNotice.hidden = true;
+      return;
+    }
+
+    siteNoticeText.textContent = message;
+    siteNotice.hidden = false;
+  } catch {
+    siteNotice.hidden = true;
+  }
 }
 
 function initSettingsMenu() {
@@ -362,16 +400,24 @@ async function loadGitHubRepos() {
 
   updateRepoStatus('repo.status.checking');
   const cached = readRepoCache();
+  const cachedRepos = cached ? prepareRepos(cached, 'cache') : [];
 
-  if (cached) {
-    visibleRepos = prepareRepos(cached, 'cache');
+  if (cachedRepos.length > 0) {
+    visibleRepos = cachedRepos;
     renderRepos();
     updateRepoStatus('repo.status.cache', { count: visibleRepos.length });
+  } else {
+    visibleRepos = prepareRepos(fallbackRepos, 'fallback');
+    renderRepos();
   }
+
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), GITHUB_FETCH_TIMEOUT_MS);
 
   try {
     const response = await fetch(GITHUB_REPOS_URL, {
       headers: { Accept: 'application/vnd.github+json' },
+      signal: controller.signal,
     });
 
     if (!response.ok) {
@@ -379,17 +425,24 @@ async function loadGitHubRepos() {
     }
 
     const repos = await response.json();
+    const liveRepos = prepareRepos(repos, 'github');
+    if (liveRepos.length === 0) {
+      throw new Error('GitHub sync returned no visible repositories.');
+    }
+
     writeRepoCache(repos);
-    visibleRepos = prepareRepos(repos, 'github');
+    visibleRepos = liveRepos;
     renderRepos();
     updateRepoStatus('repo.status.live', { count: visibleRepos.length });
   } catch (error) {
-    if (!cached) {
+    if (visibleRepos.length === 0) {
       visibleRepos = prepareRepos(fallbackRepos, 'fallback');
       renderRepos();
     }
 
     updateRepoStatus('repo.status.fallback', { message: error.message });
+  } finally {
+    window.clearTimeout(timeout);
   }
 }
 
@@ -483,28 +536,114 @@ function sortRepos(a, b) {
   );
 }
 
-function renderRepos() {
-  if (!projectGrid) return;
-
-  const repos = visibleRepos.filter((repo) => {
+function getFilteredRepos() {
+  return visibleRepos.filter((repo) => {
     if (activeProjectFilter === 'all') return true;
     if (activeProjectFilter === 'featured') return repo.featured;
     return repo.category === activeProjectFilter;
   });
+}
 
-  if (repos.length === 0) {
-    projectGrid.innerHTML = `
-      <article class="project-card project-card-loading">
-        <span class="project-type">${escapeHtml(t('repo.empty.type'))}</span>
-        <h3>${escapeHtml(t('repo.empty.title'))}</h3>
-        <p>${escapeHtml(t('repo.empty.body'))}</p>
-      </article>
-    `;
+function renderRepos({ animate = false, direction = 'next' } = {}) {
+  if (!projectGrid) return;
+
+  if (!animate && projectPageTransitionTimer) {
+    window.clearTimeout(projectPageTransitionTimer);
+    projectPageTransitionTimer = null;
+    isProjectPageTransitioning = false;
+    projectGrid.classList.remove(
+      'is-page-leaving',
+      'is-page-leaving-next',
+      'is-page-leaving-previous',
+      'is-page-entering',
+      'is-page-entering-next',
+      'is-page-entering-previous',
+    );
+    projectGrid.removeAttribute('aria-busy');
+  }
+
+  const repos = getFilteredRepos();
+  const totalPages = Math.max(1, Math.ceil(repos.length / PROJECTS_PER_PAGE));
+  activeProjectPage = Math.min(Math.max(activeProjectPage, 1), totalPages);
+  const pageStart = (activeProjectPage - 1) * PROJECTS_PER_PAGE;
+  const pageRepos = repos.slice(pageStart, pageStart + PROJECTS_PER_PAGE);
+
+  const paintPage = () => {
+    if (repos.length === 0) {
+      projectGrid.innerHTML = `
+        <article class="project-card project-card-loading">
+          <span class="project-type">${escapeHtml(t('repo.empty.type'))}</span>
+          <h3>${escapeHtml(t('repo.empty.title'))}</h3>
+          <p>${escapeHtml(t('repo.empty.body'))}</p>
+        </article>
+      `;
+    } else {
+      projectGrid.innerHTML = pageRepos.map(renderRepoCard).join('');
+      attachTilt(projectGrid.querySelectorAll('[data-tilt]'));
+    }
+
+    renderProjectPagination(totalPages, repos.length);
+  };
+
+  if (!animate || reducedMotion || projectGrid.children.length === 0) {
+    paintPage();
     return;
   }
 
-  projectGrid.innerHTML = repos.map(renderRepoCard).join('');
-  attachTilt(projectGrid.querySelectorAll('[data-tilt]'));
+  isProjectPageTransitioning = true;
+  projectGrid.setAttribute('aria-busy', 'true');
+  projectGrid.classList.add('is-page-leaving', `is-page-leaving-${direction}`);
+  renderProjectPagination(totalPages, repos.length);
+
+  projectPageTransitionTimer = window.setTimeout(() => {
+    projectGrid.classList.remove('is-page-leaving', 'is-page-leaving-next', 'is-page-leaving-previous');
+    paintPage();
+    projectGrid.classList.add('is-page-entering', `is-page-entering-${direction}`);
+    projectGrid.removeAttribute('aria-busy');
+
+    window.requestAnimationFrame(() => {
+      window.setTimeout(() => {
+        projectGrid.classList.remove('is-page-entering', 'is-page-entering-next', 'is-page-entering-previous');
+        isProjectPageTransitioning = false;
+        projectPageTransitionTimer = null;
+        renderProjectPagination(totalPages, repos.length);
+      }, PROJECT_PAGE_TRANSITION_MS);
+    });
+  }, PROJECT_PAGE_TRANSITION_MS);
+}
+
+function renderProjectPagination(totalPages, repoCount) {
+  if (!projectPagination) return;
+
+  projectPagination.hidden = totalPages <= 1 || repoCount === 0;
+  if (projectPagination.hidden) {
+    projectPagination.innerHTML = '';
+    return;
+  }
+
+  const isFirstPage = activeProjectPage === 1;
+  const isLastPage = activeProjectPage === totalPages;
+  const isDisabled = isProjectPageTransitioning;
+  projectPagination.innerHTML = `
+    <button class="project-page-button" type="button" data-project-page="previous" ${isFirstPage || isDisabled ? 'disabled' : ''}>
+      <span aria-hidden="true">←</span> ${escapeHtml(t('projects.pagination.previous'))}
+    </button>
+    <span class="project-page-status" aria-live="polite">${escapeHtml(t('projects.pagination.status', { page: activeProjectPage, total: totalPages }))}</span>
+    <button class="project-page-button" type="button" data-project-page="next" ${isLastPage || isDisabled ? 'disabled' : ''}>
+      ${escapeHtml(t('projects.pagination.next'))} <span aria-hidden="true">→</span>
+    </button>
+  `;
+}
+
+function changeProjectPage(targetPage) {
+  const totalPages = Math.max(1, Math.ceil(getFilteredRepos().length / PROJECTS_PER_PAGE));
+  const nextPage = Math.min(Math.max(targetPage, 1), totalPages);
+  if (isProjectPageTransitioning || nextPage === activeProjectPage) return;
+
+  const direction = nextPage > activeProjectPage ? 'next' : 'previous';
+  activeProjectPage = nextPage;
+  renderRepos({ animate: true, direction });
+  logVisitorEvent('PROJECT_PAGE_CHANGED', { page: activeProjectPage, filter: activeProjectFilter });
 }
 
 function renderRepoCard(repo) {
@@ -636,6 +775,8 @@ function normalizeBook(book) {
   const type = (fileName.split('.').pop() || 'book').toUpperCase();
   const name = cleanBookTitle(fileName);
   const localUrl = getLocalBookFile(name);
+  const localSlug = getLocalBookSlug(name);
+  const drivePreviewUrl = getDrivePreviewUrl(name, book.path);
   return {
     id: `book_${hashString(book.path)}`,
     name,
@@ -643,6 +784,9 @@ function normalizeBook(book) {
     downloadUrl: makeRawBookUrl(book.path),
     htmlUrl: makeGitHubBookUrl(book.path),
     localUrl,
+    localSlug,
+    localDataPath: book.path,
+    drivePreviewUrl,
     type,
     category: getBookCategory(book.path),
     coverQuery: name,
@@ -663,6 +807,9 @@ function normalizeFallbackBook(book) {
     downloadUrl: book.downloadUrl || makeRawBookUrl(path),
     htmlUrl: book.htmlUrl || makeGitHubBookUrl(path),
     localUrl: book.localUrl || getLocalBookFile(name),
+    localSlug: book.localSlug || getLocalBookSlug(name),
+    localDataPath: book.localDataPath || path,
+    drivePreviewUrl: book.drivePreviewUrl || getDrivePreviewUrl(name, path),
     type,
     category: book.category || getBookCategory(path),
     coverQuery: book.coverQuery || name,
@@ -679,6 +826,39 @@ function getLocalBookCover(title) {
 function getLocalBookFile(title) {
   const normalized = String(title || '').toLowerCase();
   return LOCAL_BOOK_FILES.find((book) => normalized.includes(book.match))?.src || null;
+}
+
+function getLocalBookSlug(title) {
+  const normalized = String(title || '').toLowerCase();
+  return LOCAL_BOOK_FILES.find((book) => normalized.includes(book.match))?.slug || null;
+}
+
+function getDrivePreviewUrl(title, bookPath = '') {
+  const normalized = String(title || '').toLowerCase();
+  const normalizedPath = String(bookPath || '').toLowerCase();
+  const exactPath = bookDrivePreviews.find((book) => normalizedPath === String(book.path || '').toLowerCase())?.src;
+  if (exactPath) return normalizeDrivePreviewUrl(exactPath);
+
+  const exactTitle = bookDrivePreviews.find((book) => normalized === String(book.match || '').toLowerCase())?.src;
+  if (exactTitle) return normalizeDrivePreviewUrl(exactTitle);
+
+  const source = bookDrivePreviews.find((book) => normalized.includes(String(book.match || '').toLowerCase()))?.src;
+  return normalizeDrivePreviewUrl(source);
+}
+
+function normalizeDrivePreviewUrl(value) {
+  const source = String(value || '').trim();
+  if (!source) return null;
+  if (/^https:\/\/drive\.google\.com\/file\/d\/[^/]+\/preview/i.test(source)) return source;
+
+  const fileMatch = source.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
+  if (fileMatch) return `https://drive.google.com/file/d/${encodeURIComponent(fileMatch[1])}/preview`;
+
+  if (/^[a-zA-Z0-9_-]{20,}$/.test(source)) {
+    return `https://drive.google.com/file/d/${encodeURIComponent(source)}/preview`;
+  }
+
+  return source;
 }
 
 function makeRawBookUrl(bookPath) {
@@ -716,14 +896,15 @@ function cleanBookTitle(fileName) {
 
 function renderBooks(books) {
   if (!booksGrid) return;
-  currentBooks = books;
-  const visibleBooks = allBooksExpanded ? books : books.slice(0, BOOKS_COLLAPSED_COUNT);
+  const hydratedBooks = books.map(hydrateBookRuntimeData);
+  currentBooks = hydratedBooks;
+  const visibleBooks = allBooksExpanded ? hydratedBooks : hydratedBooks.slice(0, BOOKS_COLLAPSED_COUNT);
 
   booksGrid.innerHTML = visibleBooks.map((book) => {
     const coverUrl = getLocalBookCover(book.name) || '';
     const hue = Math.abs(hashString(book.name)) % 360;
     const canReadInline = book.type === 'PDF';
-    const downloadUrl = book.localUrl || book.downloadUrl;
+    const sourceUrl = book.htmlUrl || book.downloadUrl;
     return `
     <article class="book-card book-card-dynamic" data-book-id="${escapeAttribute(book.id)}">
       <div class="book-cover" style="--book-hue: ${hue}; ${coverUrl ? `--book-cover: url('${escapeAttribute(coverUrl)}');` : ''}">
@@ -735,7 +916,7 @@ function renderBooks(books) {
       <p>${escapeHtml(book.description || book.path || t('books.source'))}</p>
       <div class="book-actions">
         ${canReadInline ? `<button type="button" data-book-read="${escapeAttribute(book.id)}">${escapeHtml(t('books.read'))}</button>` : ''}
-        <a href="${escapeAttribute(downloadUrl)}" target="_blank" rel="noreferrer" data-book-action data-book-name="${escapeAttribute(book.name)}" download>${escapeHtml(t(canReadInline ? 'books.download' : 'books.open'))}</a>
+        <a href="${escapeAttribute(sourceUrl)}" target="_blank" rel="noreferrer" data-book-action data-book-name="${escapeAttribute(book.name)}">${escapeHtml(t('books.open'))}</a>
       </div>
     </article>
   `;
@@ -755,25 +936,51 @@ function updateBooksStatus(key, vars = {}) {
 
 function openBookReader(book) {
   if (!bookReaderModal || !bookReaderFrame || !bookReaderTitle) return;
+  const hydratedBook = hydrateBookRuntimeData(book);
 
-  if (book.type !== 'PDF') {
-    window.open(book.downloadUrl, '_blank', 'noreferrer');
+  if (hydratedBook.type !== 'PDF') {
+    window.open(hydratedBook.htmlUrl || hydratedBook.downloadUrl, '_blank', 'noreferrer');
     return;
   }
 
-  bookReaderTitle.textContent = book.name;
-  if (bookReaderMeta) bookReaderMeta.textContent = `${book.category} / ${book.type}`;
-  if (bookReaderOpen) bookReaderOpen.href = book.localUrl || book.downloadUrl;
-  bookReaderFrame.src = makeBookViewerUrl(book);
+  bookReaderTitle.textContent = hydratedBook.name;
+  if (bookReaderMeta) bookReaderMeta.textContent = `${hydratedBook.category} / ${hydratedBook.type}`;
+  if (bookReaderOpen) bookReaderOpen.href = hydratedBook.drivePreviewUrl || hydratedBook.htmlUrl || hydratedBook.downloadUrl;
+  bookReaderFrame.src = makeBookViewerUrl(hydratedBook);
   bookReaderModal.classList.add('is-open');
   bookReaderModal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('is-webgl-open');
-  logVisitorEvent('BOOK_READER_OPEN', { bookName: book.name, path: book.path });
+  logVisitorEvent('BOOK_READER_OPEN', { bookName: hydratedBook.name, path: hydratedBook.path });
 }
 
 function makeBookViewerUrl(book) {
-  const source = book.localUrl || `/api/books/inline?url=${encodeURIComponent(book.downloadUrl)}`;
-  return `public/books/reader.html?file=${encodeURIComponent(source)}&title=${encodeURIComponent(book.name)}`;
+  if (book.localUrl) {
+    return `public/books/reader.html?file=${encodeURIComponent(book.localUrl)}&title=${encodeURIComponent(book.name)}`;
+  }
+  if (book.localDataPath) {
+    const source = `/api/books/data?path=${encodeURIComponent(book.localDataPath)}`;
+    return `public/books/reader.html?file=${encodeURIComponent(source)}&title=${encodeURIComponent(book.name)}`;
+  }
+  if (book.localSlug) {
+    const source = `/api/books/data?slug=${encodeURIComponent(book.localSlug)}`;
+    return `public/books/reader.html?file=${encodeURIComponent(source)}&title=${encodeURIComponent(book.name)}`;
+  }
+  if (book.drivePreviewUrl) return book.drivePreviewUrl;
+  return `public/books/drive-missing.html?title=${encodeURIComponent(book.name)}`;
+}
+
+function hydrateBookRuntimeData(book) {
+  const name = book.name || cleanBookTitle(book.path || '');
+  const path = book.path || name;
+  return {
+    ...book,
+    name,
+    path,
+    localUrl: book.localUrl || getLocalBookFile(name),
+    localSlug: book.localSlug || getLocalBookSlug(name),
+    localDataPath: book.localDataPath || path,
+    drivePreviewUrl: book.drivePreviewUrl || getDrivePreviewUrl(name, path),
+  };
 }
 
 function closeBookReader() {
@@ -988,11 +1195,20 @@ function writeTimedCache(key, items) {
 
 projectFilters.forEach((button) => {
   button.addEventListener('click', () => {
+    if (isProjectPageTransitioning) return;
     activeProjectFilter = button.getAttribute('data-project-filter') ?? 'all';
+    activeProjectPage = 1;
     projectFilters.forEach((item) => item.classList.toggle('is-active', item === button));
-    renderRepos();
+    renderRepos({ animate: true, direction: 'next' });
     logVisitorEvent('PROJECT_FILTER_CHANGED', { filter: activeProjectFilter });
   });
+});
+
+projectPagination?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-project-page]');
+  if (!(button instanceof HTMLButtonElement) || button.disabled) return;
+
+  changeProjectPage(activeProjectPage + (button.dataset.projectPage === 'next' ? 1 : -1));
 });
 
 function escapeHtml(value) {
@@ -1170,7 +1386,19 @@ function stopWebglLoadingLines() {
 }
 
 function isLikelyMobile() {
-  return window.matchMedia('(max-width: 760px)').matches || navigator.maxTouchPoints > 1;
+  return isCompactViewport() && !canUsePointerGhostTrail();
+}
+
+function shouldPinProjectReveal(target) {
+  return target?.classList?.contains('projects') && window.matchMedia('(max-width: 920px)').matches;
+}
+
+function isCompactViewport() {
+  return window.matchMedia('(max-width: 760px)').matches;
+}
+
+function canUsePointerGhostTrail() {
+  return window.matchMedia('(pointer: fine)').matches || window.matchMedia('(any-pointer: fine)').matches;
 }
 
 function trackWebglEvent(eventName, extra = {}) {
@@ -1533,18 +1761,8 @@ function initEffects() {
   });
 
   window.addEventListener('pointermove', (event) => {
-    if (reducedMotion || isLikelyMobile()) return;
-    const angle = lastPointer
-      ? Math.atan2(event.clientY - lastPointer.y, event.clientX - lastPointer.x)
-      : -0.72;
-    ghostPoints.push({
-      x: event.clientX,
-      y: event.clientY,
-      angle,
-      createdAt: performance.now(),
-    });
-    lastPointer = { x: event.clientX, y: event.clientY };
-    if (ghostPoints.length > 34) ghostPoints.shift();
+    if (reducedMotion || event.pointerType === 'touch' || !canUsePointerGhostTrail()) return;
+    addGhostPointerEvent(event);
   });
 }
 
@@ -1594,6 +1812,30 @@ function resizeEffectCanvases() {
     drift: -0.15 + Math.random() * 0.3,
     alpha: 0.16 + Math.random() * 0.34,
   }));
+}
+
+function addGhostPointerEvent(event) {
+  const samples = typeof event.getCoalescedEvents === 'function'
+    ? event.getCoalescedEvents()
+    : [event];
+
+  samples.forEach((sample) => {
+    const angle = lastPointer
+      ? Math.atan2(sample.clientY - lastPointer.y, sample.clientX - lastPointer.x)
+      : -0.72;
+
+    ghostPoints.push({
+      x: sample.clientX,
+      y: sample.clientY,
+      angle,
+      createdAt: performance.now(),
+    });
+    lastPointer = { x: sample.clientX, y: sample.clientY };
+  });
+
+  if (ghostPoints.length > 42) {
+    ghostPoints = ghostPoints.slice(-42);
+  }
 }
 
 function drawAmbient() {

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard - The Cursed Biomes</title>
+    <link rel="stylesheet" href="/admin/admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div>
+        <p class="eyebrow">Hidden admin</p>
+        <h1>The Cursed Biomes Dashboard</h1>
+      </div>
+      <button type="button" data-logout>Logout</button>
+    </header>
+
+    <nav class="admin-module-nav" aria-label="Admin modules">
+      <button class="is-active" type="button" data-admin-tab="overview">Overview</button>
+      <button type="button" data-admin-tab="notice">Notice</button>
+      <button type="button" data-admin-tab="messages">Messages</button>
+      <button type="button" data-admin-tab="events">Events</button>
+      <button type="button" data-admin-tab="repos">Repos</button>
+      <button type="button" data-admin-tab="audit">Audit</button>
+    </nav>
+
+    <main class="dashboard-grid">
+      <section class="admin-card overview-card span-2 admin-section is-active" data-admin-section="overview">
+        <div class="card-head">
+          <h2>Overview</h2>
+          <span class="status">Use these shortcuts to open each admin module</span>
+        </div>
+        <div class="overview-metrics">
+          <button class="metric-pill" type="button" data-message-status-filter="unread">
+            <span>Unread</span>
+            <strong data-kpi-unread>0</strong>
+          </button>
+          <button class="metric-pill" type="button" data-message-status-filter="all">
+            <span>Messages</span>
+            <strong data-kpi-messages>0</strong>
+          </button>
+          <button class="metric-pill" type="button" data-admin-view="events">
+            <span>Events</span>
+            <strong data-kpi-events>0</strong>
+          </button>
+          <button class="metric-pill" type="button" data-admin-view="events">
+            <span>Sessions</span>
+            <strong data-kpi-sessions>0</strong>
+          </button>
+          <button class="metric-pill" type="button" data-admin-view="audit">
+            <span>Audit</span>
+            <strong data-kpi-audit>0</strong>
+          </button>
+        </div>
+        <div class="overview-body">
+          <article class="admin-intro">
+            <p class="eyebrow">Admin console</p>
+            <h3>Portfolio control room</h3>
+            <p>
+              Use this dashboard to review visitor chat, publish the public notice bar,
+              inspect tracking events, check repo visibility data, and audit admin actions.
+            </p>
+          </article>
+          <article class="admin-chart-card">
+            <div class="card-head">
+              <h3>7-day activity</h3>
+              <span class="status">Visits vs chat</span>
+            </div>
+            <div class="activity-chart" data-overview-chart>
+              <span>Loading activity chart...</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="admin-card span-2 admin-section" data-admin-section="notice">
+        <div class="card-head">
+          <h2>Site Notice</h2>
+          <span class="status" data-notice-status>Not loaded</span>
+        </div>
+        <form class="notice-form" data-notice-form>
+          <label class="toggle-row">
+            <input name="enabled" type="checkbox" />
+            <span>Show notice on main page</span>
+          </label>
+          <label>
+            <span>Notice text</span>
+            <input name="message" maxlength="180" placeholder="Admin notice shown in DeArPix marquee..." />
+          </label>
+          <button type="submit">Save Notice</button>
+        </form>
+      </section>
+
+      <section class="admin-card span-2 admin-section" id="messages" data-admin-section="messages">
+        <div class="card-head">
+          <h2>Chat Messages</h2>
+          <div class="head-actions">
+            <select data-message-status-select aria-label="Message status filter">
+              <option value="all">All messages</option>
+              <option value="unread">Unread only</option>
+              <option value="read">Read only</option>
+            </select>
+            <button type="button" data-refresh>Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Contact</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody data-messages-body></tbody>
+          </table>
+        </div>
+        <div class="pager" data-message-pager></div>
+        <aside class="message-detail" data-message-detail>
+          <strong>Select a message</strong>
+          <span>Click a row to inspect contact, page, session, and visitor metadata.</span>
+        </aside>
+      </section>
+
+      <section class="admin-card span-2 admin-section" data-admin-section="events">
+        <div class="card-head">
+          <h2>Visitor Events</h2>
+          <button type="button" data-clear-event-filters>Clear Filters</button>
+        </div>
+        <form class="filter-grid" data-event-filters>
+          <label>
+            <span>Search</span>
+            <input name="q" placeholder="event, metadata, user agent..." />
+          </label>
+          <label>
+            <span>Event Type</span>
+            <select name="eventType" data-event-type-filter>
+              <option value="">All types</option>
+            </select>
+          </label>
+          <label>
+            <span>Date From</span>
+            <input name="dateFrom" type="date" />
+          </label>
+          <label>
+            <span>Date To</span>
+            <input name="dateTo" type="date" />
+          </label>
+          <label>
+            <span>Path</span>
+            <input name="path" placeholder="/" />
+          </label>
+          <label>
+            <span>IP</span>
+            <input name="ip" placeholder="127.0.0.1" />
+          </label>
+          <label>
+            <span>Session</span>
+            <input name="sessionId" placeholder="sess_..." />
+          </label>
+          <label>
+            <span>Repo</span>
+            <input name="repoName" placeholder="TechWeb-2026" />
+          </label>
+          <label>
+            <span>Sort</span>
+            <select name="sort">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </label>
+          <label>
+            <span>Limit</span>
+            <input name="limit" type="number" min="1" max="500" value="100" />
+          </label>
+        </form>
+        <div class="analytics-summary" data-events-summary></div>
+        <div class="feed" data-events-feed></div>
+      </section>
+
+      <section class="admin-card span-2 admin-section" data-admin-section="repos">
+        <h2>Repo Visibility Seed</h2>
+        <div class="feed" data-repos-feed></div>
+      </section>
+
+      <section class="admin-card span-2 admin-section" data-admin-section="audit">
+        <h2>Audit Log</h2>
+        <div class="feed" data-audit-feed></div>
+      </section>
+    </main>
+
+    <script src="/admin/dashboard.js" defer></script>
+  </body>
+</html>

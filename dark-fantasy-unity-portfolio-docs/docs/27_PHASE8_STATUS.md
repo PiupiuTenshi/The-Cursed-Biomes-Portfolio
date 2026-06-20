@@ -1,65 +1,24 @@
-# 27 - Phase 8 Status
+# 27 - Trạng thái Phase 8
 
-Last updated: 2026-06-11
+Cập nhật lần cuối: 2026-06-11
 
-## Completed
+## Đã hoàn thành
 
-- Expanded public event logging:
-  - `PAGE_VIEW`
-  - `PROJECT_CLICK`
-  - `PROJECT_FILTER_CHANGED`
-  - `TRY_NOW_CLICK`
-  - `CV_DOWNLOAD`
-  - `CHAT_MESSAGE_SENT`
-  - `LANGUAGE_SWITCHED`
-  - `AUDIO_TOGGLED`
-  - `AUDIO_PLAY`
-  - `AUDIO_PAUSE`
-  - `AUDIO_TRACK_CHANGE`
-  - `AUDIO_VOLUME_CHANGED`
-  - `WEBGL_LOAD_START`
-  - `WEBGL_LOAD_COMPLETE`
-  - `WEBGL_LOAD_FAILED`
-  - `WEBGL_CLOSE`
-  - `WEBGL_FULLSCREEN`
-  - `CLIENT_ERROR`
-- Project action links now include repo/action metadata so admin can filter by repo.
-- `/api/admin/events` now supports filtering and sorting:
-  - text search
-  - event type
-  - date from / date to
-  - IP
-  - path
-  - session ID
-  - repo name
-  - newest / oldest
-  - limit
-- Admin events endpoint now returns:
-  - filtered events
-  - filtered total
-  - unfiltered total
-  - unique event types
-  - unique paths
-  - summary by event type
-  - summary by path
-  - unique session count
-- Admin dashboard now includes:
-  - event filter panel
-  - clear filters action
-  - sessions KPI
-  - event summary cards
-  - richer event feed with metadata preview
-- Local health endpoint now reports Phase 8.
+- Đã mở rộng logging event công khai: `PAGE_VIEW`, `PROJECT_CLICK`, `PROJECT_FILTER_CHANGED`, `TRY_NOW_CLICK`, `CV_DOWNLOAD`, `CHAT_MESSAGE_SENT`, `LANGUAGE_SWITCHED`, các event audio, WebGL và `CLIENT_ERROR`.
+- Link action dự án có metadata repo/action để admin lọc theo repo.
+- `/api/admin/events` hỗ trợ tìm kiếm text, loại event, khoảng ngày, IP, path, session ID, tên repo, thứ tự mới/cũ và limit.
+- API trả về event đã lọc, tổng đã lọc/chưa lọc, loại event, path, tóm tắt theo event/path và số session duy nhất.
+- Dashboard có panel lọc event, xoá filter, KPI session, card tóm tắt và event feed có metadata preview.
 
-## Still Pending
+## Việc còn lại
 
-- Country/city enrichment is not enabled yet because local-only Phase 8 avoids external geo-IP services.
-- Event export CSV is still future work.
-- Long-term analytics storage should move from JSON files to a database before deploy.
-- Admin dashboard is still English-only.
+- Chưa bật bổ sung quốc gia/thành phố vì Phase 8 local không dùng dịch vụ geo-IP ngoài.
+- Export CSV là việc tương lai.
+- Cần chuyển analytics dài hạn từ JSON sang database trước deploy.
+- Dashboard admin vẫn cần i18n.
 
-## QA Notes
+## Ghi chú QA
 
-- Public analytics are best-effort; failures are intentionally swallowed so visitor UX is not blocked.
-- Admin event filters are server-side and can be combined.
-- Use `/api/admin/events?eventType=PAGE_VIEW&sort=newest&limit=50` after login to inspect filtered raw data.
+- Analytics public là best-effort; lỗi bị bỏ qua để không chặn trải nghiệm visitor.
+- Filter event admin chạy phía server và có thể kết hợp.
+- Sau khi login, dùng `/api/admin/events?eventType=PAGE_VIEW&sort=newest&limit=50` để xem raw data đã lọc.

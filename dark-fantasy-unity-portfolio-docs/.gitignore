@@ -1,6 +1,7 @@
 .env
 .env.local
 .env.production
+.env.*.local
 /private/admin-command.txt
 /node_modules/
 /.next/
@@ -11,3 +12,4 @@
 /data/chat-messages.json
 /data/visitor-events.json
 /data/admin-audit.json
+/docs

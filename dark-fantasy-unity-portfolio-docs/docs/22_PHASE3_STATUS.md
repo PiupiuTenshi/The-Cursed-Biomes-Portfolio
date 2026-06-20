@@ -1,38 +1,25 @@
-# 22 - Phase 3 Status
+# 22 - Trạng thái Phase 3
 
-Last updated: 2026-06-11
+Cập nhật lần cuối: 2026-06-11
 
-## Completed
+## Đã hoàn thành
 
-- Try Now section now opens a lazy-loaded WebGL modal.
-- Modal includes:
-  - horror loading lines
-  - iframe WebGL stage
-  - mobile warning
-  - fullscreen button
-  - open separate button
-  - fallback GitHub link
-  - close handling and Escape key handling
-- Portfolio audio is ducked/paused while the WebGL modal is open.
-- A lightweight browser demo placeholder exists at `public/games/biome-gate/index.html`.
-- WebGL demo config is mirrored in `src/config/webgl-demos.json`.
+- Khu vực Try Now mở modal WebGL tải lười.
+- Modal có các dòng loading horror, iframe WebGL, cảnh báo mobile, fullscreen, nút mở riêng, link GitHub fallback và xử lý đóng/Escape.
+- Âm thanh portfolio được giảm âm hoặc dừng khi mở WebGL modal.
+- Có demo trình duyệt nhẹ tại `public/games/biome-gate/index.html`.
+- Cấu hình demo WebGL được phản chiếu trong `src/config/webgl-demos.json`.
 
-## Still Pending
+## Việc còn lại
 
-- Replace `public/games/biome-gate` with a real Unity WebGL export when available.
-- Add a real fallback gameplay video if the Unity build is too heavy for mobile.
-- Add backend analytics events for:
-  - `TRY_NOW_CLICK`
-  - `WEBGL_LOAD_START`
-  - `WEBGL_LOAD_READY`
-  - `WEBGL_LOAD_ERROR`
-  - `WEBGL_FULLSCREEN`
-  - `WEBGL_CLOSE`
-- Connect project cards with `tryNowUrl` once a Unity repo/build is chosen.
+- Thay `public/games/biome-gate` bằng Unity WebGL export thật khi sẵn sàng.
+- Thêm video gameplay fallback nếu bản Unity quá nặng trên mobile.
+- Thêm analytics backend cho `TRY_NOW_CLICK`, `WEBGL_LOAD_START`, `WEBGL_LOAD_READY`, `WEBGL_LOAD_ERROR`, `WEBGL_FULLSCREEN` và `WEBGL_CLOSE`.
+- Nối card dự án với `tryNowUrl` khi đã chọn repo/bản build Unity.
 
-## Unity Build Drop-In Notes
+## Ghi chú đưa Unity build vào dự án
 
-Copy Unity WebGL output into:
+Chép output Unity WebGL vào:
 
 ```txt
 public/games/biome-gate/
@@ -41,4 +28,4 @@ public/games/biome-gate/
   TemplateData/
 ```
 
-Keep the same URL, or update `src/config/webgl-demos.json` and the `webglDemo` constant in `src/scripts/phase1.js`.
+Giữ nguyên URL, hoặc cập nhật `src/config/webgl-demos.json` và hằng `webglDemo` trong `src/scripts/phase1.js`.

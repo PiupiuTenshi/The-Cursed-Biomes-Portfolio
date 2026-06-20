@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Drive preview required</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #05070b;
+        --panel: rgba(12, 14, 22, 0.92);
+        --line: rgba(70, 226, 255, 0.28);
+        --text: #f6f1ff;
+        --muted: #b9aecb;
+        --accent: #46e2ff;
+        --gold: #d9a441;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        padding: 18px;
+        color: var(--text);
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          radial-gradient(circle at 50% 0%, rgba(70, 226, 255, 0.16), transparent 30%),
+          var(--bg);
+        background-size: 18px 18px, 18px 18px, 100% 100%, 100% 100%;
+        font-family: "Courier New", monospace;
+      }
+
+      main {
+        width: min(720px, 100%);
+        padding: clamp(18px, 5vw, 34px);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 22px 70px rgba(0, 0, 0, 0.36);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        color: var(--accent);
+        font-size: clamp(1.25rem, 4vw, 2rem);
+      }
+
+      p,
+      li {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      code {
+        color: var(--gold);
+        overflow-wrap: anywhere;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Can them Google Drive preview</h1>
+      <p data-title></p>
+      <p>
+        Sach nay chua co link Google Drive preview nen trang khong goi PDF local/raw de tranh IDM tu bat download.
+      </p>
+      <ol>
+        <li>Upload PDF len Google Drive.</li>
+        <li>Share file o che do viewable.</li>
+        <li>Lay link dang <code>https://drive.google.com/file/d/FILE_ID/preview</code>.</li>
+        <li>Them vao <code>frontend/src/scripts/site-content.js</code> trong <code>bookDrivePreviews</code>.</li>
+      </ol>
+    </main>
+
+    <script src="drive-missing.js"></script>
+  </body>
+</html>

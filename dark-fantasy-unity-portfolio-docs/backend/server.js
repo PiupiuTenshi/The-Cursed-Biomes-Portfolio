@@ -6,38 +6,40 @@ const net = require('net');
 const tls = require('tls');
 const { Readable } = require('stream');
 
-const ROOT = __dirname;
+const BACKEND_DIR = __dirname;
+const ROOT = path.resolve(BACKEND_DIR, '..');
+const FRONTEND_DIR = path.join(ROOT, 'frontend');
 const ENV = {
+  ...loadEnv(path.join(ROOT, '.env.local')),
   ...loadEnv(path.join(ROOT, '.env')),
+  ...loadEnv(path.join(ROOT, '.env.production')),
   ...process.env,
 };
 const PORT = Number(process.env.PORT || ENV.PORT || 3001);
 const NODE_ENV = process.env.NODE_ENV || ENV.NODE_ENV || 'development';
+const IS_PRODUCTION = NODE_ENV === 'production';
 const HOST = process.env.HOST || ENV.HOST || (NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1');
 const DATA_DIR = path.join(ROOT, 'data');
 const MESSAGES_FILE = path.join(DATA_DIR, 'chat-messages.json');
 const EVENTS_FILE = path.join(DATA_DIR, 'visitor-events.json');
 const AUDIT_FILE = path.join(DATA_DIR, 'admin-audit.json');
-const REPO_SETTINGS_FILE = path.join(ROOT, 'src', 'config', 'repo-settings.json');
+const NOTICE_FILE = path.join(DATA_DIR, 'site-notice.json');
+const REPO_SETTINGS_FILE = path.join(FRONTEND_DIR, 'src', 'config', 'repo-settings.json');
+const DRIVE_BOOK_ROOT = ENV.GAME_PROGRAM_BOOKS_DRIVE_DIR || 'H:\\My Drive\\Program Books\\GameProgramBooks';
+const LOCAL_BOOK_FILES = {
+  'game-programming-patterns': path.join(FRONTEND_DIR, 'public', 'books', 'game-programming-patterns.pdf'),
+  'clean-code': path.join(FRONTEND_DIR, 'public', 'books', 'clean-code.pdf'),
+  'unity-in-action': path.join(FRONTEND_DIR, 'public', 'books', 'unity-in-action.pdf'),
+  'game-engine-architecture': path.join(FRONTEND_DIR, 'public', 'books', 'game-engine-architecture.pdf'),
+};
 const MAX_BODY_BYTES = 16 * 1024;
 const GATE_TTL_MS = 5 * 60 * 1000;
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
-const ADMIN_GATE_PHRASE =
-  process.env.ADMIN_GATE_PHRASE ||
-  ENV.ADMIN_GATE_PHRASE ||
-  'moonlit-biomes';
-
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD ||
-  ENV.ADMIN_PASSWORD ||
-  'admin123';
+const ADMIN_GATE_PHRASE = envValue('ADMIN_GATE_PHRASE');
+const ADMIN_PASSWORD = envValue('ADMIN_PASSWORD');
 
 const ADMIN_PASSWORD_SHA256 = normalizePasswordHash(
-  process.env.ADMIN_PASSWORD_SHA256 ||
-  process.env.ADMIN_PASSWORD_HASH ||
-  ENV.ADMIN_PASSWORD_SHA256 ||
-  ENV.ADMIN_PASSWORD_HASH ||
-  ''
+  envValue('ADMIN_PASSWORD_SHA256', 'ADMIN_PASSWORD_HASH')
 );
 function envValue(...keys) {
   for (const key of keys) {
@@ -69,6 +71,13 @@ const NOTIFICATION_TIMEOUT_MS = Number(ENV.NOTIFICATION_TIMEOUT_MS || 8000);
 const MAX_STORED_MESSAGES = Number(ENV.MAX_STORED_MESSAGES || 2000);
 const MAX_STORED_EVENTS = Number(ENV.MAX_STORED_EVENTS || 5000);
 const MAX_STORED_AUDIT = Number(ENV.MAX_STORED_AUDIT || 2000);
+const TRUST_PROXY = envValue('TRUST_PROXY').toLowerCase() === 'true';
+const EXPECTED_ORIGIN = getExpectedOrigin(ENV.NEXT_PUBLIC_SITE_URL);
+const RATE_LIMITS = {
+  chat: { limit: readBoundedEnvInt('RATE_LIMIT_CHAT_MAX', 12, 1, 1000), windowMs: 10 * 60 * 1000 },
+  event: { limit: readBoundedEnvInt('RATE_LIMIT_EVENT_MAX', 90, 1, 5000), windowMs: 60 * 1000 },
+  login: { limit: readBoundedEnvInt('RATE_LIMIT_LOGIN_MAX', 5, 1, 100), windowMs: 15 * 60 * 1000 },
+};
 
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -76,6 +85,7 @@ const SECURITY_HEADERS = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
   'Cross-Origin-Opener-Policy': 'same-origin',
+  ...(IS_PRODUCTION ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}),
   'Content-Security-Policy': [
     "default-src 'self'",
     "connect-src 'self' https://api.github.com",
@@ -92,6 +102,7 @@ const SECURITY_HEADERS = {
 
 const gateTokens = new Map();
 const adminSessions = new Map();
+const rateLimitBuckets = new Map();
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -116,6 +127,12 @@ const MIME_TYPES = {
 ensureDataFile(MESSAGES_FILE);
 ensureDataFile(EVENTS_FILE);
 ensureDataFile(AUDIT_FILE);
+ensureJsonObjectFile(NOTICE_FILE, {
+  enabled: false,
+  message: '',
+  updatedAt: null,
+});
+validateRuntimeConfiguration();
 
 const server = http.createServer(async (req, res) => {
   try {
@@ -131,11 +148,17 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+    if (req.method === 'GET' && url.pathname === '/api/notice') {
+      return handlePublicNotice(res);
+    }
+
     if (req.method === 'POST' && url.pathname === '/api/chat/messages') {
+      if (!enforceRateLimit(req, res, 'chat')) return;
       return handleChatMessage(req, res);
     }
 
     if (req.method === 'POST' && url.pathname === '/api/events') {
+      if (!enforceRateLimit(req, res, 'event')) return;
       return handleEvent(req, res);
     }
 
@@ -143,11 +166,25 @@ const server = http.createServer(async (req, res) => {
       return handleInlineBook(req, res, url);
     }
 
+    if (req.method === 'GET' && url.pathname === '/api/books/data') {
+      return handleLocalBookData(res, url);
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/books/meta') {
+      return handleLocalBookMeta(res, url);
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/books/chunk') {
+      return handleLocalBookChunk(res, url);
+    }
+
     if (req.method === 'POST' && url.pathname === '/api/admin/login') {
+      if (!requireSameOrigin(req, res) || !enforceRateLimit(req, res, 'login')) return;
       return handleAdminLogin(req, res);
     }
 
     if (req.method === 'POST' && url.pathname === '/api/admin/logout') {
+      if (!requireSameOrigin(req, res)) return;
       return handleAdminLogout(req, res);
     }
 
@@ -156,6 +193,8 @@ const server = http.createServer(async (req, res) => {
       if (!session) {
         return sendJson(res, 401, { error: 'Admin session required' });
       }
+
+      if (req.method !== 'GET' && !requireSameOrigin(req, res)) return;
 
       if (req.method === 'GET' && url.pathname === '/api/admin/session') {
         return sendJson(res, 200, { ok: true, session });
@@ -167,6 +206,14 @@ const server = http.createServer(async (req, res) => {
 
       if (req.method === 'PATCH' && url.pathname.startsWith('/api/admin/messages/')) {
         return handleAdminMessagePatch(req, res, url.pathname.split('/').pop(), session);
+      }
+
+      if (req.method === 'GET' && url.pathname === '/api/admin/notice') {
+        return handleAdminNoticeGet(res);
+      }
+
+      if (req.method === 'PUT' && url.pathname === '/api/admin/notice') {
+        return handleAdminNoticePut(req, res, session);
       }
 
       if (req.method === 'GET' && url.pathname === '/api/admin/events') {
@@ -190,7 +237,11 @@ const server = http.createServer(async (req, res) => {
 
     sendJson(res, 405, { error: 'Method not allowed' });
   } catch (error) {
-    sendJson(res, 500, { error: 'Internal server error', detail: error.message });
+    console.error('[REQUEST_ERROR]', error);
+    sendJson(res, 500, {
+      error: 'Internal server error',
+      ...(IS_PRODUCTION ? {} : { detail: error.message }),
+    });
   }
 });
 
@@ -544,6 +595,45 @@ function handleAdminMessages(res) {
   });
 }
 
+function handlePublicNotice(res) {
+  const notice = readNotice();
+  sendJson(res, 200, {
+    enabled: Boolean(notice.enabled && notice.message),
+    message: notice.enabled ? notice.message : '',
+    updatedAt: notice.updatedAt || null,
+  });
+}
+
+function handleAdminNoticeGet(res) {
+  sendJson(res, 200, { notice: readNotice() });
+}
+
+async function handleAdminNoticePut(req, res, session) {
+  const payload = await readJsonBody(req);
+  const notice = {
+    enabled: Boolean(payload.enabled),
+    message: normalizeText(payload.message, 180),
+    updatedAt: new Date().toISOString(),
+    updatedBy: session.id,
+  };
+
+  if (!notice.message) {
+    notice.enabled = false;
+  }
+
+  writeJsonObject(NOTICE_FILE, notice);
+  appendJsonEntry(AUDIT_FILE, {
+    id: `aud_${crypto.randomUUID()}`,
+    timestamp: new Date().toISOString(),
+    action: 'ADMIN_NOTICE_UPDATED',
+    sessionId: session.id,
+    ip: session.ip,
+    metadata: { enabled: notice.enabled, messageLength: notice.message.length },
+  });
+
+  sendJson(res, 200, { ok: true, notice });
+}
+
 async function handleAdminMessagePatch(req, res, messageId, session) {
   const payload = await readJsonBody(req);
   const messages = readJsonArray(MESSAGES_FILE);
@@ -593,7 +683,10 @@ function handleAdminEvents(res, url) {
     filters,
     eventTypes: getUniqueValues(allEvents, 'eventType'),
     paths: getUniqueValues(allEvents, 'path'),
-    summary: summarizeEvents(filteredEvents),
+    summary: {
+      ...summarizeEvents(filteredEvents),
+      daily: summarizeDailyCounts(allEvents, 'timestamp', 7),
+    },
   });
 }
 
@@ -666,6 +759,37 @@ function topEntries(source, limit) {
     .map(([name, count]) => ({ name, count }));
 }
 
+function summarizeDailyCounts(items, timestampKey, days) {
+  const buckets = getRecentDayKeys(days).map((key) => ({ key, count: 0 }));
+  const byKey = new Map(buckets.map((bucket) => [bucket.key, bucket]));
+
+  items.forEach((item) => {
+    const key = toDateKey(item[timestampKey]);
+    if (byKey.has(key)) {
+      byKey.get(key).count += 1;
+    }
+  });
+
+  return buckets;
+}
+
+function getRecentDayKeys(days) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() - (days - 1 - index));
+    return toDateKey(date.toISOString());
+  });
+}
+
+function toDateKey(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toISOString().slice(0, 10);
+}
+
 function getUniqueValues(items, key) {
   return [...new Set(items.map((item) => item[key]).filter(Boolean))]
     .sort((a, b) => String(a).localeCompare(String(b)));
@@ -729,6 +853,122 @@ async function handleInlineBook(req, res, url) {
   }).pipe(res);
 }
 
+function handleLocalBookData(res, url) {
+  const filePath = resolveLocalBookRequest(url);
+
+  if (!filePath) {
+    return sendJson(res, 404, { error: 'Book not found' });
+  }
+
+  const absolutePath = path.resolve(filePath);
+
+  fs.stat(absolutePath, (statError, stats) => {
+    if (statError || !stats.isFile()) {
+      return sendJson(res, 404, { error: 'Book file missing' });
+    }
+
+    res.writeHead(200, {
+      ...SECURITY_HEADERS,
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': stats.size,
+      'Content-Disposition': `inline; filename="${sanitizeDownloadName(path.basename(absolutePath, path.extname(absolutePath)) || 'book')}.bin"`,
+      'Cache-Control': 'public, max-age=3600',
+      'X-Robots-Tag': 'noindex',
+    });
+    fs.createReadStream(absolutePath).pipe(res);
+  });
+}
+
+function handleLocalBookMeta(res, url) {
+  const filePath = resolveLocalBookRequest(url);
+  if (!filePath) {
+    return sendJson(res, 404, { error: 'Book not found' });
+  }
+
+  fs.stat(filePath, (statError, stats) => {
+    if (statError || !stats.isFile()) {
+      return sendJson(res, 404, { error: 'Book file missing' });
+    }
+
+    sendJson(res, 200, {
+      size: stats.size,
+      chunkSize: 256 * 1024,
+      name: sanitizeDownloadName(path.basename(filePath, path.extname(filePath))),
+    });
+  });
+}
+
+function handleLocalBookChunk(res, url) {
+  const filePath = resolveLocalBookRequest(url);
+  if (!filePath) {
+    return sendJson(res, 404, { error: 'Book not found' });
+  }
+
+  const offset = Number(url.searchParams.get('offset') || 0);
+  const length = Number(url.searchParams.get('length') || 262144);
+  if (!Number.isSafeInteger(offset) || !Number.isSafeInteger(length) || offset < 0 || length <= 0) {
+    return sendJson(res, 400, { error: 'Invalid range' });
+  }
+
+  const cappedLength = Math.min(length, 512 * 1024);
+
+  fs.stat(filePath, (statError, stats) => {
+    if (statError || !stats.isFile()) {
+      return sendJson(res, 404, { error: 'Book file missing' });
+    }
+
+    if (offset >= stats.size) {
+      return sendJson(res, 416, { error: 'Range not satisfiable' });
+    }
+
+    const end = Math.min(offset + cappedLength, stats.size) - 1;
+    res.writeHead(206, {
+      ...SECURITY_HEADERS,
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': end - offset + 1,
+      'Content-Range': `bytes ${offset}-${end}/${stats.size}`,
+      'Cache-Control': 'public, max-age=3600',
+      'X-Robots-Tag': 'noindex',
+    });
+    fs.createReadStream(filePath, { start: offset, end }).pipe(res);
+  });
+}
+
+function resolveLocalBookRequest(url) {
+  const slug = normalizeText(url.searchParams.get('slug') || '', 80).toLowerCase();
+  const bookPath = normalizeText(url.searchParams.get('path') || '', 700);
+  const filePath = bookPath ? getDriveBookPath(bookPath) : LOCAL_BOOK_FILES[slug];
+  if (!filePath) return null;
+
+  const absolutePath = path.resolve(filePath);
+  const allowedRoots = [
+    path.join(FRONTEND_DIR, 'public', 'books'),
+    path.resolve(DRIVE_BOOK_ROOT),
+  ];
+
+  return allowedRoots.some((root) => isPathInside(absolutePath, root)) ? absolutePath : null;
+}
+
+function isPathInside(targetPath, rootPath) {
+  const relative = path.relative(path.resolve(rootPath), path.resolve(targetPath));
+  return relative === '' || (!!relative && !relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+function getDriveBookPath(bookPath) {
+  if (!bookPath || path.isAbsolute(bookPath)) return null;
+  if (!/\.pdf$/i.test(bookPath)) return null;
+
+  const parts = bookPath.split(/[\\/]+/).filter(Boolean);
+  if (parts[0] === 'GameProgramBooks') parts.shift();
+  if (parts.some((part) => part === '..' || part.includes(':'))) return null;
+
+  return path.join(DRIVE_BOOK_ROOT, ...parts.map((part) => part.replace(/[<>:"\\|?*\u0000-\u001f]/g, '-')));
+}
+
+function sanitizeDownloadName(value) {
+  return String(value || 'book').replace(/[^\w .()-]+/g, '-').trim() || 'book';
+}
+
 function parseAllowedBookUrl(rawUrl) {
   try {
     const parsed = new URL(rawUrl);
@@ -785,9 +1025,9 @@ function normalizePasswordHash(value) {
 function serveStatic(requestPath, res) {
   const cleanPath = decodeURIComponent(requestPath.split('?')[0]);
   const relativePath = cleanPath === '/' ? 'index.html' : cleanPath.replace(/^\/+/, '');
-  const absolutePath = path.resolve(ROOT, relativePath);
+  const absolutePath = path.resolve(FRONTEND_DIR, relativePath);
 
-  if (!absolutePath.startsWith(ROOT)) {
+  if (!isPathInside(absolutePath, FRONTEND_DIR)) {
     return sendText(res, 403, 'Forbidden');
   }
 
@@ -1417,6 +1657,13 @@ function ensureDataFile(filePath) {
   }
 }
 
+function ensureJsonObjectFile(filePath, fallback) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, `${JSON.stringify(fallback, null, 2)}\n`, 'utf8');
+  }
+}
+
 function readJsonArray(filePath) {
   try {
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -1424,6 +1671,30 @@ function readJsonArray(filePath) {
   } catch {
     return [];
   }
+}
+
+function readJsonObject(filePath, fallback = {}) {
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return data && typeof data === 'object' && !Array.isArray(data) ? data : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJsonObject(filePath, value) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function readNotice() {
+  const notice = readJsonObject(NOTICE_FILE, {});
+  return {
+    enabled: Boolean(notice.enabled),
+    message: normalizeText(notice.message, 180),
+    updatedAt: notice.updatedAt || null,
+    updatedBy: notice.updatedBy || null,
+  };
 }
 
 function appendJsonEntry(filePath, entry) {
@@ -1466,11 +1737,111 @@ function appendSystemAudit(action, metadata) {
 }
 
 function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
+  const forwarded = TRUST_PROXY ? req.headers['x-forwarded-for'] : null;
   if (typeof forwarded === 'string' && forwarded) {
-    return forwarded.split(',')[0].trim();
+    return normalizeIp(forwarded.split(',')[0]);
   }
-  return req.socket.remoteAddress || '';
+  return normalizeIp(req.socket.remoteAddress || '');
+}
+
+function normalizeIp(value) {
+  return String(value || '').trim().replace(/^::ffff:/i, '');
+}
+
+function getExpectedOrigin(siteUrl) {
+  try {
+    return new URL(siteUrl).origin;
+  } catch {
+    return '';
+  }
+}
+
+function readBoundedEnvInt(key, fallback, min, max) {
+  const rawValue = envValue(key);
+  if (!rawValue) return fallback;
+  const value = Number(rawValue);
+  if (!Number.isFinite(value)) return fallback;
+  return Math.max(min, Math.min(max, Math.floor(value)));
+}
+
+function validateRuntimeConfiguration() {
+  const errors = [];
+  const knownExampleValues = new Set(['moonlit-biomes', 'admin123', 'change-this-long-random-secret']);
+  const usesExampleCredentials = knownExampleValues.has(ADMIN_GATE_PHRASE) || knownExampleValues.has(ADMIN_PASSWORD);
+
+  if (!ADMIN_GATE_PHRASE) {
+    errors.push('Set ADMIN_GATE_PHRASE.');
+  } else if ((IS_PRODUCTION || !isLocalOnlyHost(HOST)) && knownExampleValues.has(ADMIN_GATE_PHRASE)) {
+    errors.push('ADMIN_GATE_PHRASE must be a private, non-example value.');
+  }
+
+  if (!ADMIN_PASSWORD_SHA256 && !ADMIN_PASSWORD) {
+    errors.push('Set ADMIN_PASSWORD_SHA256 or ADMIN_PASSWORD.');
+  }
+
+  if ((IS_PRODUCTION || !isLocalOnlyHost(HOST)) && !ADMIN_PASSWORD_SHA256 && knownExampleValues.has(ADMIN_PASSWORD)) {
+    errors.push('ADMIN_PASSWORD must not use an example value.');
+  }
+
+  if (IS_PRODUCTION) {
+    if (!ADMIN_PASSWORD_SHA256) {
+      errors.push('Production requires ADMIN_PASSWORD_SHA256; plaintext ADMIN_PASSWORD is not accepted.');
+    }
+    if (!EXPECTED_ORIGIN || !EXPECTED_ORIGIN.startsWith('https://')) {
+      errors.push('Production requires NEXT_PUBLIC_SITE_URL with an https:// origin.');
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Invalid security configuration: ${errors.join(' ')}`);
+  }
+
+  if (!IS_PRODUCTION && usesExampleCredentials) {
+    console.warn('[SECURITY_WARNING] Example admin credentials are allowed only for local development.');
+  }
+}
+
+function isLocalOnlyHost(host) {
+  return ['127.0.0.1', '::1', 'localhost'].includes(String(host || '').toLowerCase());
+}
+
+function requireSameOrigin(req, res) {
+  if (!IS_PRODUCTION) return true;
+
+  if (req.headers.origin !== EXPECTED_ORIGIN) {
+    sendJson(res, 403, { error: 'Invalid request origin' });
+    return false;
+  }
+
+  return true;
+}
+
+function enforceRateLimit(req, res, bucketName) {
+  const config = RATE_LIMITS[bucketName];
+  if (!config) return true;
+
+  const now = Date.now();
+  const key = `${bucketName}:${getClientIp(req) || 'unknown'}`;
+  const existing = rateLimitBuckets.get(key);
+  const state = !existing || now >= existing.resetAt
+    ? { count: 0, resetAt: now + config.windowMs }
+    : existing;
+
+  state.count += 1;
+  rateLimitBuckets.set(key, state);
+
+  if (rateLimitBuckets.size > 10000) {
+    for (const [storedKey, stored] of rateLimitBuckets) {
+      if (now >= stored.resetAt) rateLimitBuckets.delete(storedKey);
+    }
+  }
+
+  if (state.count <= config.limit) return true;
+
+  const retryAfter = Math.max(1, Math.ceil((state.resetAt - now) / 1000));
+  res.setHeader('Retry-After', String(retryAfter));
+  sendJson(res, 429, { error: 'Too many requests. Please try again later.' });
+  return false;
 }
 
 function loadEnv(filePath) {
@@ -1507,6 +1878,7 @@ function makeCookie(name, value, maxAgeMs) {
     'Path=/',
     'HttpOnly',
     'SameSite=Lax',
+    ...(IS_PRODUCTION ? ['Secure', 'Priority=High'] : []),
     `Max-Age=${Math.floor(maxAgeMs / 1000)}`,
   ];
   return parts.join('; ');

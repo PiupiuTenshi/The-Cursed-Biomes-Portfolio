@@ -1,53 +1,26 @@
-# 24 - Phase 5 Status
+# 24 - Trạng thái Phase 5
 
-Last updated: 2026-06-11
+Cập nhật lần cuối: 2026-06-20
 
-## Completed
+## Đã hoàn thành
 
-- Hidden admin gate command is handled server-side through chatbot messages:
-  - `/open gate: moonlit-biomes`
-- Frontend does not store or compare the gate phrase.
-- Backend creates a one-time gate token that expires after 5 minutes.
-- Admin login requires:
-  - valid one-time gate token
-  - server-side password
-- Admin session uses an HttpOnly `admin_session` cookie.
-- Hidden admin pages added:
-  - `/admin/login.html`
-  - `/admin/dashboard.html`
-- Protected admin APIs added:
-  - `POST /api/admin/login`
-  - `POST /api/admin/logout`
-  - `GET /api/admin/session`
-  - `GET /api/admin/messages`
-  - `PATCH /api/admin/messages/:id`
-  - `GET /api/admin/events`
-  - `GET /api/admin/repos`
-  - `GET /api/admin/audit`
-- Dashboard shows KPIs, chat messages, visitor events, repo settings seed, and audit log.
-- Admin actions are logged to `data/admin-audit.json`.
+- Lệnh mở cổng admin ẩn được xử lý server-side qua chatbot; gate phrase không được frontend lưu hay so sánh.
+- Backend tạo gate token dùng một lần, hết hạn sau 5 phút.
+- Admin login cần gate token hợp lệ và mật khẩu/hàm băm do server xác thực.
+- Session admin dùng cookie `admin_session` HttpOnly; production có Secure, SameSite và Origin check.
+- Có các trang `/admin/login.html`, `/admin/dashboard.html` và API admin được bảo vệ.
+- Dashboard hiển thị KPI, chat message, event visitor, repo setting seed và audit log.
+- Mọi action admin được ghi vào `data/admin-audit.json`.
+- Đã thêm rate limit cho login, chat và analytics; xem `docs/32_SECURITY_AUDIT_AND_HARDENING.md`.
 
-## Local Dev Login
+## Đăng nhập local
 
-1. Open the public site.
-2. Open chatbot.
-3. Send:
+1. Đặt `ADMIN_GATE_PHRASE` và `ADMIN_PASSWORD` riêng trong `.env.local`.
+2. Mở public site, mở chatbot và gửi `/open gate: <gate-phrase-cua-ban>`.
+3. Mở link admin được trả về, rồi dùng mật khẩu local đã đặt.
 
-```txt
-/open gate: moonlit-biomes
-```
+## Việc còn lại
 
-4. Open the returned admin link.
-5. Use local dev password:
-
-```txt
-admin123
-```
-
-## Still Pending
-
-- Replace local dev password fallback with a production password hash.
-- Replace in-memory sessions with persistent signed JWT/session storage.
-- Add stronger rate limiting to login and gate attempts.
-- Move repo visibility toggles from seed JSON into a real DB-backed admin editor.
-- Add role-based auth if more admin users are needed.
+- Chuyển session in-memory sang session/JWT có chữ ký và lưu trữ bền vững nếu cần nhiều instance.
+- Chuyển toggle ẩn/hiện repo từ JSON seed sang admin editor có DB.
+- Thêm role-based auth nếu có nhiều admin.

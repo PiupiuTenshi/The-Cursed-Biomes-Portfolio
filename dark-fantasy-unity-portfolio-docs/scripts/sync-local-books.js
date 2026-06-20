@@ -2,9 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const BOOK_DIR = path.join(ROOT, 'public', 'books');
+const FRONTEND = path.join(ROOT, 'frontend');
+const BOOK_DIR = path.join(FRONTEND, 'public', 'books');
 const PDFJS_SOURCE = path.join(ROOT, 'node_modules', 'pdfjs-dist', 'legacy', 'build');
-const PDFJS_TARGET = path.join(ROOT, 'public', 'vendor', 'pdfjs');
+const PDFJS_TARGET = path.join(FRONTEND, 'public', 'vendor', 'pdfjs');
 
 const books = [
   {

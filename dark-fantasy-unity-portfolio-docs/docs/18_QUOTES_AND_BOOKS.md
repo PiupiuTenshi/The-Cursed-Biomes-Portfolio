@@ -48,8 +48,8 @@ Language: EN/VI optional
 
 ## 2.1. Runtime quote data
 
-Quote card now reads from `window.CursedBiomesContent.libraryQuotes` in `src/scripts/site-content.js`.
-On every page load, `src/scripts/phase1.js` picks one random quote and renders it into:
+Quote card now reads from `window.CursedBiomesContent.libraryQuotes` in `frontend/src/scripts/site-content.js`.
+On every page load, `frontend/src/scripts/phase1.js` picks one random quote and renders it into:
 
 ```html
 [data-random-quote]
@@ -99,6 +99,37 @@ Why I recommend it
 Tags: C#, Unity, Game Architecture, Git, JS, Simulation
 [Read] [EPUB/Buy]
 ```
+
+## 5.1. Online reader modes
+
+Current default reader:
+
+- Local PDF files live in `frontend/public/books`.
+- `frontend/public/books/reader.html` + `reader.js` render PDFs with PDF.js.
+- Pages are lazy-rendered near the viewport to avoid loading the whole book at once.
+- The reader avoids opening a `.pdf` URL. It resolves `/api/books/data?slug=...` or `/api/books/data?path=...` into chunked requests:
+  - `/api/books/meta?...` returns file size and preferred chunk size.
+  - `/api/books/chunk?...&offset=...&length=...` returns small byte ranges for PDF.js.
+- This reduces IDM/browser auto-download conflicts and prevents large books from loading as one big request.
+
+Google Drive iframe option:
+
+1. Upload the PDF to Google Drive.
+2. Share it as viewable.
+3. Copy the preview URL:
+
+```txt
+https://drive.google.com/file/d/FILE_ID/preview
+```
+
+4. Add it to `bookDrivePreviews` in `frontend/src/scripts/site-content.js`:
+
+```js
+{ match: 'game programming patterns', src: 'https://drive.google.com/file/d/FILE_ID/preview' }
+```
+
+Drive preview URLs are kept as source/fallback links, but the Read button uses the local chunked PDF.js reader by default.
+This avoids Google's internal PDF requests, which can still be intercepted by IDM depending on the user's browser setup.
 
 ## 6. Vietnamese descriptions
 

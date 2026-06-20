@@ -1,0 +1,13 @@
+name = "cursed-biomes-portfolio"
+main = "cloudflare/worker.mjs"
+compatibility_date = "2025-06-01"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cursed-biomes-portfolio"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "cloudflare/migrations"

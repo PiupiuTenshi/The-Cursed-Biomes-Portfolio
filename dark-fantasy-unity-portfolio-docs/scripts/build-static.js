@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
+const FRONTEND = path.join(ROOT, 'frontend');
 const DIST = path.join(ROOT, 'dist');
 const COPY_TARGETS = [
   'index.html',
@@ -16,7 +17,7 @@ fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
 
 COPY_TARGETS.forEach((target) => {
-  const source = path.join(ROOT, target);
+  const source = path.join(FRONTEND, target);
   if (!fs.existsSync(source)) return;
 
   const destination = path.join(DIST, target);
